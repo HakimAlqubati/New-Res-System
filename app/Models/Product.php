@@ -27,7 +27,7 @@ class Product extends Model
         return $this->hasMany(UnitPrice::class);
     }
 
-    
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -36,5 +36,16 @@ class Product extends Model
     public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class);
+    }
+
+
+    public function toArray()
+    {
+        return [
+            'product_id' => $this->id,
+            'product_name' => $this->name, 
+            'description' => $this->description, 
+            'unit_prices' => $this->unitPrices, 
+        ];
     }
 }

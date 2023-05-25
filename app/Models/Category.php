@@ -23,9 +23,9 @@ class Category extends Model
     public function toArray()
     {
         return [
-            'id' => $this->id, 
-            'name' => $this->name, 
-            'products' => $this->products, 
+            'category_id' => $this->id,
+            'category_name' => $this->name,
+            'products' => $this->products,
         ];
     }
 }

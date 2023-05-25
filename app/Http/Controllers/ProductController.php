@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ProductResource;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -15,6 +17,12 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        // $data = Category::with('products')->get();
+         $categoreis = Category::get();
+
+          return CategoryResource::collection($categoreis);
+
+        
 
         $query = Product::query();
         if ($request->has('category_id')) {
