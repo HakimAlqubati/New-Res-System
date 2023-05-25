@@ -16,9 +16,12 @@ class AuthController extends Controller
 
             $token = $user->createToken('MyApp')->accessToken;
 
+              
+           
             return response()->json([
                 'token' => $token,
-                'user' => $user
+                'user' => $user,
+                'roles' => $user->roles
             ]);
         } else {
             return response()->json(['error' => 'Unauthorized'], 401);
