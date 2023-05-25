@@ -37,15 +37,15 @@ class Order extends Model
 
 
 
-    public function categories()
-    {
-        return $this->belongsToMany(Category::class, 'orders_details', 'order_id', 'product_id')
-            ->with(['products' => function ($query) {
-                $query->join('orders_details', 'products.id', '=', 'orders_details.product_id')
-                    ->where('orders_details.order_id', $this->id);
-            }])
-            ->distinct();
-    }
+    // public function categories()
+    // {
+    //     return $this->belongsToMany(Category::class, 'orders_details', 'order_id', 'product_id')
+    //         ->with(['products' => function ($query) {
+    //             $query->join('orders_details', 'products.id', '=', 'orders_details.product_id')
+    //                 ->where('orders_details.order_id', $this->id);
+    //         }])
+    //         ->distinct();
+    // }
 
    
 }
