@@ -18,24 +18,12 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         // $data = Category::with('products')->get();
-         $categoreis = Category::get();
-
-          return CategoryResource::collection($categoreis);
-
-        
-
-        $query = Product::query();
+        $query = Category::query();
         if ($request->has('category_id')) {
-            $query->where('category_id', $request->category_id);
+            $query->where('id', $request->category_id);
         }
-
-        if ($request->has('id')) {
-            $query->where('id', $request->id);
-        }
-
-        $query->where('active', 1);
-        $products = $query->get();
-        return ProductResource::collection($products);
+        $categoreis = $query->get();
+        return CategoryResource::collection($categoreis); 
     }
 
     /**
