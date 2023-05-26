@@ -38,7 +38,7 @@ class OrderDetails extends Model
     public function toArray()
     {
         return [
-            'category_id' => $this->id,
+            'order_detail_id' => $this->id,
             'product' => [
                 'id' => $this->product_id,
                 'name' => $this->product->name,

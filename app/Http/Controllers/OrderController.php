@@ -55,37 +55,53 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         return  DB::transaction(function () use ($request) {
-            // Map order data from request body 
-            $orderData = [
-                'status' => Order::ORDERED,
-                'customer_id' => auth()->user()->id,
-                'branch_id' => auth()->user()->branch->id,
-                'notes' => $request->input('notes'),
-                'description' => $request->input('description'),
+            try {
+                // Map order data from request body 
+                $orderData = [
+                    'status' => Order::ORDERED,
+                    'customer_id' => auth()->user()->id,
+                    'branch_id' => auth()->user()->branch->id,
+                    'notes' => $request->input('notes'),
+                    'description' => $request->input('description'),
 
-            ];
-            // Create new order
-            $order = Order::create($orderData);
-
-            // Map order details data from request body
-            $orderDetailsData = [];
-            foreach ($request->input('order_details') as $orderDetail) {
-                $orderDetailsData[] = [
-                    'order_id' => $order->id,
-                    'product_id' => $orderDetail['product_id'],
-                    'unit_id' => $orderDetail['unit_id'],
-                    'quantity' => $orderDetail['quantity'],
-                    'available_quantity' => $orderDetail['quantity'],
-                    'price' => (UnitPrice::where(
-                        'product_id',
-                        $orderDetail['product_id']
-                    )->where('unit_id', $orderDetail['unit_id'])->first()->price) * $orderDetail['quantity'],
-                    'created_at' => $order->created_at,
-                    'updated_at' => $order->created_at,
                 ];
+                // Create new order
+                $order = Order::create($orderData);
+
+                // Map order details data from request body
+                $orderDetailsData = [];
+                foreach ($request->input('order_details') as $orderDetail) {
+                    $orderDetailsData[] = [
+                        'order_id' => $order->id,
+                        'product_id' => $orderDetail['product_id'],
+                        'unit_id' => $orderDetail['unit_id'],
+                        'quantity' => $orderDetail['quantity'],
+                        'available_quantity' => $orderDetail['quantity'],
+                        'price' => (UnitPrice::where(
+                            'product_id',
+                            $orderDetail['product_id']
+                        )->where('unit_id', $orderDetail['unit_id'])->first()->price) * $orderDetail['quantity'],
+                        'created_at' => $order->created_at,
+                        'updated_at' => $order->created_at,
+                    ];
+                }
+                OrderDetails::insert($orderDetailsData);
+
+                $totalPrice = array_reduce($orderDetailsData, function ($carry, $item) {
+                    return $carry + $item['price'];
+                }, 0);
+                Order::find($order->id)->update(['total' => $totalPrice]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'done successfully',
+                    'order' => $order->where('id', $order->id)->with('orderDetails')->get(),
+                ], 200);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ], 500);
             }
-            OrderDetails::insert($orderDetailsData);
-            return $order->where('id', $order->id)->with('orderDetails')->get();
         });
     }
 

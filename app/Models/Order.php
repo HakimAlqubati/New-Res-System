@@ -22,6 +22,7 @@ class Order extends Model
         'notes',
         'description',
         'full_quantity',
+        'total',
     ];
 
     public function orderDetails()
@@ -29,10 +30,14 @@ class Order extends Model
         return $this->hasMany(OrderDetails::class);
     }
 
-
     public function customer()
     {
         return $this->belongsTo(User::class, 'customer_id');
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 
 
@@ -47,5 +52,5 @@ class Order extends Model
     //         ->distinct();
     // }
 
-   
+
 }
