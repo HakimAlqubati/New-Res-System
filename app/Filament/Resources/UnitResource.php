@@ -22,6 +22,14 @@ class UnitResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $navigationGroup = 'Products - units';
+
+    protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
+    // protected static bool $shouldRegisterNavigation = false;
+
+
+    protected static ?string $navigationLabel = 'Units';
+    protected static ?int $navigationSort = 2;
     public static function form(Form $form): Form
     {
         return $form
@@ -37,6 +45,7 @@ class UnitResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('code'),
                 Tables\Columns\TextColumn::make('description'),
@@ -68,5 +77,15 @@ class UnitResource extends Resource
             'create' => Pages\CreateUnit::route('/create'),
             'edit' => Pages\EditUnit::route('/{record}/edit'),
         ];
+    }
+
+    protected static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    protected static function getActiveNavigationIcon(): string
+    {
+        return 'heroicon-s-document-text';
     }
 }

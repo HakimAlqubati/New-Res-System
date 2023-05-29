@@ -6,6 +6,9 @@ use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\OrderDetails;
 use App\Models\UnitPrice;
+use App\Models\User;
+use App\Notifications\OrderCreated;
+use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -56,23 +59,42 @@ class OrderController extends Controller
     {
         return  DB::transaction(function () use ($request) {
             try {
+                // to get current user role
+                $currnetRole = $request->user()->roles[0]->id;
+                $pendingOrderId = 0;
+                if ($currnetRole == 7) {
+                    $orderStatus = Order::ORDERED;
+                    $branchId = auth()->user()->branch->id;
+                } else if ($currnetRole == 8) {
+                    $orderStatus = Order::PENDING_APPROVAL;
+                    $branchId = auth()->user()->owner_id;
+                    $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder(auth()->user()->id);
+                }
+
                 // Map order data from request body 
                 $orderData = [
                     'status' => Order::ORDERED,
                     'customer_id' => auth()->user()->id,
-                    'branch_id' => auth()->user()->branch->id,
+                    'branch_id' => 1,
                     'notes' => $request->input('notes'),
                     'description' => $request->input('description'),
-
                 ];
-                // Create new order
-                $order = Order::create($orderData);
 
+                // Create new order 
+                // if ($currnetRole == 8 && $pendingOrderId > 0) {
+                //     $orderId = $pendingOrderId;
+                // } else {
+                //     $order = Order::create($orderData);
+                //     $orderId = $order->id;
+                // } 
+
+                $order = Order::create($orderData);
+                $orderId = $order->id;
                 // Map order details data from request body
                 $orderDetailsData = [];
                 foreach ($request->input('order_details') as $orderDetail) {
                     $orderDetailsData[] = [
-                        'order_id' => $order->id,
+                        'order_id' => $orderId,
                         'product_id' => $orderDetail['product_id'],
                         'unit_id' => $orderDetail['unit_id'],
                         'quantity' => $orderDetail['quantity'],
@@ -81,20 +103,30 @@ class OrderController extends Controller
                             'product_id',
                             $orderDetail['product_id']
                         )->where('unit_id', $orderDetail['unit_id'])->first()->price) * $orderDetail['quantity'],
-                        'created_at' => $order->created_at,
-                        'updated_at' => $order->created_at,
+                        // 'created_at' => $order->created_at,
+                        // 'updated_at' => $order->created_at,
                     ];
                 }
                 OrderDetails::insert($orderDetailsData);
 
+                //to calculate the total of order when store it
                 $totalPrice = array_reduce($orderDetailsData, function ($carry, $item) {
                     return $carry + $item['price'];
                 }, 0);
-                Order::find($order->id)->update(['total' => $totalPrice]);
+                Order::find($orderId)->update(['total' => $totalPrice]);
+
+ 
+                $recipient = User::find(1); 
+                Notification::make()
+                    ->title('Order no ' . $orderId . ' Has been created')
+                    ->sendToDatabase($recipient)
+                    ->broadcast($recipient);
+                    
                 return response()->json([
                     'success' => true,
                     'message' => 'done successfully',
-                    'order' => $order->where('id', $order->id)->with('orderDetails')->get(),
+                    // 'order' => $order->where('id',$orderId)->with('orderDetails')->get(),
+                    'order' => Order::find($orderId)->with('orderDetails')->get(),
                 ], 200);
             } catch (\Exception $e) {
                 return response()->json([
@@ -148,5 +180,18 @@ class OrderController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Check if user has order pending for approval
+     * @param int $user_id
+     */
+    public function checkIfUserHasPendingForApprovalOrder($user_id)
+    {
+        $order = Order::where(
+            'status',
+            Order::PENDING_APPROVAL
+        )->where('customer_id', $user_id)->first();
+        return $order->id;
     }
 }

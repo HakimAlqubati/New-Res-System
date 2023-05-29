@@ -10,12 +10,14 @@ class UnitPrice extends Model
     use HasFactory;
     protected $table = 'unit_prices';
 
+    protected $fillable = ['unit_id', 'product_id', 'price'];
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function unit(){
+    public function unit()
+    {
         return $this->belongsTo(Unit::class);
     }
     public function toArray()
@@ -26,5 +28,4 @@ class UnitPrice extends Model
             'price' => $this->price,
         ];
     }
-
 }

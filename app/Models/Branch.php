@@ -10,10 +10,14 @@ class Branch extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'name',
         'address',
         'manager_id',
         'active',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'manager_id');
+    }
 }

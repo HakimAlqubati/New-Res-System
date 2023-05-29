@@ -8,7 +8,10 @@ use App\Models\Category;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -21,22 +24,31 @@ class ProductResource extends Resource
     protected static ?string $model = Product::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-
+     
+    protected static ?string $navigationGroup = 'Products - units';
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')->required(),
-                Forms\Components\TextInput::make('code')->required(),
-                Forms\Components\Textarea::make('description')
-                    ->rows(10)
-                    ->cols(20),
+                TextInput::make('name')->required(),
+                TextInput::make('code')->required(),
+                Textarea::make('description')
+                    ->rows(2)
+                // ->cols(20)
+                ,
                 Checkbox::make('active'),
                 Select::make('category_id')
                     ->searchable()
                     ->options(function () {
                         return Category::pluck('name', 'id');
-                    })
+                    }),
+                // Repeater::make('units')
+                //     ->relationship('unitPrices')
+                //     ->schema([
+                //         TextInput::make('unit_id'),
+                //         TextInput::make('price'),
+                //     ])
+
             ]);
     }
 
@@ -66,6 +78,22 @@ class ProductResource extends Resource
     {
         return [
             'index' => Pages\ManageProducts::route('/'),
+            'create' => Pages\CreateProduct::route('/create'),
+            'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
     }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\UnitPricesRelationManager::class,
+        ];
+    }
+
+    protected static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    
 }

@@ -2,34 +2,41 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CategoryResource\Pages;
-use App\Filament\Resources\CategoryResource\RelationManagers;
-use App\Models\Category;
+use App\Filament\Resources\BranchResource\Pages;
+use App\Filament\Resources\BranchResource\RelationManagers;
+use App\Models\Branch;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CategoryResource extends Resource
+class BranchResource extends Resource
 {
-    protected static ?string $model = Category::class;
+    protected static ?string $model = Branch::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-    protected static ?string $navigationGroup = 'Categories';
+
+    protected static ?string $navigationGroup = 'Branches';
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')->required(),
-                Forms\Components\TextInput::make('code')->required(),
-                Forms\Components\Textarea::make('description')
-                    ->rows(10)
-                    ->cols(20),
+                TextInput::make('name')->required(),
+                Textarea::make('address'),
                 Checkbox::make('active'),
+                Select::make('manager_id')
+                    ->label('Manager')
+                    ->options(User::all()->pluck('name', 'id'))
+                    ->searchable()
             ]);
     }
 
@@ -37,9 +44,11 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('code'),
-                Tables\Columns\TextColumn::make('description'),
+                TextColumn::make('id'),
+                TextColumn::make('name')->searchable(),
+                TextColumn::make('address'),
+                TextColumn::make('user.name')->label('Manager'),
+
             ])
             ->filters([
                 //
@@ -56,7 +65,7 @@ class CategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageCategories::route('/'),
+            'index' => Pages\ManageBranches::route('/'),
         ];
     }
 
