@@ -61,35 +61,44 @@ class OrderController extends Controller
             try {
                 // to get current user role
                 $currnetRole = $request->user()->roles[0]->id;
+
                 $pendingOrderId = 0;
+                $message = '';
+                // check if user has pending for approval order to determine branchId & orderId & orderStatus
                 if ($currnetRole == 7) {
-                    $orderStatus = Order::ORDERED;
                     $branchId = auth()->user()->branch->id;
+                    $orderStatus = Order::ORDERED;
                 } else if ($currnetRole == 8) {
                     $orderStatus = Order::PENDING_APPROVAL;
-                    $branchId = auth()->user()->owner_id;
-                    $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder(auth()->user()->id);
+                    $branchId = auth()->user()->owner->branch->id;
+                    // $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder($branchId);
+                    // dd($pendingOrderId);
                 }
+                $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder($branchId);
 
                 // Map order data from request body 
                 $orderData = [
-                    'status' => Order::ORDERED,
+                    'status' => $orderStatus,
                     'customer_id' => auth()->user()->id,
-                    'branch_id' => 1,
+                    'branch_id' => $branchId,
                     'notes' => $request->input('notes'),
                     'description' => $request->input('description'),
                 ];
 
                 // Create new order 
-                // if ($currnetRole == 8 && $pendingOrderId > 0) {
-                //     $orderId = $pendingOrderId;
-                // } else {
-                //     $order = Order::create($orderData);
-                //     $orderId = $order->id;
-                // } 
+                if ($pendingOrderId > 0) {
+                    $orderId = $pendingOrderId;
+                    $message = 'Your order has been submited on pending approval order no ' . $orderId;
+                    if ($currnetRole == 7) {
+                        Order::find($orderId)->update(['status' => Order::ORDERED]);
+                        $message = 'Your has been submited on pending approval order no ' . $orderId . ' and convert it to ' . Order::ORDERED;
+                    }
+                } else {
+                    $order = Order::create($orderData);
+                    $orderId = $order->id;
+                    $message = 'done successfully';
+                }
 
-                $order = Order::create($orderData);
-                $orderId = $order->id;
                 // Map order details data from request body
                 $orderDetailsData = [];
                 foreach ($request->input('order_details') as $orderDetail) {
@@ -115,18 +124,18 @@ class OrderController extends Controller
                 }, 0);
                 Order::find($orderId)->update(['total' => $totalPrice]);
 
- 
+
                 $recipient = User::find(1); 
                 Notification::make()
                     ->title('Order no ' . $orderId . ' Has been created')
                     ->sendToDatabase($recipient)
                     ->broadcast($recipient);
-                    
+
                 return response()->json([
                     'success' => true,
-                    'message' => 'done successfully',
+                    'message' => $message,
                     // 'order' => $order->where('id',$orderId)->with('orderDetails')->get(),
-                    'order' => Order::find($orderId)->with('orderDetails')->get(),
+                    'order' => Order::find($orderId),
                 ], 200);
             } catch (\Exception $e) {
                 return response()->json([
@@ -184,14 +193,17 @@ class OrderController extends Controller
 
     /**
      * Check if user has order pending for approval
-     * @param int $user_id
+     * @param int $branch_id
      */
-    public function checkIfUserHasPendingForApprovalOrder($user_id)
+    public function checkIfUserHasPendingForApprovalOrder($branch_id)
     {
         $order = Order::where(
             'status',
             Order::PENDING_APPROVAL
-        )->where('customer_id', $user_id)->first();
-        return $order->id;
+        )->where('active', 1)->where('branch_id', $branch_id)->first();
+        if ($order) {
+            return $order->id;
+        }
+        return null;
     }
 }

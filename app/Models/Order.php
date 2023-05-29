@@ -23,6 +23,7 @@ class Order extends Model
         'description',
         'full_quantity',
         'total',
+        'active',
     ];
 
     public function orderDetails()

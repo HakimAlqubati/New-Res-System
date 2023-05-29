@@ -66,4 +66,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(Branch::class, 'manager_id');
     }
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
 }
