@@ -24,6 +24,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Request;
 
 class OrderResource extends Resource
 {
@@ -38,6 +39,9 @@ class OrderResource extends Resource
             ->schema([
                 TextInput::make('id')->label('Order id'),
                 TextInput::make('customer.name')->label('customer'),
+                TextInput::make('status')->label('Status'),
+                TextInput::make('total')->label('total'),
+                TextInput::make('branch.name')->label('branch'),
             ]);
     }
 
@@ -171,26 +175,12 @@ class OrderResource extends Resource
 
         return $query;
     }
-
-    // protected function getTableFiltersFormColumns(): int
-    // {
-    //     return 3;
-    // }
-
-    protected function getTableFiltersFormWidth(): string
+    public static function canCreate(): bool
     {
-        return '4xl';
+        return false;
     }
-
-    protected function getTableFiltersLayout(): ?string
+    public static function canEdit(Model $model): bool
     {
-        return Layout::BelowContent;
-    }
-
-    protected function getTableActions(): array
-    {
-        return [
-            // ...
-        ];
+        return false;
     }
 }

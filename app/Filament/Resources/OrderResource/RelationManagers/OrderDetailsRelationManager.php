@@ -50,5 +50,10 @@ class OrderDetailsRelationManager extends RelationManager
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }    
+    }
+
+    public   function canCreate(): bool
+    {
+        return false;
+    }
 }

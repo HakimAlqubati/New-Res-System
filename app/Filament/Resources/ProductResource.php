@@ -16,7 +16,9 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProductResource extends Resource
@@ -24,7 +26,7 @@ class ProductResource extends Resource
     protected static ?string $model = Product::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-     
+
     protected static ?string $navigationGroup = 'Products - units';
     public static function form(Form $form): Form
     {
@@ -56,14 +58,32 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('code'),
-                Tables\Columns\TextColumn::make('description'),
+                Tables\Columns\TextColumn::make('id')
+                    ->copyable()
+                    ->copyMessage('Order id copied')
+                    ->copyMessageDuration(1500)
+                    ->sortable()->searchable()
+                    ->searchable(isIndividual: true, isGlobal: false),
+                Tables\Columns\TextColumn::make('name')
+                    ->toggleable()
+                    ->searchable()
+                    ->searchable(isIndividual: true)
+                    ->tooltip(fn (Model $record): string => "By {$record->name}"),
+                Tables\Columns\TextColumn::make('code')->searchable()
+                    ->searchable(isIndividual: true, isGlobal: false),
+
+                Tables\Columns\TextColumn::make('description')->searchable(),
+                Tables\Columns\TextColumn::make('category.name')->searchable()
+                    ->searchable(isIndividual: true, isGlobal: false),
                 Tables\Columns\CheckboxColumn::make('active')->label('Active?')->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('active')
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('active')),
+                SelectFilter::make('category_id')
+                    ->searchable()
+                    ->multiple()
+                    ->label('Category')->relationship('category', 'name')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -94,6 +114,4 @@ class ProductResource extends Resource
     {
         return static::getModel()::count();
     }
-
-    
 }

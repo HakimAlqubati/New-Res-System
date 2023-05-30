@@ -128,7 +128,7 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
+        Str::slug(env('APP_NAME', 'laravel'), '_') . '_session'
     ),
 
     /*
@@ -197,5 +197,11 @@ return [
     */
 
     'same_site' => 'lax',
-
+    'connections' => [
+        'file' => [
+            'driver' => 'file',
+            'path' => storage_path('framework/sessions'),
+            'lifetime' => 120,
+        ],
+    ],
 ];

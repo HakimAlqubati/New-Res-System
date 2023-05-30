@@ -22,8 +22,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationGroup = 'User & Roles';
 
     public static function form(Form $form): Form
     {
@@ -46,13 +46,20 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id'),
-                TextColumn::make('name'),
-                TextColumn::make('email'),
-                TextColumn::make('owner.name'),
+                TextColumn::make('id')
+                    ->sortable()->searchable()
+                    ->searchable(isIndividual: true, isGlobal: false),
+                TextColumn::make('name')
+                    ->sortable()->searchable()
+                    ->searchable(isIndividual: true, isGlobal: false),
+                TextColumn::make('email')
+                    ->sortable()->searchable()
+                    ->searchable(isIndividual: true, isGlobal: false),
+                TextColumn::make('owner.name')->searchable(),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('active')
+                    ->query(fn (Builder $query): Builder => $query->whereNotNull('active')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -76,5 +83,10 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
+    }
+
+    protected static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }
