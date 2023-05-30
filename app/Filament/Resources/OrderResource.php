@@ -7,24 +7,18 @@ use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Order;
 use Closure;
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\View;
+use Filament\Forms\Components\TextInput; 
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables; 
+use Filament\Tables\Columns\BadgeColumn; 
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\Layout;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\Filter; 
+use Filament\Tables\Filters\SelectFilter; 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Database\Eloquent\Model; 
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class OrderResource extends Resource
 {
@@ -125,6 +119,7 @@ class OrderResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                ExportBulkAction::make()
             ]);
     }
 

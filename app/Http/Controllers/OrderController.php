@@ -126,6 +126,7 @@ class OrderController extends Controller
 
 
                 $recipient = User::find(1); 
+                
                 Notification::make()
                     ->title('Order no ' . $orderId . ' Has been created')
                     ->sendToDatabase($recipient)

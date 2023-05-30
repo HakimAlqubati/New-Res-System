@@ -13,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 // implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
@@ -59,6 +59,7 @@ class User extends Authenticatable
 
     public function canAccessFilament(): bool
     {
+        return true;
         return $this->group === 'Filament Users';
     }
 
@@ -70,4 +71,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
+
+    // public function canAccessFilament(): bool
+    // {
+    //     return true;
+    // }
 }

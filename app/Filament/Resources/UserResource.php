@@ -2,23 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\User;
-use Closure;
-use Filament\Forms;
-use Filament\Forms\Components\Checkbox;
+use App\Filament\Resources\UserResource\Pages; 
+use App\Models\User; 
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables;
-use Filament\Tables\Columns\CheckboxColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TextInputColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use Filament\Tables; 
+use Filament\Tables\Columns\TextColumn; 
+use Illuminate\Database\Eloquent\Builder; 
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
@@ -66,6 +59,7 @@ class UserResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                ExportBulkAction::make()
             ]);
     }
 

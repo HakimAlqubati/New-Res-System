@@ -6,9 +6,7 @@ use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Category;
 use App\Models\Product;
-use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -19,8 +17,7 @@ use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
@@ -91,6 +88,7 @@ class ProductResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                ExportBulkAction::make(),
             ]);
     }
 
