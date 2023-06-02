@@ -37,18 +37,15 @@ class OrderResource extends JsonResource
             'id'=>$this->id,
             'desc'=>$this->description,
             'created_by'=>$this->created_by,
-            'created_by_user_name'=>$this->customer->id,
-            'request_state_id'=>$this->status,
+            'created_by_user_name'=>$this->customer->name,
+            'request_state_name'=>$this->status,
             'branch_id'=>$this->branch_id,
+            'branch_name'=>$this->branch->name,
             'notes'=>$this->notes,
             'total'=>$this->total,
-            'order_details'=>[
-                'id'=>$this->orderDetails->id,
-                'order_id'=>$this->orderDetails->order_id,
-                'product_id'=>$this->orderDetails->product_id,
-                'id'=>$this->orderDetails->id,
-
-            ],
+            'created_at'=>$this->created_at,
+            'updated_at'=>$this->updated_at,
+            'order_details'=>OrderDetailsResource::collection($this->orderDetails)
         ];
     }
 }
