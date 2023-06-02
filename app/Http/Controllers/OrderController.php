@@ -76,7 +76,7 @@ class OrderController extends Controller
                 }
                 $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder($branchId);
 
-                // Map order data from request body 
+                // Map order data from request body
                 $orderData = [
                     'status' => $orderStatus,
                     'customer_id' => auth()->user()->id,
@@ -85,7 +85,7 @@ class OrderController extends Controller
                     'description' => $request->input('description'),
                 ];
 
-                // Create new order 
+                // Create new order
                 if ($pendingOrderId > 0) {
                     $orderId = $pendingOrderId;
                     $message = 'Your order has been submited on pending approval order no ' . $orderId;
@@ -125,8 +125,8 @@ class OrderController extends Controller
                 Order::find($orderId)->update(['total' => $totalPrice]);
 
 
-                $recipient = User::find(1); 
-                
+                $recipient = User::find(1);
+
                 Notification::make()
                     ->title('Order no ' . $orderId . ' Has been created')
                     ->sendToDatabase($recipient)

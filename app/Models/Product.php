@@ -43,9 +43,14 @@ class Product extends Model
     {
         return [
             'product_id' => $this->id,
-            'product_name' => $this->name, 
-            'description' => $this->description, 
-            'unit_prices' => $this->unitPrices, 
+            'product_name' => $this->name,
+            'description' => $this->description,
+            'unit_prices' => $this->unitPrices,
         ];
+    }
+   //new code
+    public function scopeActive($query)
+    {
+        return $query->where('active', '=', 1);
     }
 }

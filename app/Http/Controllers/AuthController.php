@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,15 +14,11 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user = $request->user();
+            $token = $user->createToken('MyApp')->accessToken;
 
-            $token = $user->createToken('MyApp')->accessToken; 
             return response()->json([
                 'token' => $token,
-                'user_id' => $user->id,
-                'user_name'=>$user->name,
-                'email'=>$user->email,
-                'owner_id'=>$user->owner_id,
-                'role_id' => $user->roles[0]->id, 
+                'user'=>UserResource::make($user)
             ]);
         } else {
             return response()->json(['error' => 'Unauthorized'], 401);
@@ -30,6 +27,6 @@ class AuthController extends Controller
 
     public function getCurrnetUser(Request $request)
     {
-        return $request->user();
+        return UserResource::make($request->user());
     }
 }

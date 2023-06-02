@@ -28,4 +28,10 @@ class Category extends Model
             'products' => $this->products,
         ];
     }
+
+    //new code
+    public function scopeActive($query)
+    {
+        return $query->where('active', '=', 1);
+    }
 }
