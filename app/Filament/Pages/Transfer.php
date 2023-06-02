@@ -22,10 +22,11 @@ class Transfer extends Page
 
     protected static ?string $navigationGroup = 'Orders';
 
-    // protected static function shouldRegisterNavigation(): bool
-    // {
-    //     return auth()->user()->canManageSettings();
-    // }
+    protected static function shouldRegisterNavigation(): bool
+    {
+        return true;
+        // return auth()->user()->canManageSettings();
+    }
 
     protected function getActions(): array
     {
