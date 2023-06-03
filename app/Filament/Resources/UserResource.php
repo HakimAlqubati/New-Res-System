@@ -30,18 +30,18 @@ class UserResource extends Resource
                 TextInput::make('name')->required(),
                 TextInput::make('email')->email()->required(),
 
-                TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->reactive()
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
-                // Select::make('role_id')
-                //     ->searchable()
+                // TextInput::make('password')
+                //     ->password()
                 //     ->required()
-                //     ->options(function () {
-                //         return DB::table('roles')->pluck('name', 'id');
-                //     })
-                //     ->hiddenOn(Pages\EditUser::class)
+                //     ->reactive()
+                //     ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
+                Select::make('role_id')
+                    ->searchable()
+                    ->required()
+                    ->options(function () {
+                        return DB::table('roles')->pluck('name', 'id');
+                    })
+                    ->hiddenOn(Pages\EditUser::class)
 
 
             ]);
