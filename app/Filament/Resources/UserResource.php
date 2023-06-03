@@ -35,13 +35,13 @@ class UserResource extends Resource
                     ->required()
                     ->reactive()
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
-                Select::make('role_id')
-                    ->searchable()
-                    ->required()
-                    ->options(function () {
-                        return DB::table('roles')->pluck('name', 'id');
-                    })
-                    ->hiddenOn(Pages\EditUser::class)
+                // Select::make('role_id')
+                //     ->searchable()
+                //     ->required()
+                //     ->options(function () {
+                //         return DB::table('roles')->pluck('name', 'id');
+                //     })
+                //     ->hiddenOn(Pages\EditUser::class)
 
 
             ]);
