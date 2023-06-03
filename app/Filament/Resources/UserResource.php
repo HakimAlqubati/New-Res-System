@@ -40,7 +40,8 @@ class UserResource extends Resource
                     ->required()
                     ->options(function () {
                         return DB::table('roles')->pluck('name', 'id');
-                    })->hiddenOn(Pages\EditUser::class)
+                    })
+                // ->hiddenOn(Pages\EditUser::class)
 
 
             ]);
