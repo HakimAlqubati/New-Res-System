@@ -24,7 +24,7 @@ class ProductController extends Controller
         // }
         // $categoreis = $query->get();
         //new code
-        $products=Product::active()->get();
+        $products=Product::active()->orderBy('ordered_num', 'DESC')->get();
         return ProductResource::collection($products);
     }
 

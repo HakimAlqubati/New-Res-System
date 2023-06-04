@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\OrderDetails;
+use App\Models\Product;
 use App\Models\UnitPrice;
 use App\Models\User;
 use App\Notifications\OrderCreated;
@@ -35,7 +36,7 @@ class OrderController extends Controller
             $query->where('id', $request->id);
         }
 
-        $orders = $query->get();
+        $orders = $query->orderBy('created_at', 'DESC')->get();
         return OrderResource::collection($orders);
     }
 
@@ -102,6 +103,7 @@ class OrderController extends Controller
                 // Map order details data from request body
                 $orderDetailsData = [];
                 foreach ($request->input('order_details') as $orderDetail) {
+                    $this->updateProductOrderedNumber($orderDetail['product_id']);
                     $orderDetailsData[] = [
                         'order_id' => $orderId,
                         'product_id' => $orderDetail['product_id'],
@@ -196,6 +198,8 @@ class OrderController extends Controller
      * Check if user has order pending for approval
      * @param int $branch_id
      */
+
+
     public function checkIfUserHasPendingForApprovalOrder($branch_id)
     {
         $order = Order::where(
@@ -207,4 +211,10 @@ class OrderController extends Controller
         }
         return null;
     }
+
+    public function updateProductOrderedNumber($product_id){
+        $product= Product::find($product_id);
+        $product->updateProductOrderedNumber();
+        $product->save();
+     }
 }
