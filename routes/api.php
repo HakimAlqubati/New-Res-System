@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderDetailsController;
 use App\Http\Controllers\ProductController; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/user', [AuthController::class, 'getCurrnetUser']);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('orders', OrderController::class);
-     
+    Route::resource('orderDetails', OrderDetailsController::class);
     Route::get('/categories', [CategoryController::class, 'index']);
 });
