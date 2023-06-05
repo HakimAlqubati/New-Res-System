@@ -71,9 +71,7 @@ class OrderController extends Controller
                     $orderStatus = Order::ORDERED;
                 } else if ($currnetRole == 8) {
                     $orderStatus = Order::PENDING_APPROVAL;
-                    $branchId = auth()->user()->owner->branch->id;
-                    // $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder($branchId);
-                    // dd($pendingOrderId);
+                    $branchId = auth()->user()->owner->branch->id; 
                 }
                 $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder($branchId);
 
@@ -103,7 +101,6 @@ class OrderController extends Controller
                 // Map order details data from request body
                 $orderDetailsData = [];
                 foreach ($request->input('order_details') as $orderDetail) {
-                    $this->updateProductOrderedNumber($orderDetail['product_id']);
                     $orderDetailsData[] = [
                         'order_id' => $orderId,
                         'product_id' => $orderDetail['product_id'],
@@ -211,10 +208,4 @@ class OrderController extends Controller
         }
         return null;
     }
-
-    public function updateProductOrderedNumber($product_id){
-        $product= Product::find($product_id);
-        $product->updateProductOrderedNumber();
-        $product->save();
-     }
 }

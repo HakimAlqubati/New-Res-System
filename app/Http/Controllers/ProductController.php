@@ -19,12 +19,12 @@ class ProductController extends Controller
     {
         // $data = Category::with('products')->get();
         // $query = Category::query();
-        // if ($request->has('category_id')) {
+        // if D($request->has('category_id')) {
         //     $query->where('id', $request->category_id);
         // }
         // $categoreis = $query->get();
         //new code
-        $products=Product::active()->orderBy('ordered_num', 'DESC')->get();
+        $products=Product::active()->get();
         return ProductResource::collection($products);
     }
 
