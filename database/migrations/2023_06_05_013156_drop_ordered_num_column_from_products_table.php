@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->bigInteger('ordered_num')->default(0)->after('active');
+            $table->dropColumn('ordered_num');
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->removeColumn('ordered_num');
+            $table->bigInteger('ordered_num')->default(0)->after('active');
         });
     }
 };

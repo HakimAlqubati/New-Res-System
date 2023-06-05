@@ -13,8 +13,7 @@ class Product extends Model
         'code',
         'description',
         'active',
-        'category_id',
-        'ordered_num'
+        'category_id', 
     ];
 
     public function units()
@@ -54,8 +53,5 @@ class Product extends Model
     {
         return $query->where('active', '=', 1);
     }
-
-    public  function updateOrderedNumber(){
-        $this->ordered_num+=1;
-    }
+ 
 }
