@@ -10,6 +10,7 @@ use App\Models\UnitPrice;
 use App\Models\User;
 use App\Notifications\OrderCreated;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -178,27 +179,62 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $order = Order::find($id);
-        // Validate the request data
-        $validatedData = $request->validate([
-            'status' => [
-                'string',
-                Rule::in([
-                    Order::PROCESSING,
-                    Order::READY_FOR_DELEVIRY,
-                    Order::DELEVIRED,
-                ])
-            ],
-            'notes' => 'string',
-            'full_quantity' => 'boolean',
-            'active' => 'boolean',
-        ]);
+        try {
+            // Start a database transaction
+            DB::beginTransaction();
 
-        // Update the order with the validated data
-        $order->update($validatedData);
+            try {
+                // Find the order by the given ID or throw a ModelNotFoundException
+                $order = Order::findOrFail($id);
+            } catch (ModelNotFoundException $e) {
+                // Roll back the transaction and return an error response if the order is not found
+                DB::rollBack();
 
-        // Return the updated order
-        return $order;
+                return response()->json([
+                    'success' => false,
+                    'orderId' => null,
+                    'message' => "Order not found with $id id",
+                ], 404);
+            }
+
+            // Validate the request data
+            $validatedData = $request->validate([
+                'status' => [
+                    'string',
+                    Rule::in([
+                        Order::PROCESSING,
+                        Order::READY_FOR_DELEVIRY,
+                        Order::DELEVIRED,
+                    ])
+                ],
+                'notes' => 'string',
+                'full_quantity' => 'boolean',
+                'active' => 'boolean',
+            ]);
+
+            // Fill the order with the validated data and save it to the database
+            $order->fill($validatedData)->save();
+
+            // Commit the transaction
+            DB::commit();
+
+            // Return a success response with the updated order information
+            return [
+                'success' => true,
+                'orderId' => $order->id,
+                'message' => 'done successfully'
+            ];
+        } catch (\Exception $e) {
+            // Roll back the transaction in case of an error
+            DB::rollBack();
+
+            // Handle the exception and return an error response
+            return response()->json([
+                'success' => false,
+                'orderId' => $order->id,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
