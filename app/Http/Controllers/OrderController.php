@@ -12,6 +12,7 @@ use App\Notifications\OrderCreated;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
@@ -71,7 +72,7 @@ class OrderController extends Controller
                     $orderStatus = Order::ORDERED;
                 } else if ($currnetRole == 8) {
                     $orderStatus = Order::PENDING_APPROVAL;
-                    $branchId = auth()->user()->owner->branch->id; 
+                    $branchId = auth()->user()->owner->branch->id;
                 }
                 $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder($branchId);
 
@@ -177,7 +178,27 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dd('update');
+        $order = Order::find($id);
+        // Validate the request data
+        $validatedData = $request->validate([
+            'status' => [
+                'string',
+                Rule::in([
+                    Order::PROCESSING,
+                    Order::READY_FOR_DELEVIRY,
+                    Order::DELEVIRED,
+                ])
+            ],
+            'notes' => 'string',
+            'full_quantity' => 'boolean',
+            'active' => 'boolean',
+        ]);
+
+        // Update the order with the validated data
+        $order->update($validatedData);
+
+        // Return the updated order
+        return $order;
     }
 
     /**
