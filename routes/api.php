@@ -32,5 +32,6 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('orders', OrderController::class);
     Route::resource('orderDetails', OrderDetailsController::class);
     Route::patch('patch', [OrderDetailsController::class, 'update']);
+    Route::post('orderDetails/update', [OrderDetailsController::class, 'updateOrderDetails']);
     Route::get('/categories', [CategoryController::class, 'index']);
 });
