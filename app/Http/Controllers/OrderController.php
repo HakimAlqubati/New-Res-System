@@ -89,8 +89,7 @@ class OrderController extends Controller
                 $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder($branchId);
 
                 // Map order data from request body 
-                $orderData = [
-                    'id'=>uniqid(),
+                $orderData = [ 
                     'status' => $orderStatus,
                     'customer_id' => auth()->user()->id,
                     'branch_id' => $branchId,
