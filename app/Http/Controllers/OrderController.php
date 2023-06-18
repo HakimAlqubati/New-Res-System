@@ -63,13 +63,24 @@ class OrderController extends Controller
         return  DB::transaction(function () use ($request) {
             try {
                 // to get current user role
-                $currnetRole = $request->user()->roles[0]->id;
-
+                $currnetRole = $request->user()?->roles[0]?->id;
+                if (!isset($currnetRole)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'you dont have any role'
+                    ], 500);
+                }
                 $pendingOrderId = 0;
                 $message = '';
                 // check if user has pending for approval order to determine branchId & orderId & orderStatus
                 if ($currnetRole == 7) {
-                    $branchId = auth()->user()->branch->id;
+                    $branchId = auth()->user()?->branch?->id;
+                    if (!isset($branchId)) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'You are not manager of any branch'
+                        ], 500);
+                    }
                     $orderStatus = Order::ORDERED;
                 } else if ($currnetRole == 8) {
                     $orderStatus = Order::PENDING_APPROVAL;
@@ -77,7 +88,7 @@ class OrderController extends Controller
                 }
                 $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder($branchId);
 
-                // Map order data from request body
+                // Map order data from request body 
                 $orderData = [
                     'status' => $orderStatus,
                     'customer_id' => auth()->user()->id,
@@ -102,7 +113,7 @@ class OrderController extends Controller
 
                 // Map order details data from request body
                 $orderDetailsData = [];
-                foreach ($request->input('order_details') as $orderDetail) {
+                foreach ($request->input('order_details') as $orderDetail) { 
                     $orderDetailsData[] = [
                         'order_id' => $orderId,
                         'product_id' => $orderDetail['product_id'],
