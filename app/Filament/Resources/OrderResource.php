@@ -49,9 +49,9 @@ class OrderResource extends Resource
                     ->copyMessageDuration(1500)
                     ->sortable()->searchable()
                     ->searchable(isIndividual: true, isGlobal: false),
-                TextColumn::make('customer.name')->label('customer')->toggleable()
-                    ->searchable(isIndividual: true)
-                    ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
+                // TextColumn::make('customer.name')->label('customer')->toggleable()
+                //     ->searchable(isIndividual: true)
+                //     ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
                 BadgeColumn::make('status')
                     ->colors([
                         'primary',

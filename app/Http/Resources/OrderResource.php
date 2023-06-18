@@ -13,31 +13,13 @@ class OrderResource extends JsonResource
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
     public function toArray($request)
-    {
-        // return [
-        //     'id' => $this->id,
-        //     'description' => $this->description,
-        //     'notes' => $this->notes,
-        //     'customer' => [
-        //         'id' => $this->customer->id,
-        //         'name' => $this->customer->name,
-        //     ],
-        //     'branch' => [
-        //         'id' => $this->branch_id,
-        //         'name' => $this->branch->name
-        //     ],
-        //     'status' => $this->status,
-        //     'total' => $this->total,
-        //     'created_at' => $this->created_at,
-        //     'orderDetails' => $this->orderDetails,
-
-        // ];
+    { 
         //new code
         return [
             'id'=>$this->id,
             'desc'=>$this->description,
-            'created_by'=>$this->created_by,
-            'created_by_user_name'=>$this->customer->name,
+            'created_by'=>$this->customer_id,
+            'created_by_user_name'=>$this?->customer?->name,
             'request_state_name'=>$this->status,
             'branch_id'=>$this->branch_id,
             'branch_name'=>$this->branch->name,

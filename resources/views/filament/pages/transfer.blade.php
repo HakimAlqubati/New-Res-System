@@ -1,3 +1,3 @@
-<x-filament::page>
-    <h1> hi </h1>
-</x-filament::page>
+<input  wire:model="name" type="text"  />
+
+<h1> {{ $name }} </h1>
