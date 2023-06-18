@@ -18,11 +18,13 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $navigationGroup = 'Products - units';
     public static function form(Form $form): Form
@@ -36,7 +38,7 @@ class ProductResource extends Resource
                 // ->cols(20)
                 ,
                 Checkbox::make('active'),
-                Select::make('category_id')
+                Select::make('category_id')->required()
                     ->searchable()
                     ->options(function () {
                         return Category::pluck('name', 'id');
@@ -111,5 +113,9 @@ class ProductResource extends Resource
     protected static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
+    }
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->name;
     }
 }

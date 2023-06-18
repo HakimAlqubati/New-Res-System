@@ -7,17 +7,17 @@ use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Order;
 use Closure;
 use Filament\Forms;
-use Filament\Forms\Components\TextInput; 
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables; 
-use Filament\Tables\Columns\BadgeColumn; 
+use Filament\Tables;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter; 
-use Filament\Tables\Filters\SelectFilter; 
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model; 
+use Illuminate\Database\Eloquent\Model;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class OrderResource extends Resource
@@ -25,8 +25,9 @@ class OrderResource extends Resource
     protected static ?string $model = Order::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-
     protected static ?string $navigationGroup = 'Orders';
+    protected static ?string $recordTitleAttribute = 'id';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -177,5 +178,10 @@ class OrderResource extends Resource
     public static function canEdit(Model $model): bool
     {
         return false;
+    }
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->id;
     }
 }

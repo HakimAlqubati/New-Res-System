@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\OrderResource\Pages;
 
-use App\Filament\Resources\OrderResource; 
+use App\Filament\Resources\OrderResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -17,5 +17,8 @@ class ListOrders extends ListRecords
         ];
     }
 
-    
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [10, 25, 30, 50];
+    }
 }

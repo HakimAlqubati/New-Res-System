@@ -23,4 +23,8 @@ class LatestOrders extends BaseWidget
                 ->label('Customer'),
         ];
     }
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [10, 25, 30, 50];
+    }
 }

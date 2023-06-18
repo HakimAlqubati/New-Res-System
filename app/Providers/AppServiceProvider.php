@@ -16,9 +16,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        
-    }
 
+    }
+    
+    
+    
     /**
      * Bootstrap any application services.
      *
@@ -27,5 +29,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        Filament::registerNavigationGroups([
+            'Orders',
+            'Products - units',
+            'Categories',
+            'Branches',
+            'User & Roles',
+        ]);
     }
 }

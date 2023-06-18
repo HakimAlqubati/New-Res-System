@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CategoryResource extends Resource
@@ -20,6 +21,8 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $navigationGroup = 'Categories';
+    protected static ?string $recordTitleAttribute = 'name';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -67,6 +70,10 @@ class CategoryResource extends Resource
         ];
     }
 
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->name;
+    }
     protected static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();

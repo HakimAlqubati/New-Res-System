@@ -330,5 +330,4 @@ return [
             MirrorConfigToSubpackages::class,
         ],
     ],
-
 ];

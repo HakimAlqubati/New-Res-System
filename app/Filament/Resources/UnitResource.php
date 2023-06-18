@@ -28,8 +28,7 @@ class UnitResource extends Resource
     // protected static bool $shouldRegisterNavigation = false;
 
 
-    protected static ?string $navigationLabel = 'Units';
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationLabel = 'Units'; 
     public static function form(Form $form): Form
     {
         return $form

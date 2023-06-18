@@ -23,9 +23,8 @@ class BranchResource extends Resource
 {
     protected static ?string $model = Branch::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
-
-    protected static ?string $navigationGroup = 'Branches';
+    protected static ?string $navigationIcon = 'heroicon-o-collection'; 
+    protected static ?string $navigationGroup = 'Branches'; 
     public static function form(Form $form): Form
     {
         return $form

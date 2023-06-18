@@ -16,4 +16,9 @@ class ManageProducts extends ManageRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [10, 25, 30, 50];
+    }
 }
