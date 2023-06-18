@@ -38,7 +38,7 @@ class OrderController extends Controller
             $query->where('id', $request->id);
         }
 
-        $orders = $query->orderBy('created_at', 'DESC')->limit(10)->get();
+        $orders = $query->orderBy('created_at', 'DESC')->limit(20)->get();
         return OrderResource::collection($orders);
     }
 
