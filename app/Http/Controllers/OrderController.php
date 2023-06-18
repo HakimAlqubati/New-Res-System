@@ -90,6 +90,7 @@ class OrderController extends Controller
 
                 // Map order data from request body 
                 $orderData = [
+                    'id'=>uniqid(),
                     'status' => $orderStatus,
                     'customer_id' => auth()->user()->id,
                     'branch_id' => $branchId,
@@ -114,8 +115,7 @@ class OrderController extends Controller
                 // Map order details data from request body
                 $orderDetailsData = [];
                 foreach ($request->input('order_details') as $orderDetail) {
-                    $orderDetailsData[] = [
-                        'id' =>  uniqid(),
+                    $orderDetailsData[] = [ 
                         'order_id' => $orderId,
                         'product_id' => $orderDetail['product_id'],
                         'unit_id' => $orderDetail['unit_id'],
