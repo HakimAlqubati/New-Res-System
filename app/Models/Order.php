@@ -11,7 +11,7 @@ class Order extends Model
 
     public const ORDERED = 'ordered';
     public const PROCESSING = 'processing';
-    public const READY_FOR_DELEVIRY = 'ready_for_deleviry';
+    public const READY_FOR_DELEVIRY = 'ready_for_delivery';
     public const DELEVIRED = 'delevired';
     public const PENDING_APPROVAL = 'pending_approval'; 
     protected $fillable = [
