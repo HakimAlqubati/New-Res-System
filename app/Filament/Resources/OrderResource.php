@@ -83,7 +83,7 @@ class OrderResource extends Resource
                     ->options([
                         'ordered' => 'Ordered',
                         'processing' => 'Processing',
-                        'ready_for_deleviry' => 'Ready for deleviry',
+                        'ready_for_delivery' => 'Ready for deleviry',
                         'delevired' => 'Delevired',
                         'pending_approval' => 'Pending approval',
                     ]),
