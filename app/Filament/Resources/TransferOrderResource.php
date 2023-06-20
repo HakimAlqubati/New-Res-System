@@ -3,8 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
-use App\Filament\Resources\OrderResource\RelationManagers;
-use App\Models\Order;
+use App\Filament\Resources\OrderResource\RelationManagers; 
+use App\Models\OrderTransfer;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
@@ -20,13 +20,17 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
-class OrderResource extends Resource
+class TransferOrderResource extends Resource
 {
-    protected static ?string $model = Order::class;
+    protected static ?string $model = OrderTransfer::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $navigationGroup = 'Orders';
     protected static ?string $recordTitleAttribute = 'id';
+
+    protected static ?string $label = 'Transfers';
+    protected static ?string $navigationLabel = 'Transfers list';
+    public static ?string $slug = 'transfers-list';
 
     public static function form(Form $form): Form
     {
@@ -134,7 +138,7 @@ class OrderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOrders::route('/'),
+            'index' => Pages\ListTransferOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),
             'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
@@ -153,10 +157,6 @@ class OrderResource extends Resource
     }
 
 
-    protected static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count(); 
-    }
 
     public function isTableSearchable(): bool
     {
@@ -166,7 +166,7 @@ class OrderResource extends Resource
     protected function applySearchToTableQuery(Builder $query): Builder
     {
         if (filled($searchQuery = $this->getTableSearchQuery())) {
-            $query->whereIn('id', Order::search($searchQuery)->keys());
+            $query->whereIn('id', OrderTransfer::search($searchQuery)->keys());
         }
 
         return $query;
@@ -184,5 +184,13 @@ class OrderResource extends Resource
     {
         return $record->id;
     }
-  
+    public static function getEloquentQuery(): Builder
+    {
+        return static::getModel()::query()->InTransfer();
+    }
+
+    // protected static function getNavigationBadge(): ?string
+    // {
+    //     return static::getModel()::InTransfer()->count();
+    // }
 }

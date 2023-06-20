@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class OrderTransfer extends Model
 {
     use HasFactory;
 
+    protected $table = 'orders';
     public const ORDERED = 'ordered';
     public const PROCESSING = 'processing';
     public const READY_FOR_DELEVIRY = 'ready_for_delivery';
@@ -40,5 +41,16 @@ class Order extends Model
     {
         return $this->belongsTo(Branch::class);
     }
- 
+
+    public function scopeReadyForDelivery($query)
+    {
+        return $query->where('status', self::READY_FOR_DELEVIRY);
+    }
+
+    public function scopeInTransfer($query)
+    {
+        return $query->select('orders.*')
+            ->join('orders_details', 'orders_details.order_id', '=', 'orders.id')
+            ->where('orders_details.available_in_store', 1)->distinct();
+    }
 }
