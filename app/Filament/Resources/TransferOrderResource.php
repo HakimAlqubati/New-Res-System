@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
-use App\Filament\Resources\OrderResource\RelationManagers; 
+use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\OrderTransfer;
 use Closure;
 use Filament\Forms;
@@ -57,21 +57,7 @@ class TransferOrderResource extends Resource
                 TextColumn::make('customer.name')->label('customer')->toggleable()
                     ->searchable(isIndividual: true)
                     ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
-                BadgeColumn::make('status')
-                    ->colors([
-                        'primary',
-                        'secondary' => static fn ($state): bool => $state === 'pending_approval',
-                        'warning' => static fn ($state): bool => $state === 'ready_for_deleviry',
-                        'success' => static fn ($state): bool => $state === 'delevired',
-                        'danger' => static fn ($state): bool => $state === 'processing',
-                    ])
-                    ->icons([
-                        'heroicon-o-x',
-                        'heroicon-o-document' => 'pending_approval',
-                        'heroicon-o-truck' => 'ready_for_deleviry',
-                        'heroicon-o-refresh' => 'delevired',
-                    ])
-                    ->iconPosition('after'),
+
                 TextColumn::make('total'),
                 TextColumn::make('branch.name'),
                 TextColumn::make('created_at')->sortable(),
@@ -81,16 +67,7 @@ class TransferOrderResource extends Resource
             ->filters([
                 // Filter::make('active')
                 //     ->query(fn (Builder $query): Builder => $query->where('active', true)),
-                SelectFilter::make('status')
-                    ->multiple()
-                    ->searchable()
-                    ->options([
-                        'ordered' => 'Ordered',
-                        'processing' => 'Processing',
-                        'ready_for_delivery' => 'Ready for deleviry',
-                        'delevired' => 'Delevired',
-                        'pending_approval' => 'Pending approval',
-                    ]),
+
                 SelectFilter::make('customer_id')
                     ->searchable()
                     ->multiple()
@@ -99,7 +76,6 @@ class TransferOrderResource extends Resource
                     ->searchable()
                     ->multiple()
                     ->label('Branch')->relationship('branch', 'name'),
-                Filter::make('active'),
                 Filter::make('created_at')
                     ->form([
                         Forms\Components\DatePicker::make('created_from'),
