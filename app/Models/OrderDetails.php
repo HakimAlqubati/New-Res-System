@@ -17,9 +17,16 @@ class OrderDetails extends Model
         'available_quantity',
         'price',
         'available_in_store',
+        'created_by',
         'updated_at',
         'created_at',
     ];
+
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 
     public function product()
     {

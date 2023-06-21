@@ -89,7 +89,7 @@ class OrderController extends Controller
                 $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder($branchId);
 
                 // Map order data from request body 
-                $orderData = [ 
+                $orderData = [
                     'status' => $orderStatus,
                     'customer_id' => auth()->user()->id,
                     'branch_id' => $branchId,
@@ -114,12 +114,13 @@ class OrderController extends Controller
                 // Map order details data from request body
                 $orderDetailsData = [];
                 foreach ($request->input('order_details') as $orderDetail) {
-                    $orderDetailsData[] = [ 
+                    $orderDetailsData[] = [
                         'order_id' => $orderId,
                         'product_id' => $orderDetail['product_id'],
                         'unit_id' => $orderDetail['unit_id'],
                         'quantity' => $orderDetail['quantity'],
                         'available_quantity' => $orderDetail['quantity'],
+                        'created_by' => auth()->user()->id,
                         'price' => (UnitPrice::where(
                             'product_id',
                             $orderDetail['product_id']
@@ -216,6 +217,7 @@ class OrderController extends Controller
                         Order::PROCESSING,
                         Order::READY_FOR_DELEVIRY,
                         Order::DELEVIRED,
+                        Order::ORDERED,
                     ])
                 ],
                 'notes' => 'string',

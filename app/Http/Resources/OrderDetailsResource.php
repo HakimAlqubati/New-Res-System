@@ -26,6 +26,8 @@ class OrderDetailsResource extends JsonResource
             'available_quantity'=>$this->available_quantity,
             'price'=>$this->price,
             'available_in_store'=>$this->available_in_store,
+            'created_by'=> $this->createdBy?->id,
+            'created_by_user_name'=> $this->createdBy?->name,
         ];
     }
 }
