@@ -112,51 +112,30 @@ class OrderController extends Controller
                 }
 
                 // Map order details data from request body
-                $orderDetailsData = collect($request->input('order_details'))->map(function ($orderDetail) use ($orderId) {
-                    // Find an existing order detail with the same product_id and unit_id
-                    $existingOrderDetail = OrderDetails::where('order_id', $orderId)
-                        ->where('product_id', $orderDetail['product_id'])
-                        ->where('unit_id', $orderDetail['unit_id'])
-                        ->first();
-
-                    if ($existingOrderDetail) {
-                        // Update the existing order detail's quantity
-                        $existingOrderDetail->quantity += $orderDetail['quantity'];
-                        $existingOrderDetail->available_quantity += $orderDetail['quantity'];
-                        $existingOrderDetail->save();
-
-                        return $existingOrderDetail;
-                    } else {
-                        // Create a new order detail
-                        $unitPrice = UnitPrice::where('product_id', $orderDetail['product_id'])
-                            ->where('unit_id', $orderDetail['unit_id'])
-                            ->firstOrFail();
-
-                        return OrderDetails::create([
-                            'order_id' => $orderId,
-                            'product_id' => $orderDetail['product_id'],
-                            'unit_id' => $orderDetail['unit_id'],
-                            'quantity' => $orderDetail['quantity'],
-                            'available_quantity' => $orderDetail['quantity'],
-                            'created_by' => auth()->user()->id,
-                            'price' => $unitPrice->price * $orderDetail['quantity'],
-                        ]);
-                    }
-                });
-
-                // Extract the IDs of the order details
-                $orderDetailIds = $orderDetailsData->pluck('id')->toArray();
-
-                // Delete any order details that were not included in the request
-                OrderDetails::where('order_id', $orderId)
-                    ->whereNotIn('id', $orderDetailIds)
-                    ->delete();
+                $orderDetailsData = [];
+                foreach ($request->input('order_details') as $orderDetail) {
+                    $orderDetailsData[] = [
+                        'order_id' => $orderId,
+                        'product_id' => $orderDetail['product_id'],
+                        'unit_id' => $orderDetail['unit_id'],
+                        'quantity' => $orderDetail['quantity'],
+                        'available_quantity' => $orderDetail['quantity'],
+                        'created_by' => auth()->user()->id,
+                        'price' => (UnitPrice::where(
+                            'product_id',
+                            $orderDetail['product_id']
+                        )->where('unit_id', $orderDetail['unit_id'])->first()->price) * $orderDetail['quantity'],
+                        // 'created_at' => $order->created_at,
+                        // 'updated_at' => $order->created_at,
+                    ];
+                }
+                OrderDetails::insert($orderDetailsData);
 
                 //to calculate the total of order when store it
-                // $totalPrice = array_reduce($orderDetailsData, function ($carry, $item) {
-                //     return $carry + $item['price'];
-                // }, 0);
-                // Order::find($orderId)->update(['total' => $totalPrice]);
+                $totalPrice = array_reduce($orderDetailsData, function ($carry, $item) {
+                    return $carry + $item['price'];
+                }, 0);
+                Order::find($orderId)->update(['total' => $totalPrice]);
 
 
                 $recipient = User::find(1);
