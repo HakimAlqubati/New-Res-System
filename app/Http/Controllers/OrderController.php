@@ -114,6 +114,29 @@ class OrderController extends Controller
                 // Map order details data from request body
                 $orderDetailsData = [];
                 foreach ($request->input('order_details') as $orderDetail) {
+
+                    if ($pendingOrderId) {
+                        $existOrderDetail = OrderDetails::where(
+                            'product_id',
+                            $orderDetail['product_id']
+                        )->where(
+                            'unit_id',
+                            $orderDetail['unit_id']
+                        )->first();
+                        if ($existOrderDetail) {
+                            $newQuantity = $existOrderDetail->quantity + $orderDetail['quantity'];
+                            $existOrderDetail->update([
+                                'quantity' => $newQuantity,
+                                'available_quantity' => $newQuantity,
+                                'price' =>
+                                UnitPrice::where(
+                                    'product_id',
+                                    $orderDetail['product_id']
+                                )->where('unit_id', $orderDetail['unit_id'])->first()->price * ($newQuantity),
+                            ]);
+                            continue;
+                        }
+                    }
                     $orderDetailsData[] = [
                         'order_id' => $orderId,
                         'product_id' => $orderDetail['product_id'],
@@ -129,7 +152,9 @@ class OrderController extends Controller
                         // 'updated_at' => $order->created_at,
                     ];
                 }
-                OrderDetails::insert($orderDetailsData);
+                if (count($orderDetailsData) > 0) {
+                    OrderDetails::insert($orderDetailsData);
+                }
 
                 //to calculate the total of order when store it
                 $totalPrice = array_reduce($orderDetailsData, function ($carry, $item) {
