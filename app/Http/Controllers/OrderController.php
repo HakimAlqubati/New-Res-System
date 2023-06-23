@@ -29,11 +29,16 @@ class OrderController extends Controller
         // return $order;
 
         // return $order->categories->toSql();
+        $currnetRole = $request->user()?->roles[0]?->id;
+
         $query = Order::query();
         if ($request->has('customer_id')) {
             $query->where('customer_id', $request->customer_id);
         }
 
+        if ($currnetRole == 7) {
+            $query->where('created_by', $request->user()->id);
+        }
         if ($request->has('id')) {
             $query->where('id', $request->id);
         }
