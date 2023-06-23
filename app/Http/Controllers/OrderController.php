@@ -117,6 +117,9 @@ class OrderController extends Controller
 
                     if ($pendingOrderId) {
                         $existOrderDetail = OrderDetails::where(
+                            'order_id',
+                            $pendingOrderId
+                        )->where(
                             'product_id',
                             $orderDetail['product_id']
                         )->where(
