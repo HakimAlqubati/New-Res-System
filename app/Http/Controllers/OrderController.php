@@ -37,7 +37,7 @@ class OrderController extends Controller
         }
 
         if ($currnetRole == 7) {
-            $query->where('created_by', $request->user()->id);
+            $query->where('customer_id', $request->user()->id);
         }
         if ($request->has('id')) {
             $query->where('id', $request->id);
