@@ -38,6 +38,8 @@ class OrderController extends Controller
 
         if ($currnetRole == 7) {
             $query->where('customer_id', $request->user()->id);
+        } else if ($currnetRole == 8) {
+            $query->where('customer_id', auth()->user()->owner->id);
         }
         if ($request->has('id')) {
             $query->where('id', $request->id);
