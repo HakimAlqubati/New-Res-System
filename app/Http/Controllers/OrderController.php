@@ -307,7 +307,7 @@ class OrderController extends Controller
 
 
     public function checkIfUserHasPendingForApprovalOrder($branchId)
-    {
+     {
         $order = Order::where('status', Order::PENDING_APPROVAL)
             ->where('branch_id', $branchId)
             ->where('active', 1)
