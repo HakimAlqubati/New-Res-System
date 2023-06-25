@@ -52,8 +52,8 @@ class OrderDetailsRelationManager extends RelationManager
             ]);
     }
 
-    public   function canCreate(): bool
-    {
-        return false;
-    }
+    // public   function canCreate(): bool
+    // {
+    //     return false;
+    // }
 }
