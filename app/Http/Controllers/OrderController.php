@@ -13,6 +13,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
@@ -39,7 +40,7 @@ class OrderController extends Controller
         if ($currnetRole == 7) {
             $query->where('customer_id', $request->user()->id);
         }
-        
+
         // if ($currnetRole == 7) {
         //     $query->where('customer_id', $request->user()->id);
         // } else if ($currnetRole == 8) {
@@ -86,6 +87,7 @@ class OrderController extends Controller
                 // check if user has pending for approval order to determine branchId & orderId & orderStatus
                 if ($currnetRole == 7) {
                     $branchId = auth()->user()?->branch?->id;
+                    $customerId = auth()->user()->id;
                     if (!isset($branchId)) {
                         return response()->json([
                             'success' => false,
@@ -96,13 +98,14 @@ class OrderController extends Controller
                 } else if ($currnetRole == 8) {
                     $orderStatus = Order::PENDING_APPROVAL;
                     $branchId = auth()->user()->owner->branch->id;
+                    $customerId = auth()->user()->owner->id;
                 }
                 $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder($branchId);
 
                 // Map order data from request body 
                 $orderData = [
                     'status' => $orderStatus,
-                    'customer_id' => auth()->user()->id,
+                    'customer_id' => $customerId,
                     'branch_id' => $branchId,
                     'notes' => $request->input('notes'),
                     'description' => $request->input('description'),
@@ -307,7 +310,7 @@ class OrderController extends Controller
 
 
     public function checkIfUserHasPendingForApprovalOrder($branchId)
-     {
+    {
         $order = Order::where('status', Order::PENDING_APPROVAL)
             ->where('branch_id', $branchId)
             ->where('active', 1)

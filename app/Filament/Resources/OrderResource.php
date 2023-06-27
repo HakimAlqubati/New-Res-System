@@ -216,10 +216,10 @@ class OrderResource extends Resource
 
         return $query;
     }
-    // public static function canCreate(): bool
-    // {
-    //     return false;
-    // }
+    public static function canCreate(): bool
+    {
+        return false;
+    }
     public static function canEdit(Model $model): bool
     {
         return false;
@@ -227,6 +227,8 @@ class OrderResource extends Resource
 
     public static function getGlobalSearchResultTitle(Model $record): string
     {
-        return $record->id;
+        return $record->id; 
+        dd();
+        return $record->this->id;
     }
 }
