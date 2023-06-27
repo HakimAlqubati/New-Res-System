@@ -94,7 +94,6 @@ class OrderResource extends Resource
                     ->copyMessage('Order id copied')
                     ->copyMessageDuration(1500)
                     ->sortable()->searchable()
-
                     ->searchable(isIndividual: true, isGlobal: false),
                 TextColumn::make('customer.name')->label('customer')->toggleable()
                     ->searchable(isIndividual: true)
@@ -108,7 +107,6 @@ class OrderResource extends Resource
                         'danger' => static fn ($state): bool => $state === Order::PROCESSING,
                     ])
                     ->iconPosition('after'),
-                TextColumn::make('total'),
                 TextColumn::make('branch.name'),
                 TextColumn::make('created_at')->sortable(),
                 // TextColumn::make('recorded'),
