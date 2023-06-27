@@ -58,7 +58,7 @@ class TransferOrderResource extends Resource
                     ->searchable(isIndividual: true)
                     ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
  
-                TextColumn::make('branch_id'),
+                TextColumn::make('branch.name'),
                 TextColumn::make('created_at')->sortable(),
                 // TextColumn::make('recorded'),
                 // TextColumn::make('orderDetails'),
