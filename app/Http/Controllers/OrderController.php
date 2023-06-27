@@ -25,21 +25,12 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-
-        // $order = Order::find(11)->categories;
-        // return $order;
-
-        // return $order->categories->toSql();
         $currnetRole = $request->user()?->roles[0]?->id;
 
         $query = Order::query();
         if ($request->has('customer_id')) {
             $query->where('customer_id', $request->customer_id);
         }
-
-        // if ($currnetRole == 7) {
-        //     $query->where('customer_id', $request->user()->id);
-        // }
 
         if ($currnetRole == 7) {
             $query->where('customer_id', $request->user()->id);
