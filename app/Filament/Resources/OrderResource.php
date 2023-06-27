@@ -94,6 +94,7 @@ class OrderResource extends Resource
                     ->copyMessage('Order id copied')
                     ->copyMessageDuration(1500)
                     ->sortable()->searchable()
+
                     ->searchable(isIndividual: true, isGlobal: false),
                 TextColumn::make('customer.name')->label('customer')->toggleable()
                     ->searchable(isIndividual: true)
@@ -101,16 +102,10 @@ class OrderResource extends Resource
                 BadgeColumn::make('status')
                     ->colors([
                         'primary',
-                        'secondary' => static fn ($state): bool => $state === 'pending_approval',
-                        'warning' => static fn ($state): bool => $state === 'ready_for_deleviry',
-                        'success' => static fn ($state): bool => $state === 'delevired',
-                        'danger' => static fn ($state): bool => $state === 'processing',
-                    ])
-                    ->icons([
-                        'heroicon-o-x',
-                        'heroicon-o-document' => 'pending_approval',
-                        'heroicon-o-truck' => 'ready_for_deleviry',
-                        'heroicon-o-refresh' => 'delevired',
+                        'secondary' => static fn ($state): bool => $state === Order::PENDING_APPROVAL,
+                        'warning' => static fn ($state): bool => $state === Order::READY_FOR_DELEVIRY,
+                        'success' => static fn ($state): bool => $state === Order::DELEVIRED,
+                        'danger' => static fn ($state): bool => $state === Order::PROCESSING,
                     ])
                     ->iconPosition('after'),
                 TextColumn::make('total'),
@@ -119,6 +114,7 @@ class OrderResource extends Resource
                 // TextColumn::make('recorded'),
                 // TextColumn::make('orderDetails'),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 // Filter::make('active')
                 //     ->query(fn (Builder $query): Builder => $query->where('active', true)),
@@ -227,7 +223,7 @@ class OrderResource extends Resource
 
     public static function getGlobalSearchResultTitle(Model $record): string
     {
-        return $record->id; 
+        return $record->id;
         dd();
         return $record->this->id;
     }

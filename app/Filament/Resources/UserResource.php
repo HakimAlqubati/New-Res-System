@@ -20,7 +20,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-    protected static ?string $navigationGroup = 'User & Roles';  
+    protected static ?string $navigationGroup = 'User & Roles';
     public static function form(Form $form): Form
     {
         return $form
@@ -35,6 +35,7 @@ class UserResource extends Resource
                     ->reactive()
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
                 Select::make('role_id')
+                    ->label('Role')
                     ->searchable()
                     ->required()
                     ->options(function () {
