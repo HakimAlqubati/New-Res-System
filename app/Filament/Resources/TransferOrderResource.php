@@ -57,13 +57,13 @@ class TransferOrderResource extends Resource
                 TextColumn::make('customer.name')->label('customer')->toggleable()
                     ->searchable(isIndividual: true)
                     ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
-
-                TextColumn::make('total'),
-                TextColumn::make('branch.name'),
+ 
+                TextColumn::make('branch_id'),
                 TextColumn::make('created_at')->sortable(),
                 // TextColumn::make('recorded'),
                 // TextColumn::make('orderDetails'),
             ])
+            ->defaultSort('id','desc')
             ->filters([
                 // Filter::make('active')
                 //     ->query(fn (Builder $query): Builder => $query->where('active', true)),
