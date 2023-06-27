@@ -22,7 +22,7 @@ class OrderResource extends JsonResource
             'created_by_user_name'=>$this?->customer?->name,
             'request_state_name'=>$this->status,
             'branch_id'=>$this->branch_id,
-            'branch_name'=>$this->branch->name,
+            'branch_name'=>$this?->branch?->name,
             'notes'=>$this->notes,
             'total_price'=>$this->total,
             'created_at'=>$this->created_at,
