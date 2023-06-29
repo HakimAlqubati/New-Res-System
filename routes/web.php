@@ -21,4 +21,5 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('orders/export/{id}', [OrderController::class, 'export']);
+Route::get('orders/export-transfer/{id}', [OrderController::class, 'exportTransfer']);
 

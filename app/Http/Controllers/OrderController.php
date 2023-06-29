@@ -316,7 +316,11 @@ class OrderController extends Controller
     }
 
     public function export($id)
-    { 
-        return Excel::download(new OrdersExport($id), 'orders.xlsx');
+    {
+        return Excel::download(new OrdersExport($id), 'order-no-' . $id . '-.xlsx');
+    }
+    public function exportTransfer($id)
+    {
+        return Excel::download(new OrdersExport($id), 'transfer-no-' . $id . '-.xlsx');
     }
 }

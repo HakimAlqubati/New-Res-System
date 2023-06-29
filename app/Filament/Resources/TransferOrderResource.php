@@ -116,7 +116,8 @@ class TransferOrderResource extends Resource
         return [
             'index' => Pages\ListTransferOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),
-            'view' => Pages\ViewOrder::route('/{record}'),
+            // 'view' => Pages\ViewOrder::route('/{record}'),
+            'view' => Pages\ViewOrderTransfer::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
     }
