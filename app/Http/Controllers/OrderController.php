@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\OrdersExport;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\OrderDetails;
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrderController extends Controller
 {
@@ -311,5 +313,10 @@ class OrderController extends Controller
             ->first();
 
         return $order ? $order->id : null;
+    }
+
+    public function export($id)
+    { 
+        return Excel::download(new OrdersExport($id), 'orders.xlsx');
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,3 +19,6 @@ use Illuminate\Support\Facades\Route;
 
 //     return redirect(url('/'));
 // });
+
+Route::get('orders/export/{id}', [OrderController::class, 'export']);
+
