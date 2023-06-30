@@ -5,7 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderDetailsController;
 use App\Http\Controllers\ProductController;
-use App\Models\Order; 
+use App\Models\Order;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +33,10 @@ Route::middleware('auth:api')->group(function () {
 });
 
 Route::get('/test', function () {
+});
+
+Route::get('/new-link', function () {
+    dd('hi hakeem');
 });
 
 
