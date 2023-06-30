@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Interfaces\Orders\OrderRepositoryInterface;
+use App\Repositories\Orders\OrderRepository;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 
@@ -16,11 +18,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        $this->app->bind(
+            OrderRepositoryInterface::class,
+            OrderRepository::class,
+        );
     }
-    
-    
-    
+
+
+
     /**
      * Bootstrap any application services.
      *
