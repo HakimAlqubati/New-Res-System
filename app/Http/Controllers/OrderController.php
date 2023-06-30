@@ -111,10 +111,6 @@ class OrderController extends Controller
                 if ($pendingOrderId > 0) {
                     $orderId = $pendingOrderId;
                     $message = 'Your order has been submited on pending approval order no ' . $orderId;
-                    if ($currnetRole == 7) {
-                        Order::find($orderId)->update(['status' => Order::ORDERED]);
-                        $message = 'Your has been submited on pending approval order no ' . $orderId . ' and convert it to ' . Order::ORDERED;
-                    }
                 } else {
                     $order = Order::create($orderData);
                     $orderId = $order->id;
