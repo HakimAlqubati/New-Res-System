@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Illuminate\Support\Facades\Auth;
 
 class OrderResource extends Resource implements HasShieldPermissions
 {
@@ -34,6 +35,19 @@ class OrderResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $navigationGroup = 'Orders';
     protected static ?string $recordTitleAttribute = 'id';
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish'
+        ];
+    }
 
     public static function form(Form $form): Form
     {
@@ -87,7 +101,7 @@ class OrderResource extends Resource implements HasShieldPermissions
     }
 
     public static function table(Table $table): Table
-    {
+    { 
         return $table
             ->columns([
                 TextColumn::make('id')->label('Order id')->toggleable(isToggledHiddenByDefault: false)
@@ -225,17 +239,5 @@ class OrderResource extends Resource implements HasShieldPermissions
         return $record->id;
         dd();
         return $record->this->id;
-    }
-    public static function getPermissionPrefixes(): array
-    {
-        return [
-            'view',
-            'view_any',
-            'create',
-            'update',
-            'delete',
-            'delete_any',
-            'publish'
-        ];
     }
 }
