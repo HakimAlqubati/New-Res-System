@@ -31,6 +31,7 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('patch', [OrderDetailsController::class, 'update']);
     Route::get('/categories', [CategoryController::class, 'index']);
 });
+Route::get('/report_products', [ProductController::class, 'reportProducts']);
 
 Route::get('/test', function () {
 });
