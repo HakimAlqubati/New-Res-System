@@ -97,4 +97,25 @@ class ProductController extends Controller
     {
         //
     }
+    /**
+     * get products report
+     */
+    public function reportProducts()
+    {
+        $products = Product::with('order_details.unit')
+            ->get()
+            ->groupBy('id')
+            ->map(function ($item, $key) {
+                $units = $item->pluck('order_details')->flatten(1)->pluck('unit.name')->unique()->toArray();
+                $quantities = [];
+                foreach ($units as $unit) {
+                    $quantity = $item->pluck('order_details')->flatten(1)->where('unit.name', $unit)->sum('quantity');
+                    $quantities[$unit] = $quantity;
+                }
+                $item->units = $units;
+                $item->quantities = $quantities;
+                return $item;
+            });
+        return $products; 
+    }
 }
