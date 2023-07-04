@@ -7,6 +7,7 @@ use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -102,20 +103,46 @@ class ProductController extends Controller
      */
     public function reportProducts()
     {
-        $products = Product::with('order_details.unit')
-            ->get()
-            ->groupBy('id')
-            ->map(function ($item, $key) {
-                $units = $item->pluck('order_details')->flatten(1)->pluck('unit.name')->unique()->toArray();
-                $quantities = [];
-                foreach ($units as $unit) {
-                    $quantity = $item->pluck('order_details')->flatten(1)->where('unit.name', $unit)->sum('quantity');
-                    $quantities[$unit] = $quantity;
-                }
-                $item->units = $units;
-                $item->quantities = $quantities;
-                return $item;
-            });
-        return $products; 
+        $from_date = $_GET['from_date'] ?? null;
+        $to_date = $_GET['to_date'] ?? null;
+        $strSelect = 'SELECT DISTINCT 
+            products.id as product_id,
+            products.name as product_name,
+            orders_details.unit_id as unit_id,
+            units.name as unit_name,
+            COUNT(orders_details.product_id) as count,
+            -- orders.branch_id as branch_id,
+            branches.name as branch_name
+            -- , DATE(orders.created_at) as created_date
+        FROM 
+            products 
+            INNER JOIN orders_details ON (products.id = orders_details.product_id)
+            INNER JOIN orders ON (orders.id = orders_details.order_id)
+            inner join branches on (orders.branch_id = branches.id)
+            INNER JOIN units ON (orders_details.unit_id = units.id)';
+        $params = array();
+        if ($from_date && $to_date) {
+            $strSelect .= ' WHERE orders.created_at BETWEEN ? AND ?';
+            $params[] = $from_date;
+            $params[] = $to_date;
+        } elseif ($from_date) {
+            $strSelect .= ' WHERE orders.created_at >= ?';
+            $params[] = $from_date;
+        } elseif ($to_date) {
+            $strSelect .= ' WHERE orders.created_at <= ?';
+            $params[] = $to_date;
+        }
+        $strSelect .= ' GROUP BY 
+            products.id,
+            products.name,
+            orders_details.unit_id,
+            units.name,
+            -- DATE(orders.created_at),
+            orders.branch_id,
+            branches.name
+        ORDER BY 
+            products.id ASC';
+        $results = DB::select($strSelect, $params);
+        return $results;
     }
 }
