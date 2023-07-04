@@ -105,6 +105,7 @@ class ProductController extends Controller
     {
         $from_date = $_GET['from_date'] ?? null;
         $to_date = $_GET['to_date'] ?? null;
+        $branch_id = $_GET['branch_id'] ?? null;
         $strSelect = 'SELECT DISTINCT 
             products.id as product_id,
             products.name as product_name,
@@ -132,16 +133,20 @@ class ProductController extends Controller
             $strSelect .= ' WHERE orders.created_at <= ?';
             $params[] = $to_date;
         }
+        if ($branch_id) {
+            $strSelect .= ' WHERE orders.branch_id = ?';
+        }
         $strSelect .= ' GROUP BY 
             products.id,
             products.name,
             orders_details.unit_id,
             units.name,
             -- DATE(orders.created_at),
-            orders.branch_id,
+           -- orders.branch_id,
             branches.name
         ORDER BY 
             products.id ASC';
+            // dd($strSelect);
         $results = DB::select($strSelect, $params);
         return $results;
     }

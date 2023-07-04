@@ -43,7 +43,7 @@ class OrderRepository implements OrderRepositoryInterface
             $query->where('id', $request->id);
         }
 
-        if ($currnetRole == 5 || $currnetRole == 3) {
+        if ($currnetRole == 5) {
             $query->where('status', '!=', Order::PENDING_APPROVAL);
         }
         $orders = $query->orderBy('created_at', 'DESC')->limit(20)->get();
