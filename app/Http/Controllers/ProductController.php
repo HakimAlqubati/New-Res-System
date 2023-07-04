@@ -111,7 +111,7 @@ class ProductController extends Controller
             orders_details.unit_id as unit_id,
             units.name as unit_name,
             COUNT(orders_details.product_id) as count,
-            -- orders.branch_id as branch_id,
+            orders.branch_id as branch_id,
             branches.name as branch_name
             -- , DATE(orders.created_at) as created_date
         FROM 
