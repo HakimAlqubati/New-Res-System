@@ -37,6 +37,10 @@ class Product extends Model
     {
         return $this->hasMany(OrderDetail::class);
     }
+    public function order_details()
+    {
+        return $this->hasMany(OrderDetails::class);
+    }
 
 
     public function toArray()
