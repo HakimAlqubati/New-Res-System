@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Unit;
 use App\Models\User;
+use App\Tables\Columns\count_items_order;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
@@ -39,8 +40,8 @@ class OrderResource extends Resource
         return $form
             ->schema([
                 TextInput::make('id')->label('Order id'),
-                TextInput::make('customer_id')->label('Created by'), 
-               
+                TextInput::make('customer_id')->label('Created by'),
+
                 Select::make('status')
                     ->options([
                         Order::ORDERED => 'Ordered',
@@ -48,7 +49,7 @@ class OrderResource extends Resource
                         Order::PROCESSING => 'processing',
                         Order::DELEVIRED => 'delevired',
                     ]),
-                TextInput::make('branch_id')->label('Branch') 
+                TextInput::make('branch_id')->label('Branch')
             ]);
     }
 
@@ -74,6 +75,7 @@ class OrderResource extends Resource
                         'danger' => static fn ($state): bool => $state === Order::PROCESSING,
                     ])
                     ->iconPosition('after'),
+                count_items_order::make('item_counts'),
                 TextColumn::make('branch.name'),
                 TextColumn::make('created_at')->sortable(),
                 // TextColumn::make('recorded'),
