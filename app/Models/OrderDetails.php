@@ -20,6 +20,7 @@ class OrderDetails extends Model
         'created_by',
         'updated_at',
         'created_at',
+        'updated_by',
     ];
 
 

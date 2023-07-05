@@ -88,6 +88,7 @@ class OrderDetailsRepository implements OrderDetailsRepositoryInterface
                 $orderDetail->product_id = $orderDetailData['product_id'];
                 $orderDetail->unit_id = $orderDetailData['unit_id'];
                 $orderDetail->price = $price;
+                $orderDetail->updated_by = auth()->user()->id;
                 $orderDetail->save();
 
                 $responses[] = [

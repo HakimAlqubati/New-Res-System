@@ -24,6 +24,7 @@ class Order extends Model
         'full_quantity',
         'total',
         'active',
+        'updated_by',
     ];
 
     public function orderDetails()

@@ -93,6 +93,9 @@ class OrderRepository implements OrderRepositoryInterface
                 // Create new order
                 if ($pendingOrderId > 0) {
                     $orderId = $pendingOrderId;
+                    Order::find($orderId)->update([
+                        'updated_by' => auth()->user()->id,
+                    ]);
                     $message = 'Your order has been submited on pending approval order no ' . $orderId;
                 } else {
                     $order = Order::create($orderData);
@@ -118,6 +121,7 @@ class OrderRepository implements OrderRepositoryInterface
                         if ($existOrderDetail) {
                             $newQuantity = $existOrderDetail->quantity + $orderDetail['quantity'];
                             $existOrderDetail->update([
+                                'updated_by' => auth()->user()->id,
                                 'quantity' => $newQuantity,
                                 'available_quantity' => $newQuantity,
                                 'price' =>
@@ -218,9 +222,9 @@ class OrderRepository implements OrderRepositoryInterface
                 ],
                 'notes' => 'string',
                 'full_quantity' => 'boolean',
-                'active' => 'boolean',
+                'active' => 'boolean'
             ]);
-
+            $order->updated_by = auth()->user()->id;
             // Fill the order with the validated data and save it to the database
             $order->fill($validatedData)->save();
 
