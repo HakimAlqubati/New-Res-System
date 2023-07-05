@@ -36,6 +36,7 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'customer_id');
     }
+   
 
     public function branch()
     {
@@ -52,5 +53,10 @@ class Order extends Model
         return $query->select('orders.*')
             ->join('orders_details', 'orders_details.order_id', '=', 'orders.id')
             ->where('orders_details.available_in_store', 1)->distinct();
+    }
+
+   
+    public function customer_name(){
+        return 'dddd';
     }
 }

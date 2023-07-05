@@ -38,17 +38,9 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('id')->label('Order id')
-                    ->hidden(Pages\CreateOrder::class),
-                Select::make('customer_id')->required()
-                    ->searchable()
-                    ->hiddenOn(Pages\EditOrder::class)
-                    ->hiddenOn(Pages\ViewOrder::class)
-                    ->options(function () {
-                        return User::limit(5)->pluck('name', 'id');
-                    }),
-                TextInput::make('customer.name')->label('customer')
-                    ->hiddenOn(Pages\CreateOrder::class),
+                TextInput::make('id')->label('Order id'),
+                TextInput::make('customer_id')->label('Created by'), 
+               
                 Select::make('status')
                     ->options([
                         Order::ORDERED => 'Ordered',
@@ -56,32 +48,7 @@ class OrderResource extends Resource
                         Order::PROCESSING => 'processing',
                         Order::DELEVIRED => 'delevired',
                     ]),
-                Select::make('branch_id')->required()
-                    ->searchable()
-                    ->hiddenOn(Pages\EditOrder::class)
-                    ->hiddenOn(Pages\ViewOrder::class)
-                    ->options(function () {
-                        return Branch::pluck('name', 'id');
-                    })->columns(2),
-                TextInput::make('branch.name')->label('branch')
-                    ->hiddenOn(Pages\CreateOrder::class),
-                Repeater::make('orderDetails')
-                    ->schema([
-                        Select::make('product_id')
-                            ->required()
-                            ->searchable()
-                            ->options(function () {
-                                return Product::limit(5)->pluck('name', 'id');
-                            }),
-                        Select::make('unit_id')
-                            ->required()
-                            ->searchable()
-                            ->options(function () {
-                                return Unit::pluck('name', 'id');
-                            }),
-                        TextInput::make('quantity'),
-                    ])
-                    ->columns(2),
+                TextInput::make('branch_id')->label('Branch') 
             ]);
     }
 
