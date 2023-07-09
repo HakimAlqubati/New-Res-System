@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::middleware('auth:api')->group(function () {
+    Route::get('/report_products', [ProductController::class, 'reportProducts']);
     Route::get('/user', [AuthController::class, 'getCurrnetUser']);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('orders', OrderController::class);
@@ -31,7 +32,6 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('patch', [OrderDetailsController::class, 'update']);
     Route::get('/categories', [CategoryController::class, 'index']);
 });
-Route::get('/report_products', [ProductController::class, 'reportProducts']);
 
 Route::get('/test', function () {
 });

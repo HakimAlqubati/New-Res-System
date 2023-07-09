@@ -97,8 +97,8 @@ class ProductController extends Controller
     /**
      * get products report
      */
-    public function reportProducts()
-    {
-        return $this->productRepository->report();
+    public function reportProducts(Request $request)
+    { 
+        return $this->productRepository->report($request);
     }
 }

@@ -33,8 +33,8 @@ class ProductRepository implements ProductRepositoryInterface
         // Return a collection of product resources.
         return ProductResource::collection($products);
     }
-    function report()
-    {
+    function report($request)
+    {  
         $from_date = $_GET['from_date'] ?? null;
         $to_date = $_GET['to_date'] ?? null;
         $month = $_GET['month'] ?? null;
@@ -56,6 +56,12 @@ class ProductRepository implements ProductRepositoryInterface
         INNER JOIN units ON (orders_details.unit_id = units.id)';
         $params = array();
         $where = array();
+
+        $currnetRole = auth()->user()?->roles[0]?->id; 
+        if ($currnetRole == 7) { 
+            $where[] = 'orders.customer_id = ?';
+            $params[] = $request->user()->id;
+        }
         if ($from_date && $to_date) {
             $where[] = 'DATE(orders.created_at) BETWEEN ? AND ?';
             $params[] = $from_date;

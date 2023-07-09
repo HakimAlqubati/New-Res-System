@@ -15,14 +15,7 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        // $query = Category::query();
-        // if ($request->has('id')) {
-        //     $query->where('id', $request->id);
-        // }
-        // $query->where('active', 1);
-        // $categories =  $query->get(['id', 'code', 'name', 'description', 'active']);
-        //new code
-        $categories=Category::active()->get();
+        $categories = Category::active()->get();
         return CategoryResource::collection($categories);
     }
 
