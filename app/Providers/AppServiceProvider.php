@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Interfaces\Orders\OrderRepositoryInterface;
+use App\Models\Order;
+use App\Observers\OrderObserver;
 use App\Repositories\Orders\OrderRepository;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
@@ -34,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        Order::observe(OrderObserver::class);
+
         Filament::registerNavigationGroups([
             'Orders',
             'Products - units',
