@@ -109,6 +109,10 @@ return [
         ],
     ],
 
+    'filament.config' => [
+        'filament.pages' => 'config/filament.pages.php',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Resources
