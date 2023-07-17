@@ -46,7 +46,10 @@ class OrderTransfer extends Model
     {
         return $query->where('status', self::READY_FOR_DELEVIRY);
     }
-
+    public function orders()
+    {
+        return $this->belongsTo(Order::class, 'id');
+    }
     public function scopeInTransfer($query)
     {
         return $query->select('orders.*')

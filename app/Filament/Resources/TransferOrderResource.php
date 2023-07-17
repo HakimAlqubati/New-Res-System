@@ -26,7 +26,7 @@ class TransferOrderResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $navigationGroup = 'Orders';
-    protected static ?string $recordTitleAttribute = 'id';
+    protected static ?string $recordTitleAttribute = 'orders.id';
 
     protected static ?string $label = 'Transfers';
     protected static ?string $navigationLabel = 'Transfers list';
@@ -57,13 +57,13 @@ class TransferOrderResource extends Resource
                 TextColumn::make('customer.name')->label('customer')->toggleable()
                     ->searchable(isIndividual: true)
                     ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
- 
+
                 TextColumn::make('branch.name'),
                 TextColumn::make('created_at')->sortable(),
                 // TextColumn::make('recorded'),
                 // TextColumn::make('orderDetails'),
             ])
-            ->defaultSort('id','desc')
+            ->defaultSort('id', 'desc')
             ->filters([
                 // Filter::make('active')
                 //     ->query(fn (Builder $query): Builder => $query->where('active', true)),
@@ -157,14 +157,25 @@ class TransferOrderResource extends Resource
         return false;
     }
 
-    public static function getGlobalSearchResultTitle(Model $record): string
-    {
-        return $record->id;
-    }
     public static function getEloquentQuery(): Builder
     {
         return static::getModel()::query()->InTransfer();
     }
+
+    // public static function getGlobalSearchResultTitle(Model $record): string
+    // {
+    //     return $record;
+    // }
+
+    // public static function getEloquentQuery(): Builder
+    // {
+    //     return static::getModel()::query()
+    //         ->join('orders_details', 'orders_details.order_id', '=', 'orders.id')
+    //         ->where('orders_details.available_in_store', 1)
+    //         ->whereHas('InTransfer')
+    //         ->where('id', 'like', '%6%')
+    //         ->limit(50);
+    // }
 
     // protected static function getNavigationBadge(): ?string
     // {
