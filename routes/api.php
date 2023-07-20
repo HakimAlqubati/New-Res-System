@@ -33,6 +33,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/categories', [CategoryController::class, 'index']);
 });
 
+Route::get('/v2/report_products', [ProductController::class, 'reportProductsv2']);
 Route::get('/test', function () {
 });
 

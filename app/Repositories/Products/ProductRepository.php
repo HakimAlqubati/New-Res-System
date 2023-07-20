@@ -93,4 +93,13 @@ class ProductRepository implements ProductRepositoryInterface
         $results = DB::select($strSelect, $params);
         return $results;
     }
+
+    function reportv2($request){
+        $strSelect = 'SELECT categories.id as category_id, categories.name as category_name
+        , (select count(products.id) from products where categories.id = products.category_id) as product_count
+         FROM categories';
+        $params = null;
+        $results = DB::select($strSelect);
+        return $results;
+    }
 }

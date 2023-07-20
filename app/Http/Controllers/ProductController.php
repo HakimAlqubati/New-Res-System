@@ -101,4 +101,8 @@ class ProductController extends Controller
     { 
         return $this->productRepository->report($request);
     }
+    public function reportProductsv2(Request $request)
+    { 
+        return $this->productRepository->reportv2($request);
+    }
 }
