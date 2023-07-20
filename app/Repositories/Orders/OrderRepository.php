@@ -8,8 +8,6 @@ use App\Interfaces\Orders\OrderRepositoryInterface;
 use App\Models\Order;
 use App\Models\OrderDetails;
 use App\Models\UnitPrice;
-use App\Models\User;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -26,7 +24,7 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
     public function index($request)
-    {
+    { 
         $currnetRole = $request->user()?->roles[0]?->id;
 
         $query = Order::query();
@@ -159,12 +157,7 @@ class OrderRepository implements OrderRepositoryInterface
                 Order::find($orderId)->update(['total' => $totalPrice]);
 
 
-                $recipient = User::find(1);
-
-                Notification::make()
-                    ->title('Order no ' . $orderId . ' Has been created')
-                    ->sendToDatabase($recipient)
-                    ->broadcast($recipient);
+             
 
                 return response()->json([
                     'success' => true,
