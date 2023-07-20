@@ -99,19 +99,20 @@ class ProductRepository implements ProductRepositoryInterface
     {
 
         $final_result = [];
-        DB::table('orders_details')
+        $data = DB::table('orders_details')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
-            ->whereIn('orders_details.product_id', [1, 2, 4])
-            ->count('orders_details.product_id');
+            ->join('products', 'orders_details.product_id', '=', 'products.id')
+            // ->where('orders.branch_id', $request->input('branch_id'))
+            ->groupBy('products.category_id')
+            ->get(DB::raw('sum(orders_details.quantity) as quantity'));
+
         $categories = DB::table('categories')->where('active', 1)->get(['id', 'name'])->pluck('name', 'id');
-
-        $products = DB::table('products')->where('active', 1)->get(['id', 'name', 'category_id'])->groupBy('category_id');
-
+ 
         foreach ($categories as $cat_id => $cat_name) {
             $obj = new \stdClass();
             $obj->category_id = $cat_id;
-            $obj->category_name = $cat_name; 
-            $obj->products = isset($products[$cat_id]) ? $products[$cat_id] : [];
+            $obj->category_name = $cat_name;
+            $obj->quantity = isset($data[$cat_id]) ? $data[$cat_id]->quantity : 0;
             $final_result[] = $obj;
         }
         return $final_result;
