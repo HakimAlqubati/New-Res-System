@@ -97,22 +97,36 @@ class ProductRepository implements ProductRepositoryInterface
 
     function reportv2($request)
     {
+        $branch_id = $request->input('branch_id');
+        $from_date = $request->input('from_date');
+        $to_date = $request->input('to_date');
+        $year = $request->input('year');
+        $month = $request->input('month');
 
-        $final_result = [];
         $data = DB::table('orders_details')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             ->join('products', 'orders_details.product_id', '=', 'products.id')
-            // ->where('orders.branch_id', $request->input('branch_id'))
+            ->select('products.category_id', DB::raw('SUM(orders_details.quantity) as quantity'))
+            ->when($branch_id, function ($query) use ($branch_id) {
+                return $query->where('orders.branch_id', $branch_id);
+            })
+            ->when($from_date && $to_date, function ($query) use ($from_date, $to_date) {
+                return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
+            })->when($year && $month, function ($query) use ($year, $month) {
+                return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
+            })
             ->groupBy('products.category_id')
-            ->get(DB::raw('sum(orders_details.quantity) as quantity'));
-
+            ->get()
+            ->pluck('quantity', 'category_id')
+            ->mapWithKeys(fn ($value, $key) => [$key => ['quantity' => $value]])
+            ->all(); 
         $categories = DB::table('categories')->where('active', 1)->get(['id', 'name'])->pluck('name', 'id');
- 
+
         foreach ($categories as $cat_id => $cat_name) {
             $obj = new \stdClass();
             $obj->category_id = $cat_id;
             $obj->category_name = $cat_name;
-            $obj->quantity = isset($data[$cat_id]) ? $data[$cat_id]->quantity : 0;
+            $obj->quantity =  isset($data[$cat_id]) ? $data[$cat_id]['quantity'] : 0;
             $final_result[] = $obj;
         }
         return $final_result;
