@@ -110,8 +110,8 @@ class ProductRepository implements ProductRepositoryInterface
         foreach ($categories as $cat_id => $cat_name) {
             $obj = new \stdClass();
             $obj->category_id = $cat_id;
-            $obj->category_name = $cat_name;
-            $obj->products = $products[$cat_id];
+            $obj->category_name = $cat_name; 
+            $obj->products = isset($products[$cat_id]) ? $products[$cat_id] : [];
             $final_result[] = $obj;
         }
         return $final_result;
