@@ -105,4 +105,8 @@ class ProductController extends Controller
     { 
         return $this->productRepository->reportv2($request);
     }
+    public function reportProductsv2Details(Request $request,$category_id)
+    {  
+        return $this->productRepository->reportv2Details($request,$category_id);
+    }
 }

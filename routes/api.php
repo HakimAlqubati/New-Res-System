@@ -34,6 +34,7 @@ Route::middleware('auth:api')->group(function () {
 });
 
 Route::get('/v2/report_products', [ProductController::class, 'reportProductsv2']);
+Route::get('/v2/report_products/details/{category_id}', [ProductController::class, 'reportProductsv2Details']);
 Route::get('/test', function () {
 });
 

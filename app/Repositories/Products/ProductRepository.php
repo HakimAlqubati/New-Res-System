@@ -106,7 +106,7 @@ class ProductRepository implements ProductRepositoryInterface
         $data = DB::table('orders_details')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             ->join('products', 'orders_details.product_id', '=', 'products.id')
-            ->select('products.category_id', DB::raw('SUM(orders_details.quantity) as quantity'))
+            ->select('products.category_id', DB::raw('SUM(orders_details.available_quantity) as available_quantity'))
             ->when($branch_id, function ($query) use ($branch_id) {
                 return $query->where('orders.branch_id', $branch_id);
             })
@@ -117,18 +117,60 @@ class ProductRepository implements ProductRepositoryInterface
             })
             ->groupBy('products.category_id')
             ->get()
-            ->pluck('quantity', 'category_id')
-            ->mapWithKeys(fn ($value, $key) => [$key => ['quantity' => $value]])
-            ->all(); 
+            ->pluck('available_quantity', 'category_id')
+            ->mapWithKeys(fn ($value, $key) => [$key => ['available_quantity' => $value]])
+            ->all();
         $categories = DB::table('categories')->where('active', 1)->get(['id', 'name'])->pluck('name', 'id');
 
         foreach ($categories as $cat_id => $cat_name) {
             $obj = new \stdClass();
             $obj->category_id = $cat_id;
             $obj->category_name = $cat_name;
-            $obj->quantity =  isset($data[$cat_id]) ? $data[$cat_id]['quantity'] : 0;
+            $obj->available_quantity =  isset($data[$cat_id]) ? $data[$cat_id]['available_quantity'] : 0;
             $final_result[] = $obj;
         }
         return $final_result;
+    }
+
+    public function reportv2Details($request, $category_id)
+    {
+
+        $branch_id = $request->input('branch_id');
+        $from_date = $request->input('from_date');
+        $to_date = $request->input('to_date');
+        $year = $request->input('year');
+        $month = $request->input('month');
+
+        $data = DB::table('orders_details')
+            ->join('orders', 'orders_details.order_id', '=', 'orders.id')
+            ->join('products', 'orders_details.product_id', '=', 'products.id')
+            ->join('units', 'orders_details.unit_id', '=', 'units.id')
+            // ->select('products.category_id', 'orders_details.product_id as p_id' )
+            ->when($branch_id, function ($query) use ($branch_id) {
+                return $query->where('orders.branch_id', $branch_id);
+            })
+            ->when($from_date && $to_date, function ($query) use ($from_date, $to_date) {
+                return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
+            })->when($year && $month, function ($query) use ($year, $month) {
+                return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
+            })
+            ->where('products.category_id', $category_id)
+            ->groupBy(
+                'orders_details.product_id',
+                'products.category_id',
+                'orders_details.unit_id',
+                'orders_details.available_quantity',
+                'products.name',
+                'units.name',
+            )
+            ->get([
+                'products.category_id',
+                'orders_details.product_id',
+                'products.name as product_name',
+                'units.name as unit_name',
+                'orders_details.unit_id as unit_id',
+                'orders_details.available_quantity'
+            ]);
+        return $data;
     }
 }
