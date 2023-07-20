@@ -106,20 +106,31 @@ class ProductRepository implements ProductRepositoryInterface
         $data = DB::table('orders_details')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             ->join('products', 'orders_details.product_id', '=', 'products.id')
-            ->select('products.category_id', DB::raw('SUM(orders_details.available_quantity) as available_quantity'))
+            ->select(
+                'products.category_id',
+                DB::raw('SUM(orders_details.available_quantity) as available_quantity'),
+                DB::raw('SUM(orders_details.price) as price')
+            )
             ->when($branch_id, function ($query) use ($branch_id) {
                 return $query->where('orders.branch_id', $branch_id);
             })
             ->when($from_date && $to_date, function ($query) use ($from_date, $to_date) {
                 return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
-            })->when($year && $month, function ($query) use ($year, $month) {
+            })
+            ->when($year && $month, function ($query) use ($year, $month) {
                 return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
             })
             ->groupBy('products.category_id')
             ->get()
-            ->pluck('available_quantity', 'category_id')
-            ->mapWithKeys(fn ($value, $key) => [$key => ['available_quantity' => $value]])
-            ->all();
+            ->mapWithKeys(function ($item) {
+                if (is_object($item)) {
+                    return [$item->category_id => [
+                        'available_quantity' => $item->available_quantity,
+                        'price' => $item->price
+                    ]];
+                }
+            })
+            ->all(); 
         $categories = DB::table('categories')->where('active', 1)->get(['id', 'name'])->pluck('name', 'id');
 
         foreach ($categories as $cat_id => $cat_name) {
@@ -127,6 +138,7 @@ class ProductRepository implements ProductRepositoryInterface
             $obj->category_id = $cat_id;
             $obj->category_name = $cat_name;
             $obj->available_quantity =  isset($data[$cat_id]) ? $data[$cat_id]['available_quantity'] : 0;
+            $obj->price = isset($data[$cat_id]) ? $data[$cat_id]['price'] : 0;
             $final_result[] = $obj;
         }
         return $final_result;
