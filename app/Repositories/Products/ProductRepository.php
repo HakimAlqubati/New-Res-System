@@ -4,6 +4,7 @@ namespace App\Repositories\Products;
 
 use App\Http\Resources\ProductResource;
 use App\Interfaces\Products\ProductRepositoryInterface;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 
@@ -34,7 +35,7 @@ class ProductRepository implements ProductRepositoryInterface
         return ProductResource::collection($products);
     }
     function report($request)
-    {  
+    {
         $from_date = $_GET['from_date'] ?? null;
         $to_date = $_GET['to_date'] ?? null;
         $month = $_GET['month'] ?? null;
@@ -57,8 +58,8 @@ class ProductRepository implements ProductRepositoryInterface
         $params = array();
         $where = array();
 
-        $currnetRole = auth()->user()?->roles[0]?->id; 
-        if ($currnetRole == 7) { 
+        $currnetRole = auth()->user()?->roles[0]?->id;
+        if ($currnetRole == 7) {
             $where[] = 'orders.customer_id = ?';
             $params[] = $request->user()->id;
         }
@@ -94,12 +95,25 @@ class ProductRepository implements ProductRepositoryInterface
         return $results;
     }
 
-    function reportv2($request){
-        $strSelect = 'SELECT categories.id as category_id, categories.name as category_name
-        , (select count(products.id) from products where categories.id = products.category_id) as product_count
-         FROM categories';
-        $params = null;
-        $results = DB::select($strSelect);
-        return $results;
+    function reportv2($request)
+    {
+
+        $final_result = [];
+        DB::table('orders_details')
+            ->join('orders', 'orders_details.order_id', '=', 'orders.id')
+            ->whereIn('orders_details.product_id', [1, 2, 4])
+            ->count('orders_details.product_id');
+        $categories = DB::table('categories')->where('active', 1)->get(['id', 'name'])->pluck('name', 'id');
+
+        $products = DB::table('products')->where('active', 1)->get(['id', 'name', 'category_id'])->groupBy('category_id');
+
+        foreach ($categories as $cat_id => $cat_name) {
+            $obj = new \stdClass();
+            $obj->category_id = $cat_id;
+            $obj->category_name = $cat_name;
+            $obj->products = $products[$cat_id];
+            $final_result[] = $obj;
+        }
+        return $final_result;
     }
 }
