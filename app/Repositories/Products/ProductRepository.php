@@ -4,6 +4,7 @@ namespace App\Repositories\Products;
 
 use App\Http\Resources\ProductResource;
 use App\Interfaces\Products\ProductRepositoryInterface;
+use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
@@ -130,7 +131,7 @@ class ProductRepository implements ProductRepositoryInterface
                     ]];
                 }
             })
-            ->all(); 
+            ->all();
         $categories = DB::table('categories')->where('active', 1)->get(['id', 'name'])->pluck('name', 'id');
 
         foreach ($categories as $cat_id => $cat_name) {
@@ -141,7 +142,11 @@ class ProductRepository implements ProductRepositoryInterface
             $obj->price = isset($data[$cat_id]) ? $data[$cat_id]['price'] : 0;
             $final_result[] = $obj;
         }
-        return $final_result;
+
+        return [
+            'branches' => Branch::where('active', 1)->pluck('name', 'id'),
+            'data' => $final_result
+        ];
     }
 
     public function reportv2Details($request, $category_id)
