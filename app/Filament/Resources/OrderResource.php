@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\Unit;
 use App\Models\User;
 use App\Tables\Columns\count_items_order;
+use App\Tables\Columns\TotalOrder;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
@@ -91,6 +92,7 @@ class OrderResource extends Resource implements HasShieldPermissions
                     ])
                     ->iconPosition('after'),
                 count_items_order::make('item_counts'),
+                TotalOrder::make('total_amount'),                
                 TextColumn::make('branch.name'),
                 TextColumn::make('created_at')->sortable(),
                 // TextColumn::make('recorded'),

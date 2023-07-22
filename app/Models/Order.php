@@ -31,12 +31,17 @@ class Order extends Model
     {
         return $this->hasMany(OrderDetails::class);
     }
+    public function orderDetails2()
+    {
+        return $this->hasMany(OrderDetails::class, 'order_id');
+    }
+
 
     public function customer()
     {
         return $this->belongsTo(User::class, 'customer_id');
     }
-   
+
 
     public function branch()
     {
@@ -55,8 +60,9 @@ class Order extends Model
             ->where('orders_details.available_in_store', 1)->distinct();
     }
 
-   
-    public function customer_name(){
+
+    public function customer_name()
+    {
         return 'dddd';
     }
 }
