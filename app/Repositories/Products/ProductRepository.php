@@ -145,7 +145,7 @@ class ProductRepository implements ProductRepositoryInterface
             $obj->category_id = $cat_id;
             $obj->category_name = $cat_name;
             $obj->available_quantity =  round(isset($data[$cat_id]) ? $data[$cat_id]['available_quantity'] : 0, 2);
-            $obj->price = (isset($data[$cat_id]) ? $data[$cat_id]['price'] : 0.00) . ' ' . 'RM';
+            $obj->price = (isset($data[$cat_id]) ? $data[$cat_id]['price'] : '0.00') . ' ' . 'RM';
             $final_result[] = $obj;
         }
 
