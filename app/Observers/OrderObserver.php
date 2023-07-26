@@ -19,8 +19,8 @@ class OrderObserver
     }
     public function updated(Order $order)
     { 
-        if (in_array($order->status, [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])) {
-            OrderDetails::where('order_id', $order->id)->update(['available_in_store' => 1]);
-        }
+        // if (in_array($order->status, [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])) {
+        //     OrderDetails::where('order_id', $order->id)->update(['available_in_store' => 1]);
+        // }
     }
 }
