@@ -176,9 +176,11 @@ class ProductRepository implements ProductRepositoryInterface
                 'orders_details.product_id',
                 'products.category_id',
                 'orders_details.unit_id',
-                'orders_details.available_quantity',
+                // 'orders_details.available_quantity',
                 'products.name',
                 'units.name',
+    //             DB::raw('YEAR(orders.created_at)'),
+    // DB::raw('MONTH(orders.created_at)')
             )
             ->get([
                 'products.category_id',
@@ -186,7 +188,7 @@ class ProductRepository implements ProductRepositoryInterface
                 'products.name as product_name',
                 'units.name as unit_name',
                 'orders_details.unit_id as unit_id',
-                'orders_details.available_quantity'
+               DB::raw('SUM(orders_details.available_quantity) as available_quantity') 
             ]);
         return $data;
     }
