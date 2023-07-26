@@ -63,8 +63,8 @@ class OrderTransfer extends Model
                 Order::READY_FOR_DELEVIRY,
                 Order::DELEVIRED
             ])
-            ->where('orders_details.available_quantity', '>', 1)
-            ->where('orders_details.quantity', '>', 1)
+            ->where('orders_details.available_quantity', '>', 0)
+            ->where('orders_details.quantity', '>', 0)
             ->distinct();
     }
 }
