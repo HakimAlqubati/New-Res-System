@@ -138,7 +138,7 @@ class ProductRepository implements ProductRepositoryInterface
             $obj = new \stdClass();
             $obj->category_id = $cat_id;
             $obj->category_name = $cat_name;
-            $obj->available_quantity =  round(  isset($data[$cat_id]) ? $data[$cat_id]['available_quantity'] : 0,2) ;
+            $obj->available_quantity =  round(isset($data[$cat_id]) ? $data[$cat_id]['available_quantity'] : 0, 2);
             $obj->price = (isset($data[$cat_id]) ? $data[$cat_id]['price'] : 0) . ' ' . 'MR';
             $final_result[] = $obj;
         }
@@ -188,7 +188,7 @@ class ProductRepository implements ProductRepositoryInterface
                 'products.name as product_name',
                 'units.name as unit_name',
                 'orders_details.unit_id as unit_id',
-                DB::raw('SUM(orders_details.available_quantity) as available_quantity')
+                DB::raw('ROUND(SUM(orders_details.available_quantity), 2) as available_quantity')
             ]);
         return $data;
     }
