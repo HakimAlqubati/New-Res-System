@@ -9,13 +9,16 @@ class OrderTransfer extends Model
 {
     use HasFactory;
 
+
     protected $table = 'orders';
+    // protected $primaryKey = '_id';
     public const ORDERED = 'ordered';
     public const PROCESSING = 'processing';
     public const READY_FOR_DELEVIRY = 'ready_for_delivery';
     public const DELEVIRED = 'delevired';
     public const PENDING_APPROVAL = 'pending_approval';
     protected $fillable = [
+        'id',
         'customer_id',
         'status',
         'branch_id',
@@ -29,7 +32,9 @@ class OrderTransfer extends Model
 
     public function orderDetails()
     {
-        return $this->hasMany(OrderDetails::class);
+        return $this->hasMany(OrderDetails::class)
+            ->where('quantity', '>', 0)
+            ->where('available_quantity', '>', 0);
     }
 
     public function customer()
@@ -54,6 +59,12 @@ class OrderTransfer extends Model
     {
         return $query->select('orders.*')
             ->join('orders_details', 'orders_details.order_id', '=', 'orders.id')
-            ->where('orders_details.available_in_store', 1)->distinct();
+            ->whereIn('orders.status', [
+                Order::READY_FOR_DELEVIRY,
+                Order::DELEVIRED
+            ])
+            ->where('orders_details.available_quantity', '>', 1)
+            ->where('orders_details.quantity', '>', 1)
+            ->distinct();
     }
 }

@@ -158,6 +158,7 @@ class OrderResource extends Resource implements HasShieldPermissions
 
     public static function getPages(): array
     {
+        
         return [
             'index' => Pages\ListOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),

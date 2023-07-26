@@ -31,9 +31,9 @@ class TransferOrderResource extends Resource
     protected static ?string $label = 'Transfers';
     protected static ?string $navigationLabel = 'Transfers list';
     public static ?string $slug = 'transfers-list';
-
     public static function form(Form $form): Form
     {
+ 
         return $form
             ->schema([
                 TextInput::make('id')->label('Order id'),
@@ -117,7 +117,7 @@ class TransferOrderResource extends Resource
             'index' => Pages\ListTransferOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),
             // 'view' => Pages\ViewOrder::route('/{record}'),
-            'view' => Pages\ViewOrderTransfer::route('/{record}'),
+            'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
     }
@@ -161,24 +161,4 @@ class TransferOrderResource extends Resource
     {
         return static::getModel()::query()->InTransfer();
     }
-
-    // public static function getGlobalSearchResultTitle(Model $record): string
-    // {
-    //     return $record;
-    // }
-
-    // public static function getEloquentQuery(): Builder
-    // {
-    //     return static::getModel()::query()
-    //         ->join('orders_details', 'orders_details.order_id', '=', 'orders.id')
-    //         ->where('orders_details.available_in_store', 1)
-    //         ->whereHas('InTransfer')
-    //         ->where('id', 'like', '%6%')
-    //         ->limit(50);
-    // }
-
-    // protected static function getNavigationBadge(): ?string
-    // {
-    //     return static::getModel()::InTransfer()->count();
-    // }
 }

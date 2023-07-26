@@ -98,7 +98,13 @@ class ProductRepository implements ProductRepositoryInterface
 
     function reportv2($request)
     {
-        $branch_id = $request->input('branch_id');
+        $currnetRole =  auth()->user()?->roles[0]?->id;
+        if ($currnetRole == 7) {
+            $branch_id = auth()->user()->branch->id;
+        } else {
+            $branch_id = $request->input('branch_id');
+        }
+
         $from_date = $request->input('from_date');
         $to_date = $request->input('to_date');
         $year = $request->input('year');
@@ -151,8 +157,13 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function reportv2Details($request, $category_id)
     {
+        $currnetRole =  auth()->user()?->roles[0]?->id;
 
-        $branch_id = $request->input('branch_id');
+        if ($currnetRole == 7) {
+            $branch_id = auth()->user()->branch->id;
+        } else {
+            $branch_id = $request->input('branch_id');
+        }
         $from_date = $request->input('from_date');
         $to_date = $request->input('to_date');
         $year = $request->input('year');
