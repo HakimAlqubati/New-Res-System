@@ -181,7 +181,7 @@ class ProductRepository implements ProductRepositoryInterface
                 return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
             })->when($year && $month, function ($query) use ($year, $month) {
                 return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
-            })
+            })  
             ->where('products.category_id', $category_id)
             ->groupBy(
                 'orders_details.product_id',
@@ -192,15 +192,16 @@ class ProductRepository implements ProductRepositoryInterface
                 'units.name',
                 //             DB::raw('YEAR(orders.created_at)'),
                 // DB::raw('MONTH(orders.created_at)')
-            )
+            )   
             ->get([
                 'products.category_id',
                 'orders_details.product_id',
                 'products.name as product_name',
                 'units.name as unit_name',
                 'orders_details.unit_id as unit_id',
-                DB::raw('ROUND(SUM(orders_details.available_quantity), 2) as available_quantity')
-            ]);
+                DB::raw('ROUND(SUM(orders_details.available_quantity), 2) as available_quantity'),
+                DB::raw('CONCAT(ROUND(SUM(orders_details.price), 2), " MR") as price') ,
+            ]); 
         return $data;
     }
 }
