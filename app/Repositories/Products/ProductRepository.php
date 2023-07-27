@@ -13,10 +13,11 @@ class ProductRepository implements ProductRepositoryInterface
 {
 
     protected $model;
-
+    protected $currency;
     public function __construct(Product $model)
     {
         $this->model = $model;
+        $this->currency = 'RM';
     }
 
     function index($request)
@@ -145,7 +146,8 @@ class ProductRepository implements ProductRepositoryInterface
             $obj->category_id = $cat_id;
             $obj->category_name = $cat_name;
             $obj->available_quantity =  round(isset($data[$cat_id]) ? $data[$cat_id]['available_quantity'] : 0, 0);
-            $obj->price = (isset($data[$cat_id]) ? $data[$cat_id]['price'] : '0.00') . ' ' . 'RM';
+            $price = (isset($data[$cat_id]) ? $data[$cat_id]['price'] : '0.00');
+            $obj->price =  formatMoney($price, $this->currency);
             $final_result[] = $obj;
         }
 
@@ -181,7 +183,7 @@ class ProductRepository implements ProductRepositoryInterface
                 return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
             })->when($year && $month, function ($query) use ($year, $month) {
                 return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
-            })  
+            })
             ->where('products.category_id', $category_id)
             ->groupBy(
                 'orders_details.product_id',
@@ -192,7 +194,7 @@ class ProductRepository implements ProductRepositoryInterface
                 'units.name',
                 //             DB::raw('YEAR(orders.created_at)'),
                 // DB::raw('MONTH(orders.created_at)')
-            )   
+            )
             ->get([
                 'products.category_id',
                 'orders_details.product_id',
@@ -200,8 +202,20 @@ class ProductRepository implements ProductRepositoryInterface
                 'units.name as unit_name',
                 'orders_details.unit_id as unit_id',
                 DB::raw('ROUND(SUM(orders_details.available_quantity), 0) as available_quantity'),
-                DB::raw('CONCAT(ROUND(SUM(orders_details.price), 2), " MR") as price') ,
-            ]); 
-        return $data;
+                DB::raw('(SUM(orders_details.price)) as price'),
+            ]);
+        $final_result = [];
+        foreach ($data as   $val_data) {
+            $obj = new \stdClass();
+            $obj->category_id = $val_data->category_id;
+            $obj->product_id = $val_data->product_id;
+            $obj->product_name = $val_data->product_name;
+            $obj->unit_name = $val_data->unit_name;
+            $obj->unit_id = $val_data->unit_id;
+            $obj->available_quantity = $val_data->available_quantity;
+            $obj->price = formatMoney($val_data->price, $this->currency);
+            $final_result[] = $obj;
+        }
+        return $final_result;
     }
 }
