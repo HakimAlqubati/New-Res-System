@@ -148,6 +148,8 @@ class ProductRepository implements ProductRepositoryInterface
             $obj->available_quantity =  round(isset($data[$cat_id]) ? $data[$cat_id]['available_quantity'] : 0, 0);
             $price = (isset($data[$cat_id]) ? $data[$cat_id]['price'] : '0.00');
             $obj->price =  formatMoney($price, $this->currency);
+            $obj->amount = number_format($price,2);
+            $obj->symbol = $this->currency;
             $final_result[] = $obj;
         }
 
@@ -214,6 +216,8 @@ class ProductRepository implements ProductRepositoryInterface
             $obj->unit_id = $val_data->unit_id;
             $obj->available_quantity = $val_data->available_quantity;
             $obj->price = formatMoney($val_data->price, $this->currency);
+            $obj->amount = number_format($val_data->price, 2);
+            $obj->symbol = $this->currency;
             $final_result[] = $obj;
         }
         return $final_result;
