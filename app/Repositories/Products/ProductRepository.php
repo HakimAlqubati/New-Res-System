@@ -5,7 +5,7 @@ namespace App\Repositories\Products;
 use App\Http\Resources\ProductResource;
 use App\Interfaces\Products\ProductRepositoryInterface;
 use App\Models\Branch;
-use App\Models\Category;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 
@@ -60,7 +60,7 @@ class ProductRepository implements ProductRepositoryInterface
         $params = array();
         $where = array();
 
-        $currnetRole = auth()->user()?->roles[0]?->id;
+        $currnetRole = getCurrentRole();
         if ($currnetRole == 7) {
             $where[] = 'orders.customer_id = ?';
             $params[] = $request->user()->id;
@@ -99,9 +99,9 @@ class ProductRepository implements ProductRepositoryInterface
 
     function reportv2($request)
     {
-        $currnetRole =  auth()->user()?->roles[0]?->id;
+        $currnetRole =  getCurrentRole();
         if ($currnetRole == 7) {
-            $branch_id = auth()->user()->branch->id;
+            $branch_id = getBranchId();
         } else {
             $branch_id = $request->input('branch_id');
         }
@@ -128,6 +128,7 @@ class ProductRepository implements ProductRepositoryInterface
             ->when($year && $month, function ($query) use ($year, $month) {
                 return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
             })
+            ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
             ->groupBy('products.category_id')
             ->get()
             ->mapWithKeys(function ($item) {
@@ -148,7 +149,7 @@ class ProductRepository implements ProductRepositoryInterface
             $obj->available_quantity =  round(isset($data[$cat_id]) ? $data[$cat_id]['available_quantity'] : 0, 0);
             $price = (isset($data[$cat_id]) ? $data[$cat_id]['price'] : '0.00');
             $obj->price =  formatMoney($price, $this->currency);
-            $obj->amount = number_format($price,2);
+            $obj->amount = number_format($price, 2);
             $obj->symbol = $this->currency;
             $final_result[] = $obj;
         }
@@ -161,10 +162,10 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function reportv2Details($request, $category_id)
     {
-        $currnetRole =  auth()->user()?->roles[0]?->id;
+        $currnetRole =  getCurrentRole();
 
         if ($currnetRole == 7) {
-            $branch_id = auth()->user()->branch->id;
+            $branch_id = getBranchId();
         } else {
             $branch_id = $request->input('branch_id');
         }
@@ -186,6 +187,7 @@ class ProductRepository implements ProductRepositoryInterface
             })->when($year && $month, function ($query) use ($year, $month) {
                 return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
             })
+            ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
             ->where('products.category_id', $category_id)
             ->groupBy(
                 'orders_details.product_id',
