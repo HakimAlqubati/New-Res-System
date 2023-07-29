@@ -232,4 +232,33 @@ class ProductRepository implements ProductRepositoryInterface
         }
         return $final_result;
     }
+
+    public function getProductsOrdersQuntities($request)
+    {
+
+ 
+        $from_date = $request->input('from_date');
+        $to_date = $request->input('to_date');
+        $data =  DB::table('orders_details')
+            ->select(
+                'products.name AS product',
+                'branches.name AS branch',
+                'units.name AS unit',
+                DB::raw('SUM(orders_details.available_quantity) AS quantity')
+            )
+            ->join('products', 'orders_details.product_id', '=', 'products.id')
+            ->join('orders', 'orders_details.order_id', '=', 'orders.id')
+            ->join('branches', 'orders.branch_id', '=', 'branches.id')
+            ->join('units', 'orders_details.unit_id', '=', 'units.id')
+            ->where('orders_details.product_id', '=', $request->input('product_id')) 
+            ->when($from_date && $to_date, function ($query) use ($from_date, $to_date) {
+                return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
+            })
+            ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            // ->groupBy('orders.branch_id')
+            ->groupBy('orders.branch_id', 'products.name', 'branches.name', 'units.name')
+            ->get();
+
+        return $data;
+    }
 }

@@ -35,12 +35,13 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/v2/report_products', [ProductController::class, 'reportProductsv2']);
     Route::get('/v2/report_products/details/{category_id}', [ProductController::class, 'reportProductsv2Details']);
 });
+Route::get('/getProductOrderQuantities', [ProductController::class, 'getProductOrderQuantities']);
 
 Route::get('/test', function () {
 });
 
 Route::get('/new-link', function () {
-    dd('hi hakeem');
+    
 });
 
 Route::get('/branches',function(){
