@@ -110,6 +110,7 @@ class ProductRepository implements ProductRepositoryInterface
         $to_date = $request->input('to_date');
         $year = $request->input('year');
         $month = $request->input('month');
+        $product_id = $request->input('product_id');
 
         $data = DB::table('orders_details')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
@@ -119,6 +120,9 @@ class ProductRepository implements ProductRepositoryInterface
                 DB::raw('SUM(orders_details.available_quantity) as available_quantity'),
                 DB::raw('SUM(orders_details.price) as price')
             )
+            ->when($product_id, function ($query) use ($product_id) {
+                return $query->where('orders_details.product_id', $product_id);
+            })
             ->when($branch_id, function ($query) use ($branch_id) {
                 return $query->where('orders.branch_id', $branch_id);
             })
@@ -173,6 +177,7 @@ class ProductRepository implements ProductRepositoryInterface
         $to_date = $request->input('to_date');
         $year = $request->input('year');
         $month = $request->input('month');
+        $product_id = $request->input('product_id');
 
         $data = DB::table('orders_details')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
@@ -181,6 +186,9 @@ class ProductRepository implements ProductRepositoryInterface
             // ->select('products.category_id', 'orders_details.product_id as p_id' )
             ->when($branch_id, function ($query) use ($branch_id) {
                 return $query->where('orders.branch_id', $branch_id);
+            })
+            ->when($product_id, function ($query) use ($product_id) {
+                return $query->where('orders_details.product_id', $product_id);
             })
             ->when($from_date && $to_date, function ($query) use ($from_date, $to_date) {
                 return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
