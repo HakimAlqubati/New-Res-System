@@ -2,13 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CategoryResource;
-use App\Http\Resources\ProductResource;
-use App\Models\Category;
-use App\Models\Product;
 use App\Repositories\Products\ProductRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -98,15 +93,19 @@ class ProductController extends Controller
      * get products report
      */
     public function reportProducts(Request $request)
-    { 
+    {
         return $this->productRepository->report($request);
     }
     public function reportProductsv2(Request $request)
-    { 
+    {
         return $this->productRepository->reportv2($request);
     }
-    public function reportProductsv2Details(Request $request,$category_id)
-    {  
-        return $this->productRepository->reportv2Details($request,$category_id);
+    public function reportProductsv2Details(Request $request, $category_id)
+    {
+        return $this->productRepository->reportv2Details($request, $category_id);
+    }
+    public function getProductOrderQuantities(Request $request)
+    {
+        return $this->productRepository->getProductsOrdersQuntities($request);
     }
 }
