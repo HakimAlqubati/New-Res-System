@@ -235,10 +235,9 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function getProductsOrdersQuntities($request)
     {
-
- 
         $from_date = $request->input('from_date');
         $to_date = $request->input('to_date');
+        $branch_id = $request->input('branch_id');
         $data =  DB::table('orders_details')
             ->select(
                 'products.name AS product',
@@ -250,9 +249,12 @@ class ProductRepository implements ProductRepositoryInterface
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             ->join('branches', 'orders.branch_id', '=', 'branches.id')
             ->join('units', 'orders_details.unit_id', '=', 'units.id')
-            ->where('orders_details.product_id', '=', $request->input('product_id')) 
+            ->where('orders_details.product_id', '=', $request->input('product_id'))
             ->when($from_date && $to_date, function ($query) use ($from_date, $to_date) {
                 return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
+            })
+            ->when($branch_id, function ($query) use ($branch_id) {
+                return $query->where('orders.branch_id', [$branch_id]);
             })
             ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
             // ->groupBy('orders.branch_id')
