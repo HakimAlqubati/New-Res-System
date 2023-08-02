@@ -237,7 +237,8 @@ class ProductRepository implements ProductRepositoryInterface
     {
         $from_date = $request->input('from_date');
         $to_date = $request->input('to_date');
-        $branch_id = $request->input('branch_id');
+        $branch_id = implode(',', $request->input('branch_id'));
+
         $data =  DB::table('orders_details')
             ->select(
                 'products.name AS product',
@@ -254,7 +255,7 @@ class ProductRepository implements ProductRepositoryInterface
                 return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
             })
             ->when($branch_id, function ($query) use ($branch_id) {
-                return $query->where('orders.branch_id', [$branch_id]);
+                return $query->whereIn('orders.branch_id', $branch_id);
             })
             ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
             // ->groupBy('orders.branch_id')
