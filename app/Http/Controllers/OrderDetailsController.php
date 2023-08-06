@@ -1,18 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\Category;
-use App\Models\OrderDetails;
-use App\Models\Product;
-use App\Models\UnitPrice;
-use App\Repositories\Orders\OrderDetailsRepository;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
+ 
+use App\Repositories\Orders\OrderDetailsRepository; 
+use Illuminate\Http\Request; 
 
 class OrderDetailsController extends Controller
 {

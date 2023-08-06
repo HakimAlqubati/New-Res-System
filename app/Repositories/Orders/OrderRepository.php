@@ -25,7 +25,7 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function index($request)
     { 
-        $currnetRole = $request->user()?->roles[0]?->id;
+        $currnetRole = getCurrentRole();
 
         $query = Order::query();
         if ($request->has('customer_id')) {
@@ -44,7 +44,7 @@ class OrderRepository implements OrderRepositoryInterface
         if ($currnetRole == 5) {
             $query->where('status', '!=', Order::PENDING_APPROVAL);
         }
-        $orders = $query->orderBy('created_at', 'DESC')->limit(20)->get();
+        $orders = $query->orderBy('created_at', 'DESC')->limit(80)->get();
         return OrderResource::collection($orders);
     }
     public function store($request)
@@ -52,7 +52,7 @@ class OrderRepository implements OrderRepositoryInterface
         return  DB::transaction(function () use ($request) {
             try {
                 // to get current user role
-                $currnetRole = $request->user()?->roles[0]?->id;
+                $currnetRole = getCurrentRole();
                 if (!isset($currnetRole)) {
                     return response()->json([
                         'success' => false,
