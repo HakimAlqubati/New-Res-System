@@ -235,9 +235,15 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function getProductsOrdersQuntities($request)
     {
+        $currnetRole = getCurrentRole();
+        
         $from_date = $request->input('from_date');
         $to_date = $request->input('to_date');
-        $branch_id = explode(',', $request->input('branch_id')); 
+        if ($currnetRole == 7)
+            $branch_id = [getBranchId()];
+        else
+            $branch_id = explode(',', $request->input('branch_id'));
+            
         $data =  DB::table('orders_details')
             ->select(
                 'products.name AS product',
