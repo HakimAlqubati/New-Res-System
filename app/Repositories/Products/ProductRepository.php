@@ -237,8 +237,7 @@ class ProductRepository implements ProductRepositoryInterface
     {
         $from_date = $request->input('from_date');
         $to_date = $request->input('to_date');
-        $branch_id = implode(',', $request->input('branch_id'));
-
+        $branch_id = explode(',', $request->input('branch_id')); 
         $data =  DB::table('orders_details')
             ->select(
                 'products.name AS product',
