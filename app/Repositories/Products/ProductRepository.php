@@ -236,14 +236,13 @@ class ProductRepository implements ProductRepositoryInterface
     public function getProductsOrdersQuntities($request)
     {
         $currnetRole = getCurrentRole();
-        
         $from_date = $request->input('from_date');
         $to_date = $request->input('to_date');
         if ($currnetRole == 7)
             $branch_id = [getBranchId()];
         else
             $branch_id = explode(',', $request->input('branch_id'));
-            
+ 
         $data =  DB::table('orders_details')
             ->select(
                 'products.name AS product',
@@ -259,7 +258,7 @@ class ProductRepository implements ProductRepositoryInterface
             ->when($from_date && $to_date, function ($query) use ($from_date, $to_date) {
                 return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
             })
-            ->when($branch_id, function ($query) use ($branch_id) {
+            ->when($branch_id && is_numeric($branch_id), function ($query) use ($branch_id) {
                 return $query->whereIn('orders.branch_id', $branch_id);
             })
             ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
