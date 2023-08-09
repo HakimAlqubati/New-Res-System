@@ -242,8 +242,18 @@ class ProductRepository implements ProductRepositoryInterface
             $branch_id = [getBranchId()];
         else
             $branch_id = explode(',', $request->input('branch_id'));
- 
-        $data =  DB::table('orders_details')
+
+        $dataQuantity =  $this->getReportData($request, $from_date, $to_date, $branch_id);
+
+        return [
+            'dataQuantity' => $dataQuantity,
+            'dataTotal' => $this->getCount($request, $from_date, $to_date)
+        ];
+    }
+
+    public function getReportData($request, $from_date, $to_date, $branch_id)
+    {
+        $data = DB::table('orders_details')
             ->select(
                 'products.name AS product',
                 'branches.name AS branch',
@@ -262,10 +272,28 @@ class ProductRepository implements ProductRepositoryInterface
                 return $query->whereIn('orders.branch_id', $branch_id);
             })
             ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
-            // ->groupBy('orders.branch_id')
             ->groupBy('orders.branch_id', 'products.name', 'branches.name', 'units.name')
             ->get();
-
+        return $data;
+    }
+    public function getCount($request, $from_date, $to_date)
+    {
+        $data = DB::table('orders_details')
+            ->select(
+                'products.name AS product', 
+                'units.name AS unit',
+                DB::raw('SUM(orders_details.available_quantity) AS quantity')
+            )
+            ->join('products', 'orders_details.product_id', '=', 'products.id')
+            ->join('orders', 'orders_details.order_id', '=', 'orders.id') 
+            ->join('units', 'orders_details.unit_id', '=', 'units.id')
+            ->where('orders_details.product_id', '=', $request->input('product_id'))
+            ->when($from_date && $to_date, function ($query) use ($from_date, $to_date) {
+                return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
+            }) 
+            ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            ->groupBy('products.name',   'units.name')
+            ->get();
         return $data;
     }
 }
