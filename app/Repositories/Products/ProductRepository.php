@@ -243,11 +243,12 @@ class ProductRepository implements ProductRepositoryInterface
         else
             $branch_id = explode(',', $request->input('branch_id'));
 
+        // dd($branch_id);
         $dataQuantity =  $this->getReportData($request, $from_date, $to_date, $branch_id);
 
         return [
             'dataQuantity' => $dataQuantity,
-            'dataTotal' => $this->getCount($request, $from_date, $to_date)
+            'dataTotal' => $this->getCount($request, $from_date, $to_date, $branch_id)
         ];
     }
 
@@ -268,7 +269,7 @@ class ProductRepository implements ProductRepositoryInterface
             ->when($from_date && $to_date, function ($query) use ($from_date, $to_date) {
                 return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
             })
-            ->when($branch_id && is_numeric($branch_id), function ($query) use ($branch_id) {
+            ->when($branch_id && is_array($branch_id), function ($query) use ($branch_id) {
                 return $query->whereIn('orders.branch_id', $branch_id);
             })
             ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
@@ -276,23 +277,30 @@ class ProductRepository implements ProductRepositoryInterface
             ->get();
         return $data;
     }
-    public function getCount($request, $from_date, $to_date)
+    public function getCount($request, $from_date, $to_date, $branch_id)
     {
         $data = DB::table('orders_details')
             ->select(
-                'products.name AS product', 
+                'products.name AS product',
                 'units.name AS unit',
                 DB::raw('SUM(orders_details.available_quantity) AS quantity')
             )
             ->join('products', 'orders_details.product_id', '=', 'products.id')
-            ->join('orders', 'orders_details.order_id', '=', 'orders.id') 
+            ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             ->join('units', 'orders_details.unit_id', '=', 'units.id')
             ->where('orders_details.product_id', '=', $request->input('product_id'))
             ->when($from_date && $to_date, function ($query) use ($from_date, $to_date) {
                 return $query->whereBetween('orders.created_at', [$from_date, $to_date]);
-            }) 
+            })
+            ->when(getCurrentRole() == 7, function ($query) {
+                return $query->where('orders.branch_id', getBranchId());
+            })
+            ->when(getCurrentRole() == 3 && $branch_id && is_array($branch_id), function ($query) use ($branch_id) {
+                return $query->whereIn('orders.branch_id', $branch_id);
+            })
             ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
             ->groupBy('products.name',   'units.name')
+            // ->groupBy('orders.branch_id')
             ->get();
         return $data;
     }
