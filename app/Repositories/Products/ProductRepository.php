@@ -245,7 +245,7 @@ class ProductRepository implements ProductRepositoryInterface
 
         // dd($branch_id);
         $dataQuantity =  $this->getReportData($request, $from_date, $to_date, $branch_id);
-
+        // dd($dataQuantity);
         return [
             'dataQuantity' => $dataQuantity,
             'dataTotal' => $this->getCount($request, $from_date, $to_date, $branch_id)
@@ -275,7 +275,16 @@ class ProductRepository implements ProductRepositoryInterface
             ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
             ->groupBy('orders.branch_id', 'products.name', 'branches.name', 'units.name')
             ->get();
-        return $data;
+        $final = [];
+        foreach ($data as   $val) {
+            $obj = new \stdClass();
+            $obj->product = $val->product;
+            $obj->branch = $val->branch;
+            $obj->unit = $val->unit;
+            $obj->quantity =   number_format($val->quantity, 2);
+            $final[] = $obj;
+        }
+        return $final;
     }
     public function getCount($request, $from_date, $to_date, $branch_id)
     {
@@ -302,6 +311,11 @@ class ProductRepository implements ProductRepositoryInterface
             ->groupBy('products.name',   'units.name')
             // ->groupBy('orders.branch_id')
             ->get();
+        // Apply number_format() to the quantity value
+        foreach ($data as &$item) {
+             
+            $item->quantity  = number_format($item->quantity , 2);
+        }
         return $data;
     }
 }
