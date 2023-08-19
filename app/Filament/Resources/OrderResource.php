@@ -44,7 +44,7 @@ class OrderResource extends Resource implements HasShieldPermissions
             'publish'
         ];
     }
-    
+
     protected static ?string $model = Order::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
@@ -92,7 +92,7 @@ class OrderResource extends Resource implements HasShieldPermissions
                     ])
                     ->iconPosition('after'),
                 count_items_order::make('item_counts'),
-                TotalOrder::make('total_amount'),                
+                TotalOrder::make('total_amount'),
                 TextColumn::make('branch.name'),
                 TextColumn::make('created_at')->sortable(),
                 // TextColumn::make('recorded'),
@@ -158,7 +158,7 @@ class OrderResource extends Resource implements HasShieldPermissions
 
     public static function getPages(): array
     {
-        
+
         return [
             'index' => Pages\ListOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),

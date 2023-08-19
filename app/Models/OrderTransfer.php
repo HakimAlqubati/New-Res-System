@@ -11,7 +11,7 @@ class OrderTransfer extends Model
 
 
     protected $table = 'orders';
-    // protected $primaryKey = '_id';
+    // protected $primaryKey = 'id';
     public const ORDERED = 'ordered';
     public const PROCESSING = 'processing';
     public const READY_FOR_DELEVIRY = 'ready_for_delivery';
@@ -32,7 +32,7 @@ class OrderTransfer extends Model
 
     public function orderDetails()
     {
-        return $this->hasMany(OrderDetails::class)
+        return $this->hasMany(OrderDetails::class,'order_id')
             ->where('quantity', '>', 0)
             ->where('available_quantity', '>', 0);
     }
@@ -55,6 +55,8 @@ class OrderTransfer extends Model
     {
         return $this->belongsTo(Order::class, 'id');
     }
+
+   
     public function scopeInTransfer($query)
     {
         return $query->select('orders.*')

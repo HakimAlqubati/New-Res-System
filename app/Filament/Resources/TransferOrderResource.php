@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\OrderTransfer;
+use App\Tables\Columns\CountItemsTransfer;
+use App\Tables\Columns\TotalTransfer;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
@@ -33,7 +35,7 @@ class TransferOrderResource extends Resource
     public static ?string $slug = 'transfers-list';
     public static function form(Form $form): Form
     {
- 
+
         return $form
             ->schema([
                 TextInput::make('id')->label('Order id'),
@@ -52,13 +54,19 @@ class TransferOrderResource extends Resource
                     ->copyable()
                     ->copyMessage('Order id copied')
                     ->copyMessageDuration(1500)
-                    ->sortable()->searchable()
-                    ->searchable(isIndividual: true, isGlobal: false),
+                    ->sortable()
+                    ->searchable()
+                    ->searchable(
+                        isIndividual: true,
+                        isGlobal: false
+                    ),
                 TextColumn::make('customer.name')->label('customer')->toggleable()
                     ->searchable(isIndividual: true)
                     ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
 
                 TextColumn::make('branch.name'),
+                CountItemsTransfer::make('item_counts'),
+                TotalTransfer::make('total_amount'),
                 TextColumn::make('created_at')->sortable(),
                 // TextColumn::make('recorded'),
                 // TextColumn::make('orderDetails'),
