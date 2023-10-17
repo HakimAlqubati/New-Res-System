@@ -26,6 +26,9 @@ $app = new Illuminate\Foundation\Application(
 |
 */
 
+// $app->configure('modules');
+// $app->register(\Nwidart\Modules\LumenModulesServiceProvider::class);
+
 $app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
     App\Http\Kernel::class
