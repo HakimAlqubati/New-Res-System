@@ -180,8 +180,7 @@ return [
         Illuminate\Session\SessionServiceProvider::class,
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
-        Illuminate\View\ViewServiceProvider::class, 
-        Arcanedev\LogViewer\LogViewerServiceProvider::class,
+        Illuminate\View\ViewServiceProvider::class,  
         Maatwebsite\Excel\ExcelServiceProvider::class,
         /*
          * Package Service Providers...
@@ -194,6 +193,8 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
+        App\Providers\Filament\AdminPanelProvider::class,
+        App\Providers\Filament\AdminPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
 
     ],

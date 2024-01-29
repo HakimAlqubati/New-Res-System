@@ -10,9 +10,9 @@ use App\Tables\Columns\TotalTransfer;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -26,7 +26,7 @@ class TransferOrderResource extends Resource
 {
     protected static ?string $model = OrderTransfer::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Orders';
     protected static ?string $recordTitleAttribute = 'orders.id';
 

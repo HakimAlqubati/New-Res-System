@@ -57,7 +57,7 @@ class User extends Authenticatable implements FilamentUser
     public static $filamentRolesColumn = 'filament_roles';
 
 
-    public function canAccessFilament(): bool
+    public function canAccessPanel(): bool
     {
         return true;
         return $this->group === 'Filament Users';
