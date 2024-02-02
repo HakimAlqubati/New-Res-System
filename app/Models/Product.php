@@ -13,7 +13,7 @@ class Product extends Model
         'code',
         'description',
         'active',
-        'category_id', 
+        'category_id',
     ];
 
     public function units()
@@ -52,10 +52,15 @@ class Product extends Model
             'unit_prices' => $this->unitPrices,
         ];
     }
-   //new code
+    //new code
     public function scopeActive($query)
     {
         return $query->where('active', '=', 1);
     }
- 
+
+    // to return products that have unit prices only
+    public function scopeHasUnitPrices($query)
+    {
+        return $query->has('unitPrices');
+    }
 }
