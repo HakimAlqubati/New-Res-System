@@ -31,7 +31,13 @@ class UnitPricesRelationManager extends RelationManager
                     ->options(function () {
                         return Unit::pluck('name', 'id');
                     })->searchable(),
-                TextInput::make('price')->type('number')->default(1),
+                TextInput::make('price')->type('number')->default(1)
+                    ->mask(
+                        fn (TextInput\Mask $mask) => $mask
+                            ->numeric()
+                            ->decimalPlaces(2)
+                            ->thousandsSeparator(',')
+                    ),
             ]);
     }
 
