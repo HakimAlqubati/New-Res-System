@@ -108,11 +108,10 @@ class ProductRepository implements ProductRepositoryInterface
 
         $from_date = $request->input('from_date');
         $to_date = $request->input('to_date');
-        $to_date = \Carbon\Carbon::parse($to_date)->addDay()->toDateString();
         $year = $request->input('year');
         $month = $request->input('month');
         $product_id = $request->input('product_id');
- 
+
         $data = DB::table('orders_details')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             ->join('products', 'orders_details.product_id', '=', 'products.id')
@@ -176,7 +175,6 @@ class ProductRepository implements ProductRepositoryInterface
         }
         $from_date = $request->input('from_date');
         $to_date = $request->input('to_date');
-        $to_date = \Carbon\Carbon::parse($to_date)->addDay()->toDateString();
         $year = $request->input('year');
         $month = $request->input('month');
         $product_id = $request->input('product_id');
@@ -240,7 +238,6 @@ class ProductRepository implements ProductRepositoryInterface
         $currnetRole = getCurrentRole();
         $from_date = $request->input('from_date');
         $to_date = $request->input('to_date');
-        $to_date = \Carbon\Carbon::parse($to_date)->addDay()->toDateString();
         if ($currnetRole == 7)
             $branch_id = [getBranchId()];
         else
