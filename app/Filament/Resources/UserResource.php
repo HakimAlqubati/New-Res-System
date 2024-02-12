@@ -29,21 +29,26 @@ class UserResource extends Resource
                 TextInput::make('name')->required(),
                 TextInput::make('email')->email()->required(),
 
-                TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->reactive()
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
                 Select::make('role_id')
                     ->label('Role')
                     ->searchable()
                     ->required()
                     ->options(function () {
                         return DB::table('roles')->pluck('name', 'id');
-                    })
-                    ->hiddenOn(Pages\EditUser::class)
-
-
+                    }),
+                Select::make('owner_id')
+                    ->label('Owner')
+                    ->searchable()
+                    ->required()
+                    ->options(function () {
+                        return DB::table('users')->pluck('name', 'id');
+                    }),
+                TextInput::make('password')
+                    ->password()
+                    ->columnSpanFull()
+                    ->required()
+                    ->reactive()
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
             ]);
     }
 
