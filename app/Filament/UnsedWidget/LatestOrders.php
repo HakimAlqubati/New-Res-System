@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Filament\Widgets;
+// namespace App\Filament\Widgets;
+namespace App\Filament\UnusedWidgets;
 
 use App\Models\Order;
 use Closure;
