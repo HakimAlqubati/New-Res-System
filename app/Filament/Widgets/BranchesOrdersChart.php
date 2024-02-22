@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class BranchesOrdersChart extends CustomChartWidget
 {
     public ?string $yearid = '0000';
-    protected static ?string $heading = 'الفروع الأكثر طلباً لعام ';
+    protected static ?string $heading = 'الفروع الأكثر طلباً   ';
     protected static ?string $maxHeight = '300px';
     protected static string $view = 'vendor.filament.widgets.branches-orders-chart';
     protected function getData(): array
