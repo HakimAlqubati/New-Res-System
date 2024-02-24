@@ -18,7 +18,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'token' => $token,
-                'user'=>UserResource::make($user)
+                'user' => UserResource::make($user)
             ]);
         } else {
             return response()->json(['error' => 'Unauthorized'], 401);

@@ -39,7 +39,6 @@ class UserResource extends Resource
                 Select::make('owner_id')
                     ->label('Owner')
                     ->searchable()
-                    ->required()
                     ->options(function () {
                         return DB::table('users')->pluck('name', 'id');
                     }),

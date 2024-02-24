@@ -7,6 +7,7 @@ use App\Http\Controllers\OrderDetailsController;
 use App\Http\Controllers\ProductController;
 use App\Models\Branch;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -38,14 +39,14 @@ Route::middleware('auth:api')->group(function () {
 });
 
 Route::get('/test', function () {
+    return User::role([1, 3])->pluck('id');
 });
 
 Route::get('/new-link', function () {
-    
 });
 
-Route::get('/branches',function(){
-return Branch::get(['id','name']);
+Route::get('/branches', function () {
+    return Branch::get(['id', 'name']);
 });
 
 
