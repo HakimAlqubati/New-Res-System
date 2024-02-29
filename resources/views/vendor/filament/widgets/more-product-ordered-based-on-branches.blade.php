@@ -37,7 +37,7 @@
                             'dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:focus:border-primary-500' => config(
                                 'filament.dark_mode'),
                         ])>
-                            <option value="0">-إختر الشهر-</option>
+                            <option value="0">الكل</option>
                             <option value="1">يناير</option>
                             <option value="2">فبراير</option>
                             <option value="3">مارس</option>
@@ -63,7 +63,7 @@
                                 'filament.dark_mode'),
                         ])>
 
-                            <option value="0000">-الكل- </option>
+                            <option value="0000"> الكل </option>
                             <option value="2022">2022</option>
                             <option value="2023">2023</option>
                             <option value="2024">2024</option>
@@ -78,8 +78,6 @@
                             'dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:focus:border-primary-500' => config(
                                 'filament.dark_mode'),
                         ])>
-
-
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="15">15</option>
@@ -156,7 +154,7 @@
     </x-filament::card>
 </x-filament::widget>
 <style>
-    select{
+    select {
         min-width: 180px !important;
     }
 </style>

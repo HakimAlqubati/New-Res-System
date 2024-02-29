@@ -12,6 +12,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
@@ -23,29 +24,40 @@ class UserResource extends Resource
     protected static ?string $navigationGroup = 'User & Roles';
     public static function form(Form $form): Form
     {
+
         return $form
             ->schema([
 
                 TextInput::make('name')->required(),
                 TextInput::make('email')->email()->required(),
 
-                Select::make('role_id')
-                    ->label('Role')
-                    ->searchable()
-                    ->required()
-                    ->options(function () {
-                        return DB::table('roles')->pluck('name', 'id');
-                    }),
+                // Select::make('role_id')
+                //     ->label('Role')
+                //     ->searchable()
+                //     ->required()
+                //     ->options(function () {
+                //         return DB::table('roles')->pluck('name', 'id');
+                //     }),
+
+                Select::make('roles')
+                    ->relationship('roles', 'name')
+                    ->multiple()
+                    ->maxItems(1)
+                    ->preload()
+                    ->searchable(),
+
                 Select::make('owner_id')
                     ->label('Owner')
                     ->searchable()
                     ->options(function () {
                         return DB::table('users')->pluck('name', 'id');
                     }),
+
                 TextInput::make('password')
                     ->password()
                     ->columnSpanFull()
-                    ->required()
+                    // ->required()
+                    ->required(fn (string $context) => $context === 'create')
                     ->reactive()
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
             ]);
