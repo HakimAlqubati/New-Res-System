@@ -23,8 +23,8 @@ class BranchResource extends Resource
 {
     protected static ?string $model = Branch::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection'; 
-    protected static ?string $navigationGroup = 'Branches'; 
+    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationGroup = 'Branches';
     public static function form(Form $form): Form
     {
         return $form
@@ -45,7 +45,10 @@ class BranchResource extends Resource
             ->columns([
                 TextColumn::make('id'),
                 TextColumn::make('name')->searchable(),
-                TextColumn::make('address'),
+                TextColumn::make('address')
+                // ->limit(100)
+                ->words(5)
+                ,
                 TextColumn::make('user.name')->label('Manager'),
 
             ])
