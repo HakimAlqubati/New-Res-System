@@ -11,12 +11,12 @@ class OrderObserver
 {
     public function created(Order $order)
     {
-        $recipient = User::role([1, 3])->pluck('id');
+        // $recipient = User::role([1, 3])->pluck('id');
 
-        Notification::make()
-            ->title('Order no ' . $order->id . ' Has been created')
-            ->sendToDatabase($recipient)
-            ->broadcast($recipient);
+        // Notification::make()
+        //     ->title('Order no ' . $order->id . ' Has been created')
+        //     ->sendToDatabase($recipient)
+        // ->broadcast($recipient);
     }
     public function updated(Order $order)
     {
