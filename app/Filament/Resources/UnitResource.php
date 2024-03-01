@@ -28,7 +28,7 @@ class UnitResource extends Resource
     // protected static bool $shouldRegisterNavigation = false;
 
 
-    protected static ?string $navigationLabel = 'Units'; 
+    protected static ?string $navigationLabel = 'Units';
     public static function form(Form $form): Form
     {
         return $form
@@ -56,12 +56,26 @@ class UnitResource extends Resource
             ->filters([
                 Tables\Filters\Filter::make('active')
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('active')),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\ForceDeleteBulkAction::make(),
+                Tables\Actions\RestoreBulkAction::make(),
+            ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
             ]);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProductResource\RelationManagers;
 
 use App\Models\Unit;
+use App\Models\UnitPrice;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 class UnitPricesRelationManager extends RelationManager
 {
     protected static string $relationship = 'unitPrices';
-
+    protected static ?string $model = UnitPrice::class;
     protected static ?string $recordTitleAttribute = 'product_id';
 
     public static function form(Form $form): Form
@@ -49,7 +50,7 @@ class UnitPricesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('price'),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
@@ -61,9 +62,18 @@ class UnitPricesRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\RestoreBulkAction::make(),
+            ]);
+    }
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
             ]);
     }
 }

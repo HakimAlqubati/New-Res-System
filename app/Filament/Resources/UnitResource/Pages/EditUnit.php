@@ -10,10 +10,15 @@ class EditUnit extends EditRecord
 {
     protected static string $resource = UnitResource::class;
 
+
     protected function getActions(): array
     {
         return [
+            Actions\EditAction::make(),
             Actions\DeleteAction::make(),
+            // Actions\ForceDeleteAction::make(),
+            Actions\RestoreAction::make(),
+            // ...
         ];
     }
 }

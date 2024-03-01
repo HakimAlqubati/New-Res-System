@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UnitPrice extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
     protected $table = 'unit_prices';
-
+    public $primaryKey = 'id';
     protected $fillable = ['unit_id', 'product_id', 'price'];
     public function product()
     {

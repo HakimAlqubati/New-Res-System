@@ -143,8 +143,7 @@ class OrderResource extends Resource implements HasShieldPermissions
                 Tables\Actions\ViewAction::make(),
                 // Tables\Actions\EditAction::make(), 
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->bulkActions([ 
                 ExportBulkAction::make()
             ]);
     }
