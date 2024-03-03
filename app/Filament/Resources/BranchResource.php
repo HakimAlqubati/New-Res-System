@@ -25,6 +25,10 @@ class BranchResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $navigationGroup = 'Branches';
+    protected static function getNavigationLabel(): string
+    {
+        return __('lang.branches');
+    }
     public static function form(Form $form): Form
     {
         return $form

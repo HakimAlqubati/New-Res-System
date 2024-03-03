@@ -2,13 +2,22 @@
 
 namespace App\Providers;
 
+use App\Filament\Resources\BranchResource;
+use App\Filament\Resources\CategoryResource;
+use App\Filament\Resources\OrderResource;
+use App\Filament\Resources\ProductResource;
+use App\Filament\Resources\Shield\RoleResource;
+use App\Filament\Resources\TransferOrderResource;
+use App\Filament\Resources\UnitResource;
+use App\Filament\Resources\UserResource;
 use App\Interfaces\Orders\OrderRepositoryInterface;
 use App\Models\Order;
 use App\Observers\OrderObserver;
 use App\Repositories\Orders\OrderRepository;
 use Filament\Facades\Filament;
+use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
-
+use Filament\Navigation\NavigationItem;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -38,12 +47,55 @@ class AppServiceProvider extends ServiceProvider
         //
         Order::observe(OrderObserver::class);
 
-        Filament::registerNavigationGroups([
-            'Orders',
-            'Products - units',
-            'Categories',
-            'Branches',
-            'User & Roles',
-        ]);
+        // Filament::registerNavigationGroups([
+        //     'Orders',
+        //     'Products - units',
+        //     'Categories',
+        //     'Branches',
+        //     'User & Roles',
+        // ]);
+
+        Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
+            return $builder->items([
+                NavigationItem::make(__('lang.dashboard'))
+                    ->icon('heroicon-o-home')
+                    ->activeIcon('heroicon-s-home')
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
+                    ->url(route('filament.pages.dashboard')),
+            ])
+                ->groups([
+                    NavigationGroup::make(__('lang.orders'))
+                        ->items([
+                            ...OrderResource::getNavigationItems(),
+                            ...TransferOrderResource::getNavigationItems(),
+                        ]),
+                ])
+                ->groups([
+                    NavigationGroup::make(__('lang.products_and_units'))
+                        ->items([
+                            ...ProductResource::getNavigationItems(),
+                            ...UnitResource::getNavigationItems(),
+                        ]),
+                ])
+                ->groups([
+                    NavigationGroup::make(__('lang.categories'))
+                        ->items([
+                            ...CategoryResource::getNavigationItems(),
+                        ]),
+                ])
+                ->groups([
+                    NavigationGroup::make(__('lang.branches'))
+                        ->items([
+                            ...BranchResource::getNavigationItems(),
+                        ]),
+                ])
+                ->groups([
+                    NavigationGroup::make(__('lang.user_and_roles'))
+                        ->items([
+                            ...UserResource::getNavigationItems(),
+                            ...RoleResource::getNavigationItems(),
+                        ]),
+                ]);
+        });
     }
 }

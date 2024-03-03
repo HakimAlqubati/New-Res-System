@@ -23,6 +23,10 @@ class CategoryResource extends Resource
     protected static ?string $navigationGroup = 'Categories';
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static function getNavigationLabel(): string
+    {
+        return __('lang.categories');
+    }
     public static function form(Form $form): Form
     {
         return $form

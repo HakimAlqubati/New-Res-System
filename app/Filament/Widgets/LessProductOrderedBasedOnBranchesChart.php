@@ -16,10 +16,14 @@ class LessProductOrderedBasedOnBranchesChart extends CustomChartWidget
     public ?int $productscount = 15;
 
     public $branches;
-    protected static ?string $heading = 'أقل المنتجات المطلوبة';
+
     protected static ?string $maxHeight = '300px';
     protected static string $view = 'vendor.filament.widgets.less-product-ordered-based-on-branches';
 
+    protected function getHeading(): ?string
+    {
+        return __('lang.minimum_required_products');
+    }
     public function  __construct()
     {
         $this->branches = $this->getBranches();
@@ -69,7 +73,7 @@ class LessProductOrderedBasedOnBranchesChart extends CustomChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'الكمية المطلوبة (مجمعة)',
+                    'label' => __('lang.total_requested_quantity'),
                     'data' => $quantitiesArray,
                     'backgroundColor' => '#0000FF',
                 ],
@@ -80,7 +84,7 @@ class LessProductOrderedBasedOnBranchesChart extends CustomChartWidget
 
     protected function getBranches()
     {
-        $branches = Branch::pluck('name', 'id')->prepend('الكل', 0);
+        $branches = Branch::pluck('name', 'id')->prepend(__('lang.all'), 0);
         return $branches;
     }
     protected function getType(): string

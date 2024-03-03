@@ -30,6 +30,11 @@ class ProductResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $navigationGroup = 'Products - units';
+
+    protected static function getNavigationLabel(): string
+    {
+        return __('lang.products');
+    }
     public static function form(Form $form): Form
     {
         return $form

@@ -33,6 +33,10 @@ class TransferOrderResource extends Resource
     protected static ?string $label = 'Transfers';
     protected static ?string $navigationLabel = 'Transfers list';
     public static ?string $slug = 'transfers-list';
+    protected static function getNavigationLabel(): string
+    {
+        return __('lang.transfers_list');
+    }
     public static function form(Form $form): Form
     {
 

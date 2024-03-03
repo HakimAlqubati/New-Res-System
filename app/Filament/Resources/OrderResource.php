@@ -50,22 +50,26 @@ class OrderResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $navigationGroup = 'Orders';
     protected static ?string $recordTitleAttribute = 'id';
-
+    protected static function getNavigationLabel(): string
+    {
+        return __('lang.orders');
+    }
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('id')->label('Order id'),
-                TextInput::make('customer_id')->label('Created by'),
+                TextInput::make('id')->label(__('lang.order_id')),
+                TextInput::make('branch_id')->label(__('lang.branch')),
+                TextInput::make('customer_id')->label(__('lang.branch_manager')),
 
                 Select::make('status')
+                    ->label(__('lang.order_status'))
                     ->options([
                         Order::ORDERED => 'Ordered',
                         Order::READY_FOR_DELEVIRY => 'Ready for delivery',
                         Order::PROCESSING => 'processing',
                         Order::DELEVIRED => 'delevired',
                     ]),
-                TextInput::make('branch_id')->label('Branch')
             ]);
     }
 
@@ -73,16 +77,19 @@ class OrderResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                TextColumn::make('id')->label('Order id')->toggleable(isToggledHiddenByDefault: false)
+                TextColumn::make('id')->label(__('lang.order_id'))
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->copyable()
-                    ->copyMessage('Order id copied')
+                    ->copyMessage(__('lang.order_id_copied'))
                     ->copyMessageDuration(1500)
                     ->sortable()->searchable()
                     ->searchable(isIndividual: true, isGlobal: false),
-                TextColumn::make('customer.name')->label('customer')->toggleable()
+                TextColumn::make('customer.name')->label(__('lang.branch_manager'))->toggleable()
                     ->searchable(isIndividual: true)
                     ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
+                TextColumn::make('branch.name')->label(__('lang.branch')),
                 BadgeColumn::make('status')
+                    ->label(__('lang.order_status'))
                     ->colors([
                         'primary',
                         'secondary' => static fn ($state): bool => $state === Order::PENDING_APPROVAL,
@@ -91,10 +98,11 @@ class OrderResource extends Resource implements HasShieldPermissions
                         'danger' => static fn ($state): bool => $state === Order::PROCESSING,
                     ])
                     ->iconPosition('after'),
-                count_items_order::make('item_counts'),
-                TotalOrder::make('total_amount'),
-                TextColumn::make('branch.name'),
-                TextColumn::make('created_at')->sortable(),
+                count_items_order::make('item_counts')->label('lang.item_counts'),
+                TotalOrder::make('total_amount')->label(__('lang.total_amount')),
+                TextColumn::make('created_at')
+                    ->label(__('lang.created_at'))
+                    ->sortable(),
                 // TextColumn::make('recorded'),
                 // TextColumn::make('orderDetails'),
             ])
@@ -143,7 +151,7 @@ class OrderResource extends Resource implements HasShieldPermissions
                 Tables\Actions\ViewAction::make(),
                 // Tables\Actions\EditAction::make(), 
             ])
-            ->bulkActions([ 
+            ->bulkActions([
                 ExportBulkAction::make()
             ]);
     }

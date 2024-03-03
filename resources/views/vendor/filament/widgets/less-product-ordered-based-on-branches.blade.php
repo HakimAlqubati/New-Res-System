@@ -3,7 +3,8 @@
     $filters = $this->getFilters();
 @endphp
 
-<x-filament::widget class="filament-widgets-chart-widget" style="direction: rtl">
+{{-- <x-filament::widget class="filament-widgets-chart-widget" style="direction: rtl"> --}}
+<x-filament::widget class="filament-widgets-chart-widget">
     <x-filament::card>
         @if ($heading || $filters)
             <div class="flex items-center justify-between gap-8">
@@ -16,7 +17,7 @@
                 <div>
 
                     <div>
-                        <p>إختر الفرع</p>
+                        <p>{{ __('lang.choose_branch') }}</p>
                         <select wire:model="branchid" @class([
                             'block h-10 rounded-lg border-gray-300 text-gray-900 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500',
                             'dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-primary-500' => config(
@@ -31,39 +32,39 @@
                     </div>
 
                     <div>
-                        <p>إختر الشهر</p>
+                        <p> {{ __('lang.choose_month') }} </p>
                         <select wire:model="month" @class([
                             'text-gray-900 border-gray-300 block h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500',
                             'dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:focus:border-primary-500' => config(
                                 'filament.dark_mode'),
                         ])>
-                            <option value="0">الكل</option>
-                            <option value="1">يناير</option>
-                            <option value="2">فبراير</option>
-                            <option value="3">مارس</option>
-                            <option value="4">أبريل</option>
-                            <option value="5">مايو</option>
-                            <option value="6">يونيو</option>
-                            <option value="7">يوليو</option>
-                            <option value="8">أغسطس</option>
-                            <option value="9">سبتمبر</option>
-                            <option value="10">أكتوبر</option>
-                            <option value="11">نوفمبر</option>
-                            <option value="12">ديسمبر</option>
+                            <option value="0">{{ __('lang.all') }}</option>
+                            <option value="1">{{ __('lang.month_1') }}</option>
+                            <option value="2">{{ __('lang.month_2') }}</option>
+                            <option value="3">{{ __('lang.month_3') }}</option>
+                            <option value="4">{{ __('lang.month_4') }}</option>
+                            <option value="5">{{ __('lang.month_5') }}</option>
+                            <option value="6">{{ __('lang.month_6') }}</option>
+                            <option value="7">{{ __('lang.month_7') }}</option>
+                            <option value="8">{{ __('lang.month_8') }}</option>
+                            <option value="9">{{ __('lang.month_9') }}</option>
+                            <option value="10">{{ __('lang.month_10') }}</option>
+                            <option value="11">{{ __('lang.month_11') }}</option>
+                            <option value="12">{{ __('lang.month_12') }}</option>
                         </select>
                     </div>
 
                 </div>
                 <div>
                     <div>
-                        <p>إختر السنة</p>
+                        <p> {{ __('lang.choose_year') }} </p>
                         <select wire:model="yearid" @class([
                             'text-gray-900 border-gray-300 block h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500',
                             'dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:focus:border-primary-500' => config(
                                 'filament.dark_mode'),
                         ])>
 
-                            <option value="0000"> الكل </option>
+                            <option value="0000"> {{ __('lang.all') }} </option>
                             <option value="2022">2022</option>
                             <option value="2023">2023</option>
                             <option value="2024">2024</option>
@@ -72,7 +73,7 @@
 
 
                     <div>
-                        <p>عدد المنتجات الظاهرة في الرسم البياني</p>
+                        <p> {{__('lang.products_chart')}} </p>
                         <select wire:model="productscount" @class([
                             'text-gray-900 border-gray-300 block h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500',
                             'dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:focus:border-primary-500' => config(

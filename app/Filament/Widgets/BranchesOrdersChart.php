@@ -10,11 +10,15 @@ use Illuminate\Support\Facades\DB;
 class BranchesOrdersChart extends CustomChartWidget
 {
     public ?string $yearid = '0000';
-    protected static ?string $heading = 'الفروع الأكثر طلباً   ';
     protected static ?string $maxHeight = '300px';
     protected static string $view = 'vendor.filament.widgets.branches-orders-chart';
+
+    protected function getHeading(): ?string
+    {
+        return __('lang.most_requested_branches');
+    }
     protected function getData(): array
-    { 
+    {
         $yearid = $this->yearid;
         $query   = DB::table('orders_details')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
@@ -43,12 +47,12 @@ class BranchesOrdersChart extends CustomChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'بحسب الكميات',
+                    'label' => __('lang.by_quantities'),
                     'data' => $quantitiesArray,
                     'backgroundColor' => '#FF0000',
                 ],
                 [
-                    'label' => 'بحسب الأسعار',
+                    'label' => __('lang.by_prices'),
                     'data' => $pricesArray,
                     'backgroundColor' => '#00FF00',
                 ],

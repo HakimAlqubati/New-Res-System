@@ -29,6 +29,10 @@ class UnitResource extends Resource
 
 
     protected static ?string $navigationLabel = 'Units';
+    protected static function getNavigationLabel(): string
+    {
+        return __('lang.units');
+    }
     public static function form(Form $form): Form
     {
         return $form

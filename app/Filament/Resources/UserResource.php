@@ -23,6 +23,10 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $navigationGroup = 'User & Roles';
+    protected static function getNavigationLabel(): string
+    {
+        return __('lang.users');
+    }
     public static function form(Form $form): Form
     {
 
