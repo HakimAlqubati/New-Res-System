@@ -6,6 +6,7 @@ use App\Filament\Resources\BranchResource;
 use App\Filament\Resources\CategoryResource;
 use App\Filament\Resources\OrderResource;
 use App\Filament\Resources\ProductResource;
+use App\Filament\Resources\PurchaseInvoiceResource;
 use App\Filament\Resources\Shield\RoleResource;
 use App\Filament\Resources\TransferOrderResource;
 use App\Filament\Resources\UnitResource;
@@ -95,7 +96,14 @@ class AppServiceProvider extends ServiceProvider
                             ...UserResource::getNavigationItems(),
                             ...RoleResource::getNavigationItems(),
                         ]),
-                ]);
+                ])
+                // ->groups([
+                //     NavigationGroup::make(__('lang.purchase_invoice'))
+                //         ->items([
+                //             ...PurchaseInvoiceResource::getNavigationItems(), 
+                //         ]),
+                // ])
+            ;
         });
     }
 }

@@ -43,4 +43,5 @@ return [
     'item_counts' => 'Item counts',
     'total_amount' => 'Total amount',
     'created_at' => 'Created at',
+    'purchase_invoice'=>'Purchase invoice',
 ];

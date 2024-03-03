@@ -43,4 +43,5 @@ return [
     'item_counts' => 'عدد المنتجات',
     'total_amount' => 'المبلغ الكلي',
     'created_at' => 'تاريخ الانشاء',
+    'purchase_invoice' => 'فواتير المشتريات',
 ];
