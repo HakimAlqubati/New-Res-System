@@ -6,7 +6,9 @@ use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Unit;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -44,12 +46,29 @@ class ProductResource extends Resource
                     ->options(function () {
                         return Category::pluck('name', 'id');
                     }),
-                // Repeater::make('units')
-                //     ->relationship('unitPrices')
-                //     ->schema([
-                //         TextInput::make('unit_id'),
-                //         TextInput::make('price'),
-                //     ])
+                Repeater::make('units')
+                    ->columns(2)
+                    ->defaultItems(1)
+                    ->hiddenOn(Pages\EditProduct::class)
+                    ->columnSpanFull()
+                    ->collapsible()
+                    ->relationship('unitPrices')
+                    ->orderable('product_id')
+                    ->schema([
+                        Select::make('unit_id')
+                            ->required()
+                            ->searchable()
+                            ->options(function () {
+                                return Unit::pluck('name', 'id');
+                            })->searchable(),
+                        TextInput::make('price')->type('number')->default(1)
+                            ->mask(
+                                fn (TextInput\Mask $mask) => $mask
+                                    ->numeric()
+                                    ->decimalPlaces(2)
+                                    ->thousandsSeparator(',')
+                            ),
+                    ])
 
             ]);
     }

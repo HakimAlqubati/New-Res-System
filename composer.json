@@ -7,6 +7,8 @@
     "require": {
         "php": "^8.0.2",
         "arcanedev/log-viewer": "^9.0",
+        "aymanalhattami/filament-slim-scrollbar": "^1.0",
+        "bezhansalleh/filament-language-switch": "^1.0",
         "bezhansalleh/filament-shield": "^2.4",
         "filament/filament": "^2.17",
         "filament/forms": "^2.17",
