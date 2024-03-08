@@ -7,8 +7,10 @@ use App\Filament\Resources\BranchResource;
 use App\Filament\Resources\CategoryResource;
 use App\Filament\Resources\OrderResource;
 use App\Filament\Resources\ProductResource;
+use App\Filament\Resources\PurchaseInvoiceReportResource;
 use App\Filament\Resources\PurchaseInvoiceResource;
 use App\Filament\Resources\Shield\RoleResource;
+use App\Filament\Resources\StockReportResource;
 use App\Filament\Resources\StoreResource;
 use App\Filament\Resources\SupplierResource;
 use App\Filament\Resources\TransferOrderResource;
@@ -106,6 +108,9 @@ class AppServiceProvider extends ServiceProvider
                             ...PurchaseInvoiceResource::getNavigationItems(),
                             ...SupplierResource::getNavigationItems(),
                             ...StoreResource::getNavigationItems(),
+                            // ...StockReportResource::getNavigationItems(),
+                            ...PurchaseInvoiceReportResource::getNavigationItems(),
+
                         ]),
                 ])
                 // ->groups([
@@ -116,5 +121,15 @@ class AppServiceProvider extends ServiceProvider
                 // ])
             ;
         });
+
+        Filament::serving(function () {
+            // Filament::registerTheme(
+                // mix('css/filament.css'),
+            // );
+        });
+
+        Filament::registerStyles([
+            asset("filament/main.css"),
+        ]);
     }
 }
