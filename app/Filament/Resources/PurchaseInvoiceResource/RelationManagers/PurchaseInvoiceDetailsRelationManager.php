@@ -26,6 +26,10 @@ class PurchaseInvoiceDetailsRelationManager extends RelationManager
             ]);
     }
 
+    public static function getTitle(): string
+    {
+        return __('lang.purchase_invoice_details');
+    }
     public static function table(Table $table): Table
     {
         return $table

@@ -1,24 +1,21 @@
 <?php
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace App\Filament\Resources\SupplierResource\Pages;
 
-use App\Filament\Resources\UserResource;
-use App\Models\User;
+use App\Filament\Resources\SupplierResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\DB;
 
-class CreateUser extends CreateRecord
+class CreateSupplier extends CreateRecord
 {
-    protected static string $resource = UserResource::class;
+    protected static string $resource = SupplierResource::class;
 
     protected function afterCreate(): void
     {
         $user_id = $this->record->id;
-        $role_id = $this->data['role_id'];
-        User::find($user_id)->update(['role_id' => $role_id]);
         DB::table('model_has_roles')->insert([
-            'role_id' => $role_id,
+            'role_id' => 10,
             'model_id' => $user_id,
             'model_type' => 'App\Models\User'
         ]);

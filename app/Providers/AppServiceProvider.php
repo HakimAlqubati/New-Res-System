@@ -9,6 +9,8 @@ use App\Filament\Resources\OrderResource;
 use App\Filament\Resources\ProductResource;
 use App\Filament\Resources\PurchaseInvoiceResource;
 use App\Filament\Resources\Shield\RoleResource;
+use App\Filament\Resources\StoreResource;
+use App\Filament\Resources\SupplierResource;
 use App\Filament\Resources\TransferOrderResource;
 use App\Filament\Resources\UnitResource;
 use App\Filament\Resources\UserResource;
@@ -98,18 +100,20 @@ class AppServiceProvider extends ServiceProvider
                             ...RoleResource::getNavigationItems(),
                         ]),
                 ])
-                // ->groups([
-                //     NavigationGroup::make(__('lang.purchase_invoice'))
-                //         ->items([
-                //             ...PurchaseInvoiceResource::getNavigationItems(), 
-                //         ]),
-                // ])
                 ->groups([
-                    NavigationGroup::make(__('lang.reports'))
+                    NavigationGroup::make(__('lang.purchase_invoice'))
                         ->items([
-                            // ...OrderReportResource::getNavigationItems(), 
+                            ...PurchaseInvoiceResource::getNavigationItems(),
+                            ...SupplierResource::getNavigationItems(),
+                            ...StoreResource::getNavigationItems(),
                         ]),
                 ])
+                // ->groups([
+                // NavigationGroup::make(__('lang.reports'))
+                // ->items([
+                // ...OrderReportResource::getNavigationItems(), 
+                // ]),
+                // ])
             ;
         });
     }

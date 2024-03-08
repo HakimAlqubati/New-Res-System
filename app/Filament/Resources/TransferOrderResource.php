@@ -173,4 +173,9 @@ class TransferOrderResource extends Resource
     {
         return static::getModel()::query()->InTransfer();
     }
+
+    protected static function getNavigationBadge(): ?string
+    {
+        return count(OrderTransfer::inTransfer()->select('orders.id')->get()->toArray());
+    }
 }

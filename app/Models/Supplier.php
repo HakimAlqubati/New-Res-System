@@ -10,14 +10,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser
+class Supplier extends Authenticatable implements FilamentUser
 // implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
 
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -68,12 +70,30 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasOne(Branch::class, 'manager_id');
     }
-    public function owner()
+
+
+    protected static function booted()
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        static::creating(function ($model) {
+            $model->role_id = $model->role_id ?? 10;
+            $model->password = Hash::make('123456');
+        });
     }
 
-     
+    /**
+     * Get a new query builder instance for the model.
+     *
+     * @param  bool  $excludeDeleted
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function newQuery()
+    {
+        $query = parent::newQuery();
+        // Add your default where condition here
+        $query->where('role_id', 10);
+
+        return $query;
+    }
 
     // public function canAccessFilament(): bool
     // {

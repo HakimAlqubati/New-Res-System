@@ -7,8 +7,11 @@ use App\Filament\Resources\PurchaseInvoiceResource\RelationManagers;
 use App\Filament\Resources\PurchaseInvoiceResource\RelationManagers\PurchaseInvoiceDetailsRelationManager;
 use App\Models\Product;
 use App\Models\PurchaseInvoice;
+use App\Models\Store;
+use App\Models\Supplier;
 use App\Models\Unit;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -28,6 +31,14 @@ class PurchaseInvoiceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
+    public static function getLabel(): ?string
+    {
+        return __('lang.purchase_invoice');
+    }
+    protected static function getNavigationLabel(): string
+    {
+        return __('lang.purchase_invoice');
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -37,17 +48,24 @@ class PurchaseInvoiceResource extends Resource
                     ->placeholder('Enter invoice number')
                     // ->extraInputAttributes(['readonly' => true])
                     ->disabledOn('edit'),
-                DateTimePicker::make('date')
+                DatePicker::make('date')
                     ->required()
                     ->placeholder('Select date')
                     ->default(date('Y-m-d'))
+                    ->format('Y-m-d')
                     ->disabledOn('edit')
                     ->format('Y-m-d'),
                 Select::make('supplier_id')->label(__('lang.supplier'))
-                    ->options([
-                        1 => 'Supplier 1',
-                        2 => 'Supplier 2',
-                    ])
+                    ->options(
+                        Supplier::get(['id', 'name'])->pluck('name', 'id')
+                    )->searchable()
+                    ->required()
+                    ->disabledOn('edit'),
+                Select::make('store_id')->label(__('lang.store'))
+                    ->searchable()
+                    ->options(
+                        Store::where('active', 1)->get(['id', 'name'])->pluck('name', 'id')
+                    )->required()
                     ->disabledOn('edit')
                     ->searchable(),
                 Textarea::make('description')->label(__('lang.description'))
@@ -62,6 +80,7 @@ class PurchaseInvoiceResource extends Resource
                     ->columnSpanFull()
                     ->collapsible()
                     ->relationship('purchaseInvoiceDetails')
+                    ->label(__('lang.purchase_invoice_details'))
                     ->orderable('product_id')
                     ->schema([
                         Select::make('product_id')
@@ -80,16 +99,6 @@ class PurchaseInvoiceResource extends Resource
                             ->options(function () {
                                 return Unit::pluck('name', 'id');
                             })->searchable(),
-                        TextInput::make('price')
-                            ->label(__('lang.price'))
-                            ->type('number')->default(1)
-                            ->disabledOn('edit')
-                            ->mask(
-                                fn (TextInput\Mask $mask) => $mask
-                                    ->numeric()
-                                    ->decimalPlaces(2)
-                                    ->thousandsSeparator(',')
-                            ),
                         TextInput::make('quantity')
                             ->label(__('lang.quantity'))
                             ->type('number')->default(1)
@@ -100,18 +109,31 @@ class PurchaseInvoiceResource extends Resource
                                     ->decimalPlaces(2)
                                     ->thousandsSeparator(',')
                             ),
+                        TextInput::make('price')
+                            ->label(__('lang.price'))
+                            ->type('number')->default(1)
+                            ->disabledOn('edit')
+                            ->mask(
+                                fn (TextInput\Mask $mask) => $mask
+                                    ->numeric()
+                                    ->decimalPlaces(2)
+                                    ->thousandsSeparator(',')
+                            ),
+
                     ])
             ]);
     }
+
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('invoice_no')->searchable(),
-                TextColumn::make('supplier_id'),
-                TextColumn::make('date'),
-                TextColumn::make('description'),
+                TextColumn::make('invoice_no')->searchable()->sortable(),
+                TextColumn::make('supplier.name')->label('Supplier'),
+                TextColumn::make('store.name')->label('Store'),
+                TextColumn::make('date')->sortable(),
+                TextColumn::make('description')->searchable(),
             ])
             ->filters([
                 //
@@ -120,7 +142,7 @@ class PurchaseInvoiceResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
@@ -141,8 +163,21 @@ class PurchaseInvoiceResource extends Resource
         ];
     }
 
+
     public static function canDeleteAny(): bool
     {
         return static::can('deleteAny');
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+    protected static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }
