@@ -171,9 +171,12 @@ class OrderResource extends Resource implements HasShieldPermissions
             'create' => Pages\CreateOrder::route('/create'),
             'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
+            'order-report-custom' => Pages\OrderReportCustom::route('/order-report-custom'),
+
         ];
     }
 
+ 
 
     protected function getTableReorderColumn(): ?string
     {

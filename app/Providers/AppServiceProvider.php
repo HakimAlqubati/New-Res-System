@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Filament\Reports\Orders\OrderReportResource;
 use App\Filament\Resources\BranchResource;
 use App\Filament\Resources\CategoryResource;
 use App\Filament\Resources\OrderResource;
@@ -103,6 +104,12 @@ class AppServiceProvider extends ServiceProvider
                 //             ...PurchaseInvoiceResource::getNavigationItems(), 
                 //         ]),
                 // ])
+                ->groups([
+                    NavigationGroup::make(__('lang.reports'))
+                        ->items([
+                            // ...OrderReportResource::getNavigationItems(), 
+                        ]),
+                ])
             ;
         });
     }
