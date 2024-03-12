@@ -5,11 +5,15 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PurchaseInvoiceResource\Pages;
 use App\Filament\Resources\PurchaseInvoiceResource\RelationManagers;
 use App\Filament\Resources\PurchaseInvoiceResource\RelationManagers\PurchaseInvoiceDetailsRelationManager;
+use App\Http\Resources\ProductResource;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\PurchaseInvoice;
 use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\Unit;
+use App\Models\UnitPrice;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -24,6 +28,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class PurchaseInvoiceResource extends Resource
 {
@@ -41,12 +46,12 @@ class PurchaseInvoiceResource extends Resource
     }
     public static function form(Form $form): Form
     {
+
         return $form
             ->schema([
                 TextInput::make('invoice_no')->label(__('lang.invoice_no'))
                     ->required()
                     ->placeholder('Enter invoice number')
-                    // ->extraInputAttributes(['readonly' => true])
                     ->disabledOn('edit'),
                 DatePicker::make('date')
                     ->required()
@@ -69,9 +74,10 @@ class PurchaseInvoiceResource extends Resource
                     ->disabledOn('edit')
                     ->searchable(),
                 Textarea::make('description')->label(__('lang.description'))
-                    ->placeholder('Enter description'),
+                    ->placeholder('Enter description')
+                    ->columnSpanFull(),
                 Repeater::make('units')
-                    ->columns(4)
+                    ->columns(5)
                     ->defaultItems(1)
                     ->hiddenOn([
                         Pages\EditPurchaseInvoice::class,
@@ -90,35 +96,66 @@ class PurchaseInvoiceResource extends Resource
                             ->disabledOn('edit')
                             ->options(function () {
                                 return Product::pluck('name', 'id');
-                            })->searchable(),
+                            })
+                            ->reactive()
+                            ->afterStateUpdated(fn (callable $set) => $set('unit_id', null))
+                            ->searchable(),
                         Select::make('unit_id')
                             ->label(__('lang.unit'))
                             ->required()
-                            ->searchable()
                             ->disabledOn('edit')
-                            ->options(function () {
-                                return Unit::pluck('name', 'id');
-                            })->searchable(),
+                            ->options(
+                                function (callable $get) {
+
+                                    $unitPrices = UnitPrice::where('product_id', $get('product_id'))->get()->toArray();
+
+                                    if ($unitPrices)
+                                        return array_column($unitPrices, 'unit_name', 'unit_id');
+                                    return [];
+                                }
+                            )
+                            // ->searchable()
+                            ->reactive()
+                            ->afterStateUpdated(function (Closure $set, $state, $get) {
+                                $unitPrice = UnitPrice::where(
+                                    'product_id',
+                                    $get('product_id')
+                                )->where('unit_id', $state)->first()->price;
+                                $set('price', $unitPrice);
+
+                                $set('total_price',  $unitPrice * $get('quantity'));
+                            }),
                         TextInput::make('quantity')
                             ->label(__('lang.quantity'))
-                            ->type('number')->default(1)
+                            ->type('number')
+                            ->default(1)
                             ->disabledOn('edit')
                             ->mask(
                                 fn (TextInput\Mask $mask) => $mask
                                     ->numeric()
                                     ->decimalPlaces(2)
                                     ->thousandsSeparator(',')
-                            ),
+                            )->reactive()
+                            ->afterStateUpdated(function (Closure $set, $state, $get) {
+                                $set('total_price', $state * $get('price'));
+                            }),
                         TextInput::make('price')
                             ->label(__('lang.price'))
-                            ->type('number')->default(1)
+                            ->type('number')
+                            ->default(1)
                             ->disabledOn('edit')
-                            ->mask(
-                                fn (TextInput\Mask $mask) => $mask
-                                    ->numeric()
-                                    ->decimalPlaces(2)
-                                    ->thousandsSeparator(',')
-                            ),
+                            // ->mask(
+                            //     fn (TextInput\Mask $mask) => $mask
+                            //         ->numeric()
+                            //         ->decimalPlaces(2)
+                            //         ->thousandsSeparator(',')
+                            // )
+                            ->reactive()
+                            ->afterStateUpdated(function (Closure $set, $state, $get) {
+                                $set('total_price', $state * $get('quantity'));
+                            }),
+                        TextInput::make('total_price')->default(1)
+                            ->extraInputAttributes(['readonly' => true]),
 
                     ])
             ]);
