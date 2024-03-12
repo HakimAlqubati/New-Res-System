@@ -7,8 +7,9 @@ use App\Filament\Resources\BranchResource;
 use App\Filament\Resources\CategoryResource;
 use App\Filament\Resources\OrderResource;
 use App\Filament\Resources\ProductResource;
-use App\Filament\Resources\PurchaseInvoiceReportResource;
 use App\Filament\Resources\PurchaseInvoiceResource;
+use App\Filament\Resources\Reports\PurchaseInvoiceReportResource;
+use App\Filament\Resources\Reports\StoresReportResource;
 use App\Filament\Resources\Shield\RoleResource;
 use App\Filament\Resources\StockReportResource;
 use App\Filament\Resources\StoreResource;
@@ -105,11 +106,11 @@ class AppServiceProvider extends ServiceProvider
                 ->groups([
                     NavigationGroup::make(__('lang.purchase_invoice'))
                         ->items([
-                            ...PurchaseInvoiceResource::getNavigationItems(),
                             ...SupplierResource::getNavigationItems(),
-                            ...StoreResource::getNavigationItems(),
-                            // ...StockReportResource::getNavigationItems(),
+                            ...PurchaseInvoiceResource::getNavigationItems(),
                             ...PurchaseInvoiceReportResource::getNavigationItems(),
+                            ...StoreResource::getNavigationItems(),
+                            ...StoresReportResource::getNavigationItems(),
 
                         ]),
                 ])
@@ -124,7 +125,7 @@ class AppServiceProvider extends ServiceProvider
 
         Filament::serving(function () {
             // Filament::registerTheme(
-                // mix('css/filament.css'),
+            // mix('css/filament.css'),
             // );
         });
 

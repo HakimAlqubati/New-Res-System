@@ -1,18 +1,10 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Reports;
 
 use App\FakeModelReports\Models\PurchaseInvoiceReport;
-use App\Filament\Resources\PurchaseInvoiceReportResource\Pages\ListPurchaseInvoiceReport;
-use App\Filament\Resources\StockReportResource\RelationManagers;
-use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
-use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\PurchaseInvoiceReportResource\Reports\Pages\ListPurchaseInvoiceReport; 
+use Filament\Resources\Resource; 
 
 class PurchaseInvoiceReportResource extends Resource
 {

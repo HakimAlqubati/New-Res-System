@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Filament\Resources\PurchaseInvoiceReportResource\Pages;
+namespace App\Filament\Resources\PurchaseInvoiceReportResource\Reports\Pages;
 
-use App\Filament\Resources\PurchaseInvoiceReportResource;
+use App\Filament\Resources\Reports\PurchaseInvoiceReportResource;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\Supplier;
 
-use Filament\Forms\Components\Builder;
-use Filament\Pages\Actions\Action;
+use Filament\Forms\Components\Builder; 
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
@@ -61,18 +60,7 @@ class ListPurchaseInvoiceReport extends ListRecords
     protected function getTableFiltersLayout(): ?string
     {
         return Layout::AboveContent;
-    }
-
-    // protected function getActions(): array
-    // {
-    //     return [
-    //         // Action::make('export')->color("success")->action('export'),
-    //         Action::make('export_pdf')
-    //             ->color("danger")
-    //             ->action('export_pdf')
-    //             ->label(__('lang.export_pdf'))
-    //     ];
-    // }
+    } 
 
     public function getPurchasesInvoiceData($product_id, $store_id, $supplier_id)
     {

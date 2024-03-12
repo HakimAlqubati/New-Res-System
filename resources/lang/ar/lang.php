@@ -60,4 +60,5 @@ return [
     'purchase_invoice_details' => 'تفاصيل الفاتورة',
     'purchase_invoice_report' => 'تقرير المشتروات',
     'export_pdf' => 'تصدير PDF',
+    'stores_report' => 'تقرير المخازن',
 ];

@@ -10,7 +10,7 @@ return [
     'categories' => 'Categories',
     'branches' => 'Branches',
     'user_and_roles' => 'Users & Roles',
-    'users' => 'users',
+    'users' => 'Users',
     'roles' => 'Roles',
     'all' => 'All',
     'choose_year' => 'Choose year',
@@ -58,6 +58,7 @@ return [
     'price' => 'Price',
     'quantity' => 'Quantity',
     'purchase_invoice_details' => 'Supplier invoice details',
-    'purchase_invoice_report' => 'Supplier invoice report',
+    'purchase_invoice_report' => 'Purchasing reports',
     'export_pdf' => 'Export PDF',
+    'stores_report' => 'Stores report',
 ];
