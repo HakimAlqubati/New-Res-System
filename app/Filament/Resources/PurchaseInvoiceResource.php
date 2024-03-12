@@ -127,6 +127,7 @@ class PurchaseInvoiceResource extends Resource
                             }),
                         TextInput::make('quantity')
                             ->label(__('lang.quantity'))
+                            ->required()
                             ->type('number')
                             ->default(1)
                             ->disabledOn('edit')
@@ -140,6 +141,7 @@ class PurchaseInvoiceResource extends Resource
                                 $set('total_price', $state * $get('price'));
                             }),
                         TextInput::make('price')
+                            ->required()
                             ->label(__('lang.price'))
                             ->type('number')
                             ->default(1)
