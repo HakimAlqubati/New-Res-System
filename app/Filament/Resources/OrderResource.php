@@ -58,10 +58,15 @@ class OrderResource extends Resource implements HasShieldPermissions
     {
         return $form
             ->schema([
-                TextInput::make('id')->label(__('lang.order_id')),
-                TextInput::make('branch_id')->label(__('lang.branch')),
-                TextInput::make('customer_id')->label(__('lang.branch_manager')),
-
+                TextInput::make('id')->label(__('lang.order_id'))->disabledOn('edit'),
+                Select::make('customer_id')
+                    ->disabledOn('edit')
+                    ->label(__('lang.branch_manager'))
+                    ->options(User::select('id', 'name')->get()->pluck('name', 'id')),
+                Select::make('branch_id')
+                    ->label(__('lang.branch'))
+                    ->disabledOn('edit')
+                    ->options(Branch::select('id', 'name')->get()->pluck('name', 'id')),
                 Select::make('status')
                     ->label(__('lang.order_status'))
                     ->options([
@@ -149,7 +154,7 @@ class OrderResource extends Resource implements HasShieldPermissions
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                // Tables\Actions\EditAction::make(), 
+                Tables\Actions\EditAction::make(), 
             ])
             ->bulkActions([
                 ExportBulkAction::make()
@@ -176,7 +181,7 @@ class OrderResource extends Resource implements HasShieldPermissions
         ];
     }
 
- 
+
 
     protected function getTableReorderColumn(): ?string
     {
@@ -211,10 +216,7 @@ class OrderResource extends Resource implements HasShieldPermissions
     {
         return false;
     }
-    public static function canEdit(Model $model): bool
-    {
-        return false;
-    }
+
 
     public static function getGlobalSearchResultTitle(Model $record): string
     {

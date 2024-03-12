@@ -28,7 +28,7 @@ class Order extends Model
     ];
 
     public function orderDetails()
-    { 
+    {
         return $this->hasMany(OrderDetails::class);
     }
     public function orderDetails2()
@@ -46,6 +46,16 @@ class Order extends Model
     public function branch()
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    // attribute to get branch name
+    public function getBranchNameAttribute()
+    {
+        if ($this->branch) {
+            return $this?->branch?->name;
+        }
+
+        return null;
     }
 
     public function scopeReadyForDelivery($query)
