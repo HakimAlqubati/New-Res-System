@@ -16,10 +16,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-// Route::get('/', function () {
+Route::get('/', function () {
 
-//     return redirect(url('/'));
-// });
+    return redirect(url('/admin'));
+});
 
 Route::get('orders/export/{id}', [OrderController::class, 'export']);
 Route::get('orders/export-transfer/{id}', [OrderController::class, 'exportTransfer']);
