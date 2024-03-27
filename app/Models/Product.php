@@ -5,16 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Translatable\HasTranslations;
 
 class Product extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory,SoftDeletes,HasTranslations;
+    public $translatable = ['name'];
+
     protected $fillable = [
         'name',
         'code',
         'description',
         'active',
         'category_id',
+        'product_code',
+        'category_code',
     ];
 
     public function units()

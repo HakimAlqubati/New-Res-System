@@ -83,12 +83,14 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
+                    ->label(__('lang.id'))
                     ->copyable()
                     ->copyMessage('Order id copied')
                     ->copyMessageDuration(1500)
                     ->sortable()->searchable()
                     ->searchable(isIndividual: true, isGlobal: false),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('lang.name'))
                     ->toggleable()
                     ->searchable()
                     ->searchable(isIndividual: true)
