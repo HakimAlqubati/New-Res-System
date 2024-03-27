@@ -63,4 +63,8 @@ return [
     'stores_report' => 'تقرير المخازن',
     'notes' => 'ملاحظات',
     'notes_from_store' => 'ملاحظت من موظف المخزن',
+    'product_id_copied' => 'تم نسخ رقم المنتج',
+    'code' => 'الكود',
+    'category' => 'الفئة',
+    'units_prices' => 'وحدات التسعير',
 ];

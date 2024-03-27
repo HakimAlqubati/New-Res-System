@@ -63,4 +63,8 @@ return [
     'stores_report' => 'Stores report',
     'notes' => 'Notes',
     'notes_from_store' => 'Notes from store employee',
+    'product_id_copied' => 'Product id copied',
+    'code' => 'Code',
+    'category' => 'Category',
+    'units_prices' => 'Units prices',
 ];

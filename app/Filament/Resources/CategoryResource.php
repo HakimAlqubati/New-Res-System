@@ -31,12 +31,12 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')->required(),
-                Forms\Components\TextInput::make('code')->required(),
-                Forms\Components\Textarea::make('description')
+                Forms\Components\TextInput::make('name')->required()->label(__('lang.name')),
+                Forms\Components\TextInput::make('code')->required()->label(__("lang.code")),
+                Forms\Components\Textarea::make('description')->label(__("lang.description"))
                     ->rows(10)
                     ->cols(20),
-                Checkbox::make('active'),
+                Checkbox::make('active')->label(__("lang.active")),
             ]);
     }
 
@@ -45,23 +45,23 @@ class CategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->sortable()
+                    ->sortable()->label(__('lang.id'))
                     ->searchable(isIndividual: true, isGlobal: false)->searchable(),
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')->label(__('lang.name'))
                     ->searchable(isIndividual: true, isGlobal: false),
-                Tables\Columns\TextColumn::make('code')
+                Tables\Columns\TextColumn::make('code')->label(__('lang.code'))
                     ->searchable(isIndividual: true, isGlobal: false),
-                Tables\Columns\TextColumn::make('description'),
+                Tables\Columns\TextColumn::make('description')->label(__('lang.description')),
                 // Tables\Columns\TextColumn::make('products')->label('Number of products'),
             ])
             ->filters([
-                Tables\Filters\Filter::make('active')
+                Tables\Filters\Filter::make('active')->label(__('lang.active'))
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('active')),
-                    Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(), 
+                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([

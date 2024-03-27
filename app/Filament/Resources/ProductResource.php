@@ -35,27 +35,35 @@ class ProductResource extends Resource
     {
         return __('lang.products');
     }
+
+    public static function getRecordTitleAttribute(): ?string
+    {
+        return __('lang.products');
+    }
+
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('name')->required(),
-                TextInput::make('code')->required()
+                TextInput::make('name')->required()->label(__('lang.name'))
+                   
+                    ,
+                TextInput::make('code')->required()->label(__('lang.code'))
                     ->disabledOn('edit'),
 
-                Textarea::make('description')
+                Textarea::make('description')->label(__('lang.description'))
                     ->rows(2)
                 // ->cols(20)
                 ,
-                Checkbox::make('active'),
-                Select::make('category_id')->required()
+                Checkbox::make('active')->label(__('lang.active')),
+                Select::make('category_id')->required()->label(__('lang.category'))
                     ->searchable()
                     ->options(function () {
                         return Category::pluck('name', 'id');
                     }),
-                Repeater::make('units')
+                Repeater::make('units')->label(__('lang.units_prices'))
                     ->columns(2)
-                    ->defaultItems(1)
                     ->hiddenOn(Pages\EditProduct::class)
                     ->columnSpanFull()
                     ->collapsible()
@@ -63,12 +71,13 @@ class ProductResource extends Resource
                     ->orderable('product_id')
                     ->schema([
                         Select::make('unit_id')
-                            ->required()
+                            ->label(__('lang.unit'))
                             ->searchable()
                             ->options(function () {
                                 return Unit::pluck('name', 'id');
                             })->searchable(),
                         TextInput::make('price')->type('number')->default(1)
+                            ->label(__('lang.price'))
                             ->mask(
                                 fn (TextInput\Mask $mask) => $mask
                                     ->numeric()
@@ -87,7 +96,7 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->label(__('lang.id'))
                     ->copyable()
-                    ->copyMessage('Order id copied')
+                    ->copyMessage(__('lang.product_id_copied'))
                     ->copyMessageDuration(1500)
                     ->sortable()->searchable()
                     ->searchable(isIndividual: true, isGlobal: false),
@@ -98,20 +107,21 @@ class ProductResource extends Resource
                     ->searchable(isIndividual: true)
                     ->tooltip(fn (Model $record): string => "By {$record->name}"),
                 Tables\Columns\TextColumn::make('code')->searchable()
+                    ->label(__('lang.code'))
                     ->searchable(isIndividual: true, isGlobal: false),
 
-                Tables\Columns\TextColumn::make('description')->searchable(),
-                Tables\Columns\TextColumn::make('category.name')->searchable()
+                Tables\Columns\TextColumn::make('description')->searchable()->label(__('lang.description')),
+                Tables\Columns\TextColumn::make('category.name')->searchable()->label(__('lang.category'))
                     ->searchable(isIndividual: true, isGlobal: false),
-                Tables\Columns\CheckboxColumn::make('active')->label('Active?')->sortable(),
+                Tables\Columns\CheckboxColumn::make('active')->label('Active?')->sortable()->label(__('lang.active')),
             ])
             ->filters([
-                Tables\Filters\Filter::make('active')
+                Tables\Filters\Filter::make('active')->label(__('lang.active'))
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('active')),
                 SelectFilter::make('category_id')
                     ->searchable()
                     ->multiple()
-                    ->label('Category')->relationship('category', 'name'),
+                    ->label(__('lang.category'))->relationship('category', 'name'),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
