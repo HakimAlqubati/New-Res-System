@@ -1,6 +1,6 @@
 <?php
 
-namespace App\FakeModelReports\Models;
+namespace App\Models\FakeModelReports;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

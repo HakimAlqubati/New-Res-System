@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Reports;
 
-use App\FakeModelReports\Models\PurchaseInvoiceReport;
+use App\Models\FakeModelReports\PurchaseInvoiceReport;
 use App\Filament\Resources\PurchaseInvoiceReportResource\Reports\Pages\ListPurchaseInvoiceReport; 
 use Filament\Resources\Resource; 
 

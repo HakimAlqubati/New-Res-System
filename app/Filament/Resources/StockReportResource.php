@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\FakeModelReports\Models\StockReport;
+use App\Models\FakeModelReports\StockReport;
 use App\Filament\Resources\StockReportResource\Pages;
 use App\Filament\Resources\StockReportResource\RelationManagers;
  

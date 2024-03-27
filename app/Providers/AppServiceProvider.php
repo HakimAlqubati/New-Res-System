@@ -63,7 +63,7 @@ class AppServiceProvider extends ServiceProvider
         // ]);
 
         Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
-            return $builder->items([
+            $menu =  $builder->items([
                 NavigationItem::make(__('lang.dashboard'))
                     ->icon('heroicon-o-home')
                     ->activeIcon('heroicon-s-home')
@@ -95,15 +95,19 @@ class AppServiceProvider extends ServiceProvider
                         ->items([
                             ...BranchResource::getNavigationItems(),
                         ]),
-                ])
-                ->groups([
-                    NavigationGroup::make(__('lang.user_and_roles'))
-                        ->items([
-                            ...UserResource::getNavigationItems(),
-                            ...RoleResource::getNavigationItems(),
-                        ]),
-                ])
-                ->groups([
+                ]);
+
+
+            $menu = $builder->groups([
+                NavigationGroup::make(__('lang.user_and_roles'))
+                    ->items([
+                        ...UserResource::getNavigationItems(),
+                        ...(RoleResource::canViewAny() ? RoleResource::getNavigationItems() : [])
+                    ]),
+            ]);
+
+            if (getCurrentRole() == 1) {
+                $menu = $builder->groups([
                     NavigationGroup::make(__('lang.purchase_invoice'))
                         ->items([
                             ...SupplierResource::getNavigationItems(),
@@ -113,7 +117,8 @@ class AppServiceProvider extends ServiceProvider
                             ...StoresReportResource::getNavigationItems(),
 
                         ]),
-                ])
+                ]);
+            }
                 // ->groups([
                 // NavigationGroup::make(__('lang.reports'))
                 // ->items([
@@ -121,6 +126,7 @@ class AppServiceProvider extends ServiceProvider
                 // ]),
                 // ])
             ;
+            return $menu;
         });
 
         Filament::serving(function () {
