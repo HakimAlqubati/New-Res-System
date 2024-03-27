@@ -61,4 +61,6 @@ return [
     'purchase_invoice_report' => 'Purchasing reports',
     'export_pdf' => 'Export PDF',
     'stores_report' => 'Stores report',
+    'notes' => 'Notes',
+    'notes_from_store' => 'Notes from store employee',
 ];

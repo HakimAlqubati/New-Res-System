@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Forms\Components\Textarea;
 
 class OrderResource extends Resource implements HasShieldPermissions
 {
@@ -75,6 +76,8 @@ class OrderResource extends Resource implements HasShieldPermissions
                         Order::PROCESSING => 'processing',
                         Order::DELEVIRED => 'delevired',
                     ]),
+                Textarea::make('notes')->label(__('lang.notes_from_store'))->columnSpanFull(),
+
             ]);
     }
 
@@ -154,7 +157,7 @@ class OrderResource extends Resource implements HasShieldPermissions
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(), 
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 ExportBulkAction::make()

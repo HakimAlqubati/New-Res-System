@@ -61,4 +61,6 @@ return [
     'purchase_invoice_report' => 'تقرير المشتروات',
     'export_pdf' => 'تصدير PDF',
     'stores_report' => 'تقرير المخازن',
+    'notes' => 'ملاحظات',
+    'notes_from_store' => 'ملاحظت من موظف المخزن',
 ];
