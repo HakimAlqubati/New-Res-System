@@ -40,7 +40,9 @@ class ProductResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')->required(),
-                TextInput::make('code')->required(),
+                TextInput::make('code')->required()
+                    ->disabledOn('edit'),
+
                 Textarea::make('description')
                     ->rows(2)
                 // ->cols(20)
