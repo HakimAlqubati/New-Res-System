@@ -54,7 +54,7 @@ class TransferOrderResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id')->label('Order id')->toggleable(isToggledHiddenByDefault: false)
+                TextColumn::make('id')->label(__('lang.order_id'))->toggleable(isToggledHiddenByDefault: false)
                     ->copyable()
                     ->copyMessage('Order id copied')
                     ->copyMessageDuration(1500)
@@ -64,14 +64,16 @@ class TransferOrderResource extends Resource
                         isIndividual: true,
                         isGlobal: false
                     ),
-                TextColumn::make('customer.name')->label('customer')->toggleable()
+                TextColumn::make('branch.name')->label(__('lang.branch')),
+                TextColumn::make('customer.name')->label(__('lang.branch_manager'))->toggleable()
                     ->searchable(isIndividual: true)
                     ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
 
-                TextColumn::make('branch.name'),
-                CountItemsTransfer::make('item_counts'),
-                TotalTransfer::make('total_amount'),
-                TextColumn::make('created_at')->sortable(),
+                CountItemsTransfer::make('item_counts')->label(__('lang.item_counts')),
+                TotalTransfer::make('total_amount')->label(__('lang.total_amount')),
+                TextColumn::make('created_at')
+                    ->label(__('lang.created_at'))
+                    ->sortable(),
                 // TextColumn::make('recorded'),
                 // TextColumn::make('orderDetails'),
             ])
@@ -83,15 +85,16 @@ class TransferOrderResource extends Resource
                 SelectFilter::make('customer_id')
                     ->searchable()
                     ->multiple()
-                    ->label('Customer')->relationship('customer', 'name'),
+                    ->label(__('lang.branch_manager'))->relationship('customer', 'name'),
                 SelectFilter::make('branch_id')
                     ->searchable()
                     ->multiple()
-                    ->label('Branch')->relationship('branch', 'name'),
+                    ->label(__('lang.branch'))->relationship('branch', 'name'),
                 Filter::make('created_at')
+                    ->label(__('lang.created_at'))
                     ->form([
-                        Forms\Components\DatePicker::make('created_from'),
-                        Forms\Components\DatePicker::make('created_until'),
+                        Forms\Components\DatePicker::make('created_from')->label(__('lang.from')),
+                        Forms\Components\DatePicker::make('created_until')->label(__('lang.to')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -128,7 +131,6 @@ class TransferOrderResource extends Resource
         return [
             'index' => Pages\ListTransferOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),
-            // 'view' => Pages\ViewOrder::route('/{record}'),
             'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];

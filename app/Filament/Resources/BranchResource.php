@@ -33,11 +33,11 @@ class BranchResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')->required(),
-                Textarea::make('address'),
-                Checkbox::make('active'),
+                TextInput::make('name')->required()->label(__('lang.name')),
+                Textarea::make('address')->label(__('lang.address')),
+                Checkbox::make('active')->label(__('lang.active')),
                 Select::make('manager_id')
-                    ->label('Manager')
+                    ->label(__('lang.branch_manager'))
                     ->options(User::all()->pluck('name', 'id'))
                     ->searchable()
             ]);
@@ -45,15 +45,18 @@ class BranchResource extends Resource
 
     public static function table(Table $table): Table
     {
+//         $branch = Branch::find(18);
+//         $totalQuantity = $branch->total_quantity;
+// dd($totalQuantity);
         return $table
             ->columns([
-                TextColumn::make('id'),
-                TextColumn::make('name')->searchable(),
-                TextColumn::make('address')
-                // ->limit(100)
-                ->words(5)
-                ,
-                TextColumn::make('user.name')->label('Manager'),
+                TextColumn::make('id')->label(__('lang.branch_id')),
+                TextColumn::make('name')->label(__('lang.name'))->searchable(),
+                TextColumn::make('address')->label(__('lang.address'))
+                    // ->limit(100)
+                    ->words(5),
+                TextColumn::make('user.name')->label(__('lang.branch_manager')),
+                TextColumn::make('total_quantity')->label(__('lang.total_quantity_ordered'))
 
             ])
             ->filters([

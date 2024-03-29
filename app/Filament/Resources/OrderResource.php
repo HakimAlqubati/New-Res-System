@@ -106,7 +106,7 @@ class OrderResource extends Resource implements HasShieldPermissions
                         'danger' => static fn ($state): bool => $state === Order::PROCESSING,
                     ])
                     ->iconPosition('after'),
-                count_items_order::make('item_counts')->label('lang.item_counts'),
+                count_items_order::make('item_counts')->label(__('lang.item_counts')),
                 TotalOrder::make('total_amount')->label(__('lang.total_amount')),
                 TextColumn::make('created_at')
                     ->label(__('lang.created_at'))
@@ -119,6 +119,7 @@ class OrderResource extends Resource implements HasShieldPermissions
                 // Filter::make('active')
                 //     ->query(fn (Builder $query): Builder => $query->where('active', true)),
                 SelectFilter::make('status')
+                    ->label(__('lang.order_status'))
                     ->multiple()
                     ->searchable()
                     ->options([
@@ -131,16 +132,17 @@ class OrderResource extends Resource implements HasShieldPermissions
                 SelectFilter::make('customer_id')
                     ->searchable()
                     ->multiple()
-                    ->label('Customer')->relationship('customer', 'name'),
+                    ->label(__('lang.branch_manager'))->relationship('customer', 'name'),
                 SelectFilter::make('branch_id')
                     ->searchable()
                     ->multiple()
-                    ->label('Branch')->relationship('branch', 'name'),
-                Filter::make('active'),
+                    ->label(__('lang.branch'))->relationship('branch', 'name'),
+                Filter::make('active')->label(__('lang.active')),
                 Filter::make('created_at')
+                    ->label(__('lang.created_at'))
                     ->form([
-                        Forms\Components\DatePicker::make('created_from'),
-                        Forms\Components\DatePicker::make('created_until'),
+                        Forms\Components\DatePicker::make('created_from')->label(__('lang.from')),
+                        Forms\Components\DatePicker::make('created_until')->label(__('lang.to')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query

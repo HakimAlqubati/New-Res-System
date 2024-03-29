@@ -67,4 +67,13 @@ return [
     'code' => 'Code',
     'category' => 'Category',
     'units_prices' => 'Units prices',
+    'order-no-' => 'Order no ',
+    'transfer-no-' => 'Transfer no ',
+    'export_excel' => 'Export Excel',
+    'product_id' => 'Product id',
+    'from' => 'From',
+    'to' => 'To',
+    'total_quantity_ordered' => 'Total quantity ordered',
+    'address' => 'Address',
+    'branch_id' => 'Branch id',
 ];

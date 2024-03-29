@@ -244,10 +244,15 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function export($id)
     {
-        return Excel::download(new OrdersExport($id), 'order-no-' . $id . '-.xlsx');
+        $order_status = Order::find($id)->status;
+        $file_name = __('lang.order-no-') . $id;
+        if (in_array($order_status, [Order::READY_FOR_DELEVIRY, Order::DELEVIRED])) {
+            $file_name = __('lang.transfer-no-') . $id;
+        }
+        return Excel::download(new OrdersExport($id), $file_name . '.xlsx');
     }
     public function exportTransfer($id)
     {
-        return Excel::download(new OrdersExport($id), 'transfer-no-' . $id . '-.xlsx');
+        return Excel::download(new OrdersExport($id), 'transfer-no-' . $id . '.xlsx');
     }
 }

@@ -67,4 +67,13 @@ return [
     'code' => 'الكود',
     'category' => 'الفئة',
     'units_prices' => 'وحدات التسعير',
+    'order-no-' => 'الطلبية رقم ',
+    'transfer-no-' => 'المناقلة رقم ',
+    'export_excel' => 'تصدير أكسل',
+    'product_id' => 'رقم المنتج',
+    'from' => 'من',
+    'to' => 'إلى',
+    'branch_id' => 'رقم الفرع',
+    'total_quantity_ordered' => 'إجمالي الكمية المطلوبة',
+    'address' => 'العنوان',
 ];

@@ -14,7 +14,7 @@ class ViewOrder extends ViewRecord
     protected function getActions(): array
     {
         return [
-            Action::make('Export to Excel')
+            Action::make('Export to Excel')->label(__('lang.export_excel'))
                 ->action('exportToExcel'),
         ];
     }

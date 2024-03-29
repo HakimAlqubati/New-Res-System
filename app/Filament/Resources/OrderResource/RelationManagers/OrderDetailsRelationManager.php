@@ -30,11 +30,11 @@ class OrderDetailsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('product_id'),
-                Tables\Columns\TextColumn::make('product.name'),
-                Tables\Columns\TextColumn::make('unit.name'),
-                Tables\Columns\TextColumn::make('quantity'),
-                Tables\Columns\TextColumn::make('price'),
+                Tables\Columns\TextColumn::make('product_id')->label(__('lang.id')),
+                Tables\Columns\TextColumn::make('product.name')->label(__('lang.product')),
+                Tables\Columns\TextColumn::make('unit.name')->label(__('lang.name')),
+                Tables\Columns\TextColumn::make('quantity')->label(__('lang.quantity')),
+                Tables\Columns\TextColumn::make('price')->label(__('lang.price')),
             ])
             ->filters([
                 //
