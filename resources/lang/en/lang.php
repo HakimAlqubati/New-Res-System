@@ -73,7 +73,7 @@ return [
     'product_id' => 'Product id',
     'from' => 'From',
     'to' => 'To',
-    'total_quantity_ordered' => 'Total quantity ordered',
+    'total_quantity_ordered' => 'Ordered quantity',
     'address' => 'Address',
     'branch_id' => 'Branch id',
 ];
