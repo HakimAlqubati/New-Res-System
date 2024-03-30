@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SupplierResource\Pages;
 
 use App\Filament\Resources\SupplierResource;
+use App\Models\User;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,7 @@ class CreateSupplier extends CreateRecord
     protected function afterCreate(): void
     {
         $user_id = $this->record->id;
+        User::find($user_id)->update(['role_id' => 10]);
         DB::table('model_has_roles')->insert([
             'role_id' => 10,
             'model_id' => $user_id,

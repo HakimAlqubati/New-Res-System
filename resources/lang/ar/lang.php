@@ -77,4 +77,5 @@ return [
     'total_quantity_ordered' => 'إجمالي الكمية المطلوبة',
     'address' => 'العنوان',
     'product_code' => 'كود المنتج',
+    'email' => 'البريد الإلكتروني',
 ];

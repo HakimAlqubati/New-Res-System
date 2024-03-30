@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SupplierResource\Pages;
 use App\Models\Supplier;
+use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
@@ -33,8 +34,8 @@ class SupplierResource extends Resource
         return $form
             ->schema([
 
-                TextInput::make('name')->required(),
-                TextInput::make('email')->email()->required(),
+                TextInput::make('name')->label(__('lang.name'))->required(),
+                TextInput::make('email')->label(__('lang.email'))->email()->required(),
 
 
             ]);

@@ -77,4 +77,5 @@ return [
     'address' => 'Address',
     'branch_id' => 'Branch id',
     'product_code' => 'Product code',
+    'email' => 'Email',
 ];
