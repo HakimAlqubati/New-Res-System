@@ -1,9 +1,8 @@
 <table>
     <thead>
-        <tr> 
-            <th>Product id </th>
-            <th>Product name </th>
+        <tr>  
             <th>Product code </th>
+            <th>Product name </th>
             <th>Unit </th>
             <th>Quantity</th>
         </tr>
@@ -16,10 +15,9 @@
           
             if( is_numeric ($key) && ((int)$key) > 0) {
             ?>
-        <tr> 
-            <td>{{ $value?->product_id }}</td>
-            <td>{{ $value?->product_name }}</td>
+        <tr>  
             <td>{{ $value?->product_code }}</td>
+            <td>{{ $value?->product_name }}</td>
             <td>{{ $value?->unit_name }}</td>
             <td>{{ $value?->qty }}</td>
         </tr>
