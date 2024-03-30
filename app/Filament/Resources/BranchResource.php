@@ -18,6 +18,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\URL;
 
 class BranchResource extends Resource
 {
@@ -45,9 +46,6 @@ class BranchResource extends Resource
 
     public static function table(Table $table): Table
     {
-//         $branch = Branch::find(18);
-//         $totalQuantity = $branch->total_quantity;
-// dd($totalQuantity);
         return $table
             ->columns([
                 TextColumn::make('id')->label(__('lang.branch_id')),
@@ -56,7 +54,10 @@ class BranchResource extends Resource
                     // ->limit(100)
                     ->words(5),
                 TextColumn::make('user.name')->label(__('lang.branch_manager')),
-                TextColumn::make('total_quantity')->label(__('lang.total_quantity_ordered'))
+                TextColumn::make('total_quantity')->label(__('lang.quantity'))
+                    ->action(function ($record) {
+                        redirect('admin/transfers-list?tableFilters[branch_id][values][0]=' . $record->id);
+                    }),
 
             ])
             ->filters([

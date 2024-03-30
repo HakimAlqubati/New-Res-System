@@ -76,4 +76,5 @@ return [
     'total_quantity_ordered' => 'Ordered quantity',
     'address' => 'Address',
     'branch_id' => 'Branch id',
+    'product_code' => 'Product code',
 ];

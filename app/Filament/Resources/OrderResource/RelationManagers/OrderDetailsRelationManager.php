@@ -32,7 +32,8 @@ class OrderDetailsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('product_id')->label(__('lang.id')),
                 Tables\Columns\TextColumn::make('product.name')->label(__('lang.product')),
-                Tables\Columns\TextColumn::make('unit.name')->label(__('lang.name')),
+                Tables\Columns\TextColumn::make('product.code')->label(__('lang.product_code')),
+                Tables\Columns\TextColumn::make('unit.name')->label(__('lang.unit')),
                 Tables\Columns\TextColumn::make('quantity')->label(__('lang.quantity')),
                 Tables\Columns\TextColumn::make('price')->label(__('lang.price')),
             ])
