@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Models\User;
 
 function getName()
 {
@@ -61,4 +61,18 @@ function __filament_request_select($key, $default = null)
         }
         return $data;
     }
+}
+
+/**
+ * get admins to notify [Super admin - Manager] roles
+ */
+
+function getAdminsToNotify()
+{
+    $adminIds = [];
+    $adminIds =  User::whereHas("roles", function ($q) {
+        $q->whereIn("id", [1, 3]);
+    })->select('id', 'name')->get()->pluck('id')->toArray();
+    $recipients = User::whereIn('id', $adminIds)->get(['id', 'name']);
+    return $recipients;
 }

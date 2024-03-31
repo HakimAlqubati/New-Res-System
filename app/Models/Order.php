@@ -25,6 +25,7 @@ class Order extends Model
         'total',
         'active',
         'updated_by',
+        'storeuser_id_update',
     ];
 
     public function orderDetails()
@@ -70,6 +71,11 @@ class Order extends Model
             ->where('orders_details.available_in_store', 1)->distinct();
     }
 
+
+    public function storeEmpResponsiple()
+    {
+        return $this->belongsTo(User::class, 'storeuser_id_update');
+    }
 
     public function customer_name()
     {

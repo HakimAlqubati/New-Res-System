@@ -24,6 +24,8 @@ class OrderResource extends JsonResource
             'branch_id'=>$this->branch_id,
             'branch_name'=>$this?->branch?->name,
             'notes'=>$this->notes,
+            'storeuser_id_update' => $this?->storeuser_id_update,
+            'storeuser_name' =>$this?->storeEmpResponsiple?->name,
             'total_price'=>$this->total,
             'created_at'=>$this->created_at,
             'updated_at'=>$this->updated_at,

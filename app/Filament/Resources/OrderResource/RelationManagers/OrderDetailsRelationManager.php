@@ -16,6 +16,10 @@ class OrderDetailsRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'order_id';
 
+    public static function getTitle(): string
+    {
+        return __('lang.order_details');
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -34,7 +38,8 @@ class OrderDetailsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('product.name')->label(__('lang.product')),
                 Tables\Columns\TextColumn::make('product.code')->label(__('lang.product_code')),
                 Tables\Columns\TextColumn::make('unit.name')->label(__('lang.unit')),
-                Tables\Columns\TextColumn::make('quantity')->label(__('lang.quantity')),
+                Tables\Columns\TextColumn::make('quantity')->label(__('lang.ordered_quantity_by_branch')),
+                Tables\Columns\TextColumn::make('available_quantity')->label(__('lang.quantity_after_modification')),
                 Tables\Columns\TextColumn::make('price')->label(__('lang.price')),
             ])
             ->filters([

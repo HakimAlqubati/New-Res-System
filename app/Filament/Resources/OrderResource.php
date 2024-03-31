@@ -76,6 +76,7 @@ class OrderResource extends Resource implements HasShieldPermissions
                         Order::PROCESSING => 'processing',
                         Order::DELEVIRED => 'delevired',
                     ]),
+                // TextInput::make('store_emp_responsiple.name')->label(__('lang.store_responsiple'))->columnSpanFull(),
                 Textarea::make('notes')->label(__('lang.notes_from_store'))->columnSpanFull(),
 
             ]);

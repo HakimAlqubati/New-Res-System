@@ -11,17 +11,19 @@ class OrderObserver
 {
     public function created(Order $order)
     {
-        // $recipient = User::role([1, 3])->pluck('id');
-
-        // Notification::make()
-        //     ->title('Order no ' . $order->id . ' Has been created')
-        //     ->sendToDatabase($recipient)
-        // ->broadcast($recipient);
+        $recipients = getAdminsToNotify();
+        
+        foreach ($recipients as $recipient) {
+            Notification::make()
+                ->title(__('lang.order_created_notification') . $order->id)
+                ->sendToDatabase($recipient)
+                ->broadcast($recipient);
+        }
     }
     public function updated(Order $order)
     {
-        // if (in_array($order->status, [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])) {
-        //     OrderDetails::where('order_id', $order->id)->update(['available_in_store' => 1]);
-        // }
+        if (in_array($order->status, [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])) {
+            OrderDetails::where('order_id', $order->id)->update(['available_in_store' => 1]);
+        }
     }
 }

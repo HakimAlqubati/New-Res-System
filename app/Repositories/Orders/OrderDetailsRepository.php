@@ -33,7 +33,7 @@ class OrderDetailsRepository implements OrderDetailsRepositoryInterface
             'orders_details.*.id' => ['required', 'integer', Rule::exists('orders_details', 'id')],
             'orders_details.*.product_id' => ['required', 'integer', Rule::exists('products', 'id')->where('active', 1)],
             'orders_details.*.unit_id' => ['required', 'integer', Rule::exists('units', 'id')],
-            'orders_details.*.quantity' => ['required', 'numeric', 'min:0'],
+            // 'orders_details.*.quantity' => ['required', 'numeric', 'min:0'],
             'orders_details.*.available_quantity' => ['required', 'numeric', 'min:0'],
             'orders_details.*.available_in_store' => ['required', 'numeric', 'min:0'],
             'orders_details.*.operation' => ['required', 'string', Rule::in(['update', 'destroy'])],
@@ -81,13 +81,13 @@ class OrderDetailsRepository implements OrderDetailsRepositoryInterface
 
             if ($orderDetailData['operation'] === 'update') {
                 // Calculate the new price based on the quantity and unit price.
-                $price = $orderDetailData['quantity'] * $unitPrice->price;
+                // $price = $orderDetailData['quantity'] * $unitPrice->price;
 
                 // Update the order detail with the new values.
                 $orderDetail->fill($orderDetailData);
                 $orderDetail->product_id = $orderDetailData['product_id'];
                 $orderDetail->unit_id = $orderDetailData['unit_id'];
-                $orderDetail->price = $price;
+                // $orderDetail->price = $price;
                 $orderDetail->updated_by = auth()->user()->id;
                 $orderDetail->save();
 
@@ -114,7 +114,9 @@ class OrderDetailsRepository implements OrderDetailsRepositoryInterface
                 ];
             }
         }
-
+        if (isset($responses[0]['success']) && $responses[0]['success'] == true) {
+            Order::find($orderDetail['order_id'])->update(['storeuser_id_update' => auth()->user()->id]);
+        }
         // Return the array of responses.
         return response()->json($responses);
     }

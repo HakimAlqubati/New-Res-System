@@ -8,6 +8,7 @@ use App\Interfaces\Orders\OrderRepositoryInterface;
 use App\Models\Order;
 use App\Models\OrderDetails;
 use App\Models\UnitPrice;
+use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -126,7 +127,9 @@ class OrderRepository implements OrderRepositoryInterface
                             UnitPrice::where(
                                 'product_id',
                                 $orderDetail['product_id']
-                            )->where('unit_id', $orderDetail['unit_id'])->first()->price * ($newQuantity),
+                            )->where('unit_id', $orderDetail['unit_id'])->first()->price
+                            //  * ($newQuantity)
+                            ,
                         ]);
                         continue;
                     }
@@ -141,7 +144,9 @@ class OrderRepository implements OrderRepositoryInterface
                     'price' => (UnitPrice::where(
                         'product_id',
                         $orderDetail['product_id']
-                    )->where('unit_id', $orderDetail['unit_id'])->first()->price) * $orderDetail['quantity'],
+                    )->where('unit_id', $orderDetail['unit_id'])->first()->price)
+                    // * $orderDetail['quantity']
+                    ,
                     // 'created_at' => $order->created_at,
                     // 'updated_at' => $order->created_at,
                 ];

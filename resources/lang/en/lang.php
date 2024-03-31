@@ -78,4 +78,9 @@ return [
     'branch_id' => 'Branch id',
     'product_code' => 'Product code',
     'email' => 'Email',
+    'order_created_notification' => 'A new order has been created with number #',
+    'store_responsiple' => 'Store employee responsiple',
+    'ordered_quantity_by_branch'=> 'Orderd quantity',
+    'quantity_after_modification' => 'Quantity after modification',
+    'order_details' => 'Order details',
 ];

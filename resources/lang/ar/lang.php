@@ -78,4 +78,9 @@ return [
     'address' => 'العنوان',
     'product_code' => 'كود المنتج',
     'email' => 'البريد الإلكتروني',
+    'order_created_notification' => 'تم إنشاء طلبية جديدة رقمها #',
+    'store_responsiple' => 'موظف المخزن المسؤول',
+    'ordered_quantity_by_branch' => 'الكمية المطلوبة',
+    'quantity_after_modification' => 'الكمية بعد التعديل',
+    'order_details' => 'تفاصيل الطلبية',
 ];
