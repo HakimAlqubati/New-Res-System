@@ -50,7 +50,8 @@ class ProductResource extends Resource
                    
                     ,
                 TextInput::make('code')->required()->label(__('lang.code'))
-                    ->disabledOn('edit'),
+                    // ->disabledOn('edit')
+                    ,
 
                 Textarea::make('description')->label(__('lang.description'))
                     ->rows(2)
