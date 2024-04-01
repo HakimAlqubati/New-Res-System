@@ -22,7 +22,7 @@ class OrderDetailsResource extends JsonResource
             'product_category'=>$this?->product?->category?->id,
             'unit_id'=>$this->unit_id,
             'unit_name'=>$this->unit->name,
-            'quantity'=>$this->quantity,
+            'quantity'=>$this->available_quantity,
             'available_quantity'=>$this->available_quantity,
             'price'=>$this->price,
             'available_in_store'=>$this->available_in_store,
