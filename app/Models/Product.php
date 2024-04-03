@@ -9,9 +9,11 @@ use Spatie\Translatable\HasTranslations;
 
 class Product extends Model
 {
-    use HasFactory,SoftDeletes,HasTranslations;
-    public $translatable = ['name','description'];
-
+    use HasFactory, SoftDeletes
+    // , HasTranslations
+    ;
+    // public $translatable = ['name', 'description'];
+    // protected $useFallbackLocale = false;
     protected $fillable = [
         'name',
         'code',
@@ -68,5 +70,5 @@ class Product extends Model
     public function scopeHasUnitPrices($query)
     {
         return $query->has('unitPrices');
-    }
+    } 
 }
