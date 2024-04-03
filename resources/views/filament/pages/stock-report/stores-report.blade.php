@@ -16,9 +16,9 @@
                 <th>Product id </th>
                 <th>Product name</th>
                 <th>Unit</th>
-                <th>Quantity in store</th>
-                <th>Ordered quantity</th>
-                <th>Remaning quantity</th>
+                <th>Purchased Qty</th>
+                <th>Qty sent to branches</th>
+                <th>Qty in stock</th>
             </x-tables::row>
         </thead>
         <tbody>
