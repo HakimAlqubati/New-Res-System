@@ -47,12 +47,15 @@ class ListBranchStoreReport extends ListRecords
     protected function getViewData(): array
     {
         $branch_id = __filament_request_select('branch_id', 'all');
-
+        $branch_store_report_data = [];
+        $total_quantity = 0;
         $branch_store_report_data = $this->getBranchStoreReportData($branch_id);
 
-        $total_quantity = array_reduce($branch_store_report_data->toArray(), function ($carry, $item) {
-            return $carry + $item->total_quantity;
-        }, 0);
+        if (count($branch_store_report_data) > 0) {
+            $total_quantity = array_reduce($branch_store_report_data->toArray(), function ($carry, $item) {
+                return $carry + $item->total_quantity;
+            }, 0);
+        }
 
         return [
             'branch_store_report_data' => $branch_store_report_data,
