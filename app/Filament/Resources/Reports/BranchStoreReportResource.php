@@ -2,14 +2,14 @@
 
 namespace App\Filament\Resources\Reports;
 
-use App\Filament\Resources\PurchaseInvoiceReportResource\Reports\Pages\ListBranchStoreReport; 
+use App\Filament\Resources\PurchaseInvoiceReportResource\Reports\Pages\ListBranchStoreReport;
 use App\Models\FakeModelReports\BranchStoreReport;
 use Filament\Resources\Resource;
 
 class BranchStoreReportResource extends Resource
 {
     protected static ?string $model = BranchStoreReport::class;
-
+    protected static ?string $slug = 'branch-store-report';
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
     /**
