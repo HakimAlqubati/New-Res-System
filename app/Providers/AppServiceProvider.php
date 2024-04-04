@@ -139,6 +139,7 @@ class AppServiceProvider extends ServiceProvider
 
         Filament::registerStyles([
             asset("filament/main.css"),
+            asset("New-Res-System/public/filament/main.css"),
         ]);
     }
 }
