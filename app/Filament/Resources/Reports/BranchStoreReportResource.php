@@ -11,10 +11,13 @@ class BranchStoreReportResource extends Resource
     protected static ?string $model = BranchStoreReport::class;
     protected static ?string $slug = 'branch-store-report';
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-
+     
     /**
      * @deprecated Use `getModelLabel()` instead.
      */
+
+
+  
     public static function getLabel(): ?string
     {
         return __('lang.branch_store_report');

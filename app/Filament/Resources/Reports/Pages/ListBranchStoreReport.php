@@ -21,6 +21,10 @@ class ListBranchStoreReport extends ListRecords
     protected static string $view = 'filament.pages.stock-report.branch-store-report';
 
 
+    protected function getTitle(): string
+    {
+        return __('lang.branch_store_report');
+    }
     protected function getTableFilters(): array
     {
         return [
@@ -49,7 +53,7 @@ class ListBranchStoreReport extends ListRecords
 
         return [
             'branch_store_report_data' => $branch_store_report_data,
-            'branch_id'=> $branch_id,
+            'branch_id' => $branch_id,
         ];
     }
 
@@ -76,7 +80,7 @@ class ListBranchStoreReport extends ListRecords
                     Order::DELEVIRED,
                     Order::READY_FOR_DELEVIRY
                 ])
-                ->whereBetween('orders.created_at', ['2024-01-01', '2024-04-31'])
+                // ->whereBetween('orders.created_at', ['2024-01-01', '2024-04-31'])
                 ->where('orders.branch_id', $branch_id)
                 ->groupBy('products.id', 'products.name', 'units.id', 'units.name', 'orders.branch_id')
                 ->get();
