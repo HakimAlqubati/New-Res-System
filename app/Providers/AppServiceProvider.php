@@ -8,6 +8,7 @@ use App\Filament\Resources\CategoryResource;
 use App\Filament\Resources\OrderResource;
 use App\Filament\Resources\ProductResource;
 use App\Filament\Resources\PurchaseInvoiceResource;
+use App\Filament\Resources\Reports\BranchStoreReportResource;
 use App\Filament\Resources\Reports\PurchaseInvoiceReportResource;
 use App\Filament\Resources\Reports\StoresReportResource;
 use App\Filament\Resources\Shield\RoleResource;
@@ -115,6 +116,7 @@ class AppServiceProvider extends ServiceProvider
                             ...PurchaseInvoiceReportResource::getNavigationItems(),
                             ...StoreResource::getNavigationItems(),
                             ...StoresReportResource::getNavigationItems(),
+                            ...BranchStoreReportResource::getNavigationItems(),
 
                         ]),
                 ]);

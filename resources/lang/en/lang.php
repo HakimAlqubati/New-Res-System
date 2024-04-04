@@ -83,4 +83,5 @@ return [
     'ordered_quantity_by_branch'=> 'Orderd quantity',
     'quantity_after_modification' => 'Quantity after modification',
     'order_details' => 'Order details',
+    'branch_store_report' => 'Branch store report'
 ];

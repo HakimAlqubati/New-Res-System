@@ -10,9 +10,10 @@ use Spatie\Translatable\HasTranslations;
 class Product extends Model
 {
     use HasFactory,
-        SoftDeletes,
-        HasTranslations;
-    public $translatable = ['name', 'description'];
+        SoftDeletes
+        // ,HasTranslations
+    ;
+    // public $translatable = ['name', 'description'];
     // protected $useFallbackLocale = false;
     protected $fillable = [
         'name',

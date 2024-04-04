@@ -56,7 +56,7 @@ class BranchResource extends Resource
                 TextColumn::make('user.name')->label(__('lang.branch_manager')),
                 TextColumn::make('total_quantity')->label(__('lang.quantity'))
                     ->action(function ($record) {
-                        redirect('admin/transfers-list?tableFilters[branch_id][values][0]=' . $record->id);
+                        redirect('admin/fake-model-reports/branch-store-reports?tableFilters[branch_id][value]=' . $record->id);
                     }),
 
             ])

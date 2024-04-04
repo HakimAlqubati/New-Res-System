@@ -83,4 +83,5 @@ return [
     'ordered_quantity_by_branch' => 'الكمية المطلوبة',
     'quantity_after_modification' => 'الكمية بعد التعديل',
     'order_details' => 'تفاصيل الطلبية',
+    'branch_store_report' => 'تقرير مخزن الفروع',
 ];
