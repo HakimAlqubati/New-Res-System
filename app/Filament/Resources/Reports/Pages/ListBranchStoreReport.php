@@ -50,10 +50,14 @@ class ListBranchStoreReport extends ListRecords
 
         $branch_store_report_data = $this->getBranchStoreReportData($branch_id);
 
+        $total_quantity = array_reduce($branch_store_report_data->toArray(), function ($carry, $item) {
+            return $carry + $item->total_quantity;
+        }, 0);
 
         return [
             'branch_store_report_data' => $branch_store_report_data,
             'branch_id' => $branch_id,
+            'total_quantity' => $total_quantity,
         ];
     }
 

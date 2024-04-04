@@ -31,6 +31,10 @@
                     <x-tables::cell> {{ $report_item?->total_quantity }} </x-tables::cell>
                 </x-tables::row>
             @endforeach
+            <x-tables::row>
+                <x-tables::cell colspan="3">Total</x-tables::cell>
+                <x-tables::cell>{{ $total_quantity }}</x-tables::cell>
+            </x-tables::row>
         </tbody>
 
     </x-tables::table>
