@@ -91,4 +91,5 @@ return [
     'stores' => 'Stores',
     'start_date' => 'Start date',
     'end_date' => 'End date',
+    'unit_price' => 'Unit price',
 ];

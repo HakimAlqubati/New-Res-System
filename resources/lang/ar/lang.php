@@ -91,4 +91,5 @@ return [
     'stores' => 'المخازن',
     'start_date' => 'من تاريخ',
     'end_date' => 'إلى تاريخ',
+    'unit_price' => 'سعر الوحدة',
 ];
