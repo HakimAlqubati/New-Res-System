@@ -6,19 +6,19 @@
 
             <x-tables::row>
                 <th colspan="3">
-                    Stock: ({{ $purchase_invoice_data['store_name'] }})
+                    {{ __('lang.store') }}: ({{ $purchase_invoice_data['store_name'] }})
                 </th>
                 <th colspan="3">
-                    Supplier: ({{ $purchase_invoice_data['supplier_name'] }})
+                    {{ __('lang.supplier') }}: ({{ $purchase_invoice_data['supplier_name'] }})
                 </th>
             </x-tables::row>
             <x-tables::row>
-                <th>Product id </th>
-                <th>Product name</th>
-                <th>Unit</th>
-                <th>Quantity</th>
-                <th>Unit price</th>
-                <th>Total</th>
+                <th>{{ __('lang.product_id') }} </th>
+                <th>{{ __('lang.product') }}</th>
+                <th>{{ __('lang.unit') }}</th>
+                <th>{{ __('lang.quantity') }}</th>
+                <th>{{ __('lang.unit_price') }}</th>
+                <th>{{ __('lang.total_amount') }}</th>
             </x-tables::row>
         </thead>
         <tbody>
@@ -48,7 +48,7 @@
             @endforeach
 
             <x-tables::row>
-                <x-tables::cell colspan="4"> Final Total </x-tables::cell>
+                <x-tables::cell colspan="4"> {{ __('lang.total_quantity') }} </x-tables::cell>
                 <x-tables::cell> {{ $sum_unit_price }} </x-tables::cell>
                 <x-tables::cell> {{ $total_sub_total }} </x-tables::cell>
             </x-tables::row>

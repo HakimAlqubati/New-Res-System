@@ -13,16 +13,16 @@
                 </th>
             </x-tables::row> --}}
             <x-tables::row>
-                <th>Product id </th>
-                <th>Product name</th>
-                <th>Unit</th>
-                <th>Purchased Qty</th>
-                <th>Qty sent to branches</th>
-                <th>Qty in stock</th>
+                <th>{{ __('lang.product_id') }} </th>
+                <th>{{ __('lang.product') }}</th>
+                <th>{{ __('lang.unit') }}</th>
+                <th>{{ __('lang.purchased_qty') }}</th>
+                <th>{{ __('lang.qty_sent_to_branches') }}</th>
+                <th>{{ __('lang.qty_in_stock') }}</th>
             </x-tables::row>
         </thead>
         <tbody>
-            
+
             @foreach ($stores_report_data as $key => $report_item)
                 <x-tables::row>
                     <x-tables::cell> {{ $report_item?->product_id }} </x-tables::cell>
@@ -32,7 +32,7 @@
                     <x-tables::cell> {{ $report_item?->ordered }} </x-tables::cell>
                     <x-tables::cell> {{ $report_item?->remaining }} </x-tables::cell>
                 </x-tables::row>
-            @endforeach 
+            @endforeach
         </tbody>
 
     </x-tables::table>

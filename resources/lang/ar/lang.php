@@ -84,4 +84,11 @@ return [
     'quantity_after_modification' => 'الكمية بعد التعديل',
     'order_details' => 'تفاصيل الطلبية',
     'branch_store_report' => 'تقرير مخزن الفروع',
+    'qty_in_stock' => 'الكمية في المخزن',
+    'purchased_qty' => 'الكمية المشتراة',
+    'qty_sent_to_branches' => 'الكمية المرسلة للفروع',
+    'total_quantity' => 'إجمالي الكمية',
+    'stores' => 'المخازن',
+    'start_date' => 'من تاريخ',
+    'end_date' => 'إلى تاريخ',
 ];

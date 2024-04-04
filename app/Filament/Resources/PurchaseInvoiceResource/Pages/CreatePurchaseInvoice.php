@@ -9,4 +9,11 @@ use Filament\Resources\Pages\CreateRecord;
 class CreatePurchaseInvoice extends CreateRecord
 {
     protected static string $resource = PurchaseInvoiceResource::class;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        // dd($data['purchaseInvoiceDetails']);
+        return $data;
+    }
+
 }

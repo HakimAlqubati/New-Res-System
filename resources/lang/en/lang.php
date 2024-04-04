@@ -80,8 +80,15 @@ return [
     'email' => 'Email',
     'order_created_notification' => 'A new order has been created with number #',
     'store_responsiple' => 'Store employee responsiple',
-    'ordered_quantity_by_branch'=> 'Orderd quantity',
+    'ordered_quantity_by_branch' => 'Orderd quantity',
     'quantity_after_modification' => 'Quantity after modification',
     'order_details' => 'Order details',
-    'branch_store_report' => 'Branch store report'
+    'branch_store_report' => 'Branch store report',
+    'qty_in_stock' => 'Qty in stock',
+    'purchased_qty' => 'Purchased qty',
+    'qty_sent_to_branches' => 'Qty sent to branches',
+    'total_quantity' => 'Total quantity',
+    'stores' => 'Stores',
+    'start_date' => 'Start date',
+    'end_date' => 'End date',
 ];

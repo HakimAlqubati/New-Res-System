@@ -52,20 +52,22 @@ class PurchaseInvoiceResource extends Resource
                 TextInput::make('invoice_no')->label(__('lang.invoice_no'))
                     ->required()
                     ->placeholder('Enter invoice number')
-                    ->disabledOn('edit'),
+                    // ->disabledOn('edit')
+                    ,
                 DatePicker::make('date')
                     ->required()
                     ->placeholder('Select date')
                     ->default(date('Y-m-d'))
                     ->format('Y-m-d')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->format('Y-m-d'),
                 Select::make('supplier_id')->label(__('lang.supplier'))
                     ->options(
                         Supplier::get(['id', 'name'])->pluck('name', 'id')
                     )->searchable()
                     ->required()
-                    ->disabledOn('edit'),
+                    // ->disabledOn('edit')
+                    ,
                 Select::make('store_id')->label(__('lang.store'))
                     ->searchable()
                     ->options(
@@ -87,13 +89,12 @@ class PurchaseInvoiceResource extends Resource
                     ->collapsible()
                     ->relationship('purchaseInvoiceDetails')
                     ->label(__('lang.purchase_invoice_details'))
-                    ->orderable('product_id')
                     ->schema([
                         Select::make('product_id')
                             ->label(__('lang.product'))
                             ->required()
                             ->searchable()
-                            ->disabledOn('edit')
+                            // ->disabledOn('edit')
                             ->options(function () {
                                 return Product::pluck('name', 'id');
                             })
@@ -103,7 +104,7 @@ class PurchaseInvoiceResource extends Resource
                         Select::make('unit_id')
                             ->label(__('lang.unit'))
                             ->required()
-                            ->disabledOn('edit')
+                            // ->disabledOn('edit')
                             ->options(
                                 function (callable $get) {
 
@@ -114,7 +115,7 @@ class PurchaseInvoiceResource extends Resource
                                     return [];
                                 }
                             )
-                            // ->searchable()
+                            ->searchable()
                             ->reactive()
                             ->afterStateUpdated(function (Closure $set, $state, $get) {
                                 $unitPrice = UnitPrice::where(
@@ -130,7 +131,7 @@ class PurchaseInvoiceResource extends Resource
                             ->required()
                             ->type('number')
                             ->default(1)
-                            ->disabledOn('edit')
+                            // ->disabledOn('edit')
                             ->mask(
                                 fn (TextInput\Mask $mask) => $mask
                                     ->numeric()
@@ -145,7 +146,7 @@ class PurchaseInvoiceResource extends Resource
                             ->label(__('lang.price'))
                             ->type('number')
                             ->default(1)
-                            ->disabledOn('edit')
+                            // ->disabledOn('edit')
                             // ->mask(
                             //     fn (TextInput\Mask $mask) => $mask
                             //         ->numeric()

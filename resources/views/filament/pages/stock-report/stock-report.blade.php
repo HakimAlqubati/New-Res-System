@@ -4,12 +4,12 @@
     <x-tables::table class="w-full text-sm text-left pretty displayschedule">
         <thead>
             <x-tables::row>
-                <th>Product id </th>
-                <th>Product name</th>
-                <th>Unit</th>
-                <th>Quantity</th>
-                <th>Unit price</th>
-                <th>Total</th>
+                <th>{{ __('lang.product_id') }} </th>
+                <th>{{ __('lang.product') }}</th>
+                <th>{{ __('lang.unit') }}</th>
+                <th>{{ __('lang.quantity') }}</th>
+                <th>{{ __('lang.unit_price') }}</th>
+                <th>{{ __('lang.total_amount') }}</th>
             </x-tables::row>
         </thead>
         <tbody>

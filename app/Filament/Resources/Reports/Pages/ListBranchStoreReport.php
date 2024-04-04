@@ -10,7 +10,9 @@ use App\Models\Store;
 use App\Models\Supplier;
 
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\DB;
@@ -27,29 +29,61 @@ class ListBranchStoreReport extends ListRecords
     }
     protected function getTableFilters(): array
     {
+        $current_date = date('Y-m-d');  // Get the current date
+
+        // Get the start date of the current month
+        $start_of_month = date('Y-m-01', strtotime($current_date));
+
+        // Get the end date of the current month
+        $end_of_month = date('Y-m-t', strtotime($current_date));
+
         return [
             SelectFilter::make("branch_id")
                 ->label(__('lang.branch'))
                 ->query(function (Builder $q, $data) {
                     return $q;
                 })->options(Branch::get()->pluck('name', 'id')),
-            // SelectFilter::make("product_id")
-            //     ->label(__('lang.product'))
-            //     ->searchable()
-            //     ->multiple()
-            //     ->query(function (Builder $q, $data) {
-            //         return $q;
-            //     })->options(Product::get()->pluck('name', 'id')),
+            Filter::make('date')
+                ->form([
+                    DatePicker::make('start_date')
+                        ->label(__('lang.start_date'))
+                        ->default($start_of_month),
+                    DatePicker::make('end_date')
+                        ->label(__('lang.end_date'))
+                        ->default($end_of_month),
+                ])
+                ->query(function (Builder $query, array $data): Builder {
+                    return $query;
+                }),
+            SelectFilter::make("product_id")
+                ->label(__('lang.product'))
+                ->multiple()
+                ->query(function (Builder $q, $data) {
+                    return $q;
+                })->options(Product::where('active', 1)->get()->pluck('name', 'id')),
         ];
     }
 
 
     protected function getViewData(): array
     {
+
+        $current_date = date('Y-m-d');  // Get the current date
+
+        // Get the start date of the current month
+        $start_of_month = date('Y-m-01', strtotime($current_date));
+
+        // Get the end date of the current month
+        $end_of_month = date('Y-m-t', strtotime($current_date));
+        $product_ids = [];
         $branch_id = __filament_request_select('branch_id', 'all');
+        $product_ids = __filament_request_select_multiple('product_id', null, true);
+        $start_date =  date('Y-m-d', strtotime(__filament_request_key("date.start_date", $start_of_month)));
+        $end_date = date('Y-m-d', strtotime(__filament_request_key("date.end_date", $end_of_month)));
+
         $branch_store_report_data = [];
         $total_quantity = 0;
-        $branch_store_report_data = $this->getBranchStoreReportData($branch_id);
+        $branch_store_report_data = $this->getBranchStoreReportData($branch_id, $start_date, $end_date, $product_ids);
 
         if (count($branch_store_report_data) > 0) {
             $total_quantity = array_reduce($branch_store_report_data->toArray(), function ($carry, $item) {
@@ -61,6 +95,8 @@ class ListBranchStoreReport extends ListRecords
             'branch_store_report_data' => $branch_store_report_data,
             'branch_id' => $branch_id,
             'total_quantity' => $total_quantity,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
         ];
     }
 
@@ -69,11 +105,12 @@ class ListBranchStoreReport extends ListRecords
         return Layout::AboveContent;
     }
 
-    public function getBranchStoreReportData($branch_id)
+    public function getBranchStoreReportData($branch_id, $start_date, $end_date, $product_ids)
     {
+        
         $results = [];
         if (isset($branch_id) && is_numeric($branch_id)) {
-            $results = DB::table('orders_details')
+            $query = DB::table('orders_details')
                 ->select(
                     'products.id as product_id',
                     DB::raw("IF(JSON_VALID(products.name), REPLACE(JSON_EXTRACT(products.name, '$.ar'), '\"', ''), products.name) AS product_name"),
@@ -87,11 +124,15 @@ class ListBranchStoreReport extends ListRecords
                     Order::DELEVIRED,
                     Order::READY_FOR_DELEVIRY
                 ])
-                // ->whereBetween('orders.created_at', ['2024-01-01', '2024-04-31'])
-                ->where('orders.branch_id', $branch_id)
-                ->groupBy('products.id', 'products.name', 'units.id', 'units.name', 'orders.branch_id')
+                ->whereBetween('orders.created_at', [$start_date, $end_date])
+                ->where('orders.branch_id', $branch_id);
+            if (count($product_ids) > 0) {
+                $query->whereIn('orders_details.product_id', $product_ids);
+            }
+            $results = $query->groupBy('products.id', 'products.name', 'units.id', 'units.name', 'orders.branch_id')
                 ->get();
         }
+        // dd($results,$branch_id);
         return $results;
     }
 }

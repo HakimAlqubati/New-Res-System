@@ -19,14 +19,16 @@ class PurchaseInvoice extends Model
 
     public function purchaseInvoiceDetails()
     {
-        return $this->hasMany(PurchaseInvoiceDetail::class);
+        return $this->hasMany(PurchaseInvoiceDetail::class, 'purchase_invoice_id');
     }
 
-    public function supplier(){
+    public function supplier()
+    {
         return $this->belongsTo(Supplier::class);
     }
 
-    public function store(){
+    public function store()
+    {
         return $this->belongsTo(Store::class);
     }
 }
