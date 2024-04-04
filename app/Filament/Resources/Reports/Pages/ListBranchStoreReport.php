@@ -29,13 +29,13 @@ class ListBranchStoreReport extends ListRecords
     }
     protected function getTableFilters(): array
     {
-        $current_date = date('Y-m-d');  // Get the current date
+        // $current_date = date('Y-m-d');  // Get the current date
 
-        // Get the start date of the current month
-        $start_of_month = date('Y-m-01', strtotime($current_date));
+        // // Get the start date of the current month
+        // $start_of_month = date('Y-m-01', strtotime($current_date));
 
-        // Get the end date of the current month
-        $end_of_month = date('Y-m-t', strtotime($current_date));
+        // // Get the end date of the current month
+        // $end_of_month = date('Y-m-t', strtotime($current_date));
 
         return [
             SelectFilter::make("branch_id")
@@ -46,11 +46,9 @@ class ListBranchStoreReport extends ListRecords
             Filter::make('date')
                 ->form([
                     DatePicker::make('start_date')
-                        ->label(__('lang.start_date'))
-                        ->default($start_of_month),
+                        ->label(__('lang.start_date')),
                     DatePicker::make('end_date')
-                        ->label(__('lang.end_date'))
-                        ->default($end_of_month),
+                        ->label(__('lang.end_date')),
                 ])
                 ->query(function (Builder $query, array $data): Builder {
                     return $query;
@@ -68,18 +66,18 @@ class ListBranchStoreReport extends ListRecords
     protected function getViewData(): array
     {
 
-        $current_date = date('Y-m-d');  // Get the current date
+        // $current_date = date('Y-m-d');  // Get the current date
 
-        // Get the start date of the current month
-        $start_of_month = date('Y-m-01', strtotime($current_date));
+        // // Get the start date of the current month
+        // $start_of_month = date('Y-m-01', strtotime($current_date));
 
-        // Get the end date of the current month
-        $end_of_month = date('Y-m-t', strtotime($current_date));
+        // // Get the end date of the current month
+        // $end_of_month = date('Y-m-t', strtotime($current_date));
         $product_ids = [];
         $branch_id = __filament_request_select('branch_id', 'all');
-        $product_ids = __filament_request_select_multiple('product_id', null, true);
-        $start_date =  date('Y-m-d', strtotime(__filament_request_key("date.start_date", $start_of_month)));
-        $end_date = date('Y-m-d', strtotime(__filament_request_key("date.end_date", $end_of_month)));
+        $product_ids = __filament_request_select_multiple('product_id', [], true);
+        $start_date =  __filament_request_key("date.start_date", null);
+        $end_date = __filament_request_key("date.end_date", null);
 
         $branch_store_report_data = [];
         $total_quantity = 0;
@@ -91,6 +89,8 @@ class ListBranchStoreReport extends ListRecords
             }, 0);
         }
 
+        $start_date = (!is_null($start_date) ? date('Y-m-d', strtotime($start_date))  : __('lang.date_is_unspecified'));
+        $end_date = (!is_null($end_date) ? date('Y-m-d', strtotime($end_date))  : __('lang.date_is_unspecified'));
         return [
             'branch_store_report_data' => $branch_store_report_data,
             'branch_id' => $branch_id,
@@ -107,7 +107,7 @@ class ListBranchStoreReport extends ListRecords
 
     public function getBranchStoreReportData($branch_id, $start_date, $end_date, $product_ids)
     {
-        
+
         $results = [];
         if (isset($branch_id) && is_numeric($branch_id)) {
             $query = DB::table('orders_details')
@@ -123,16 +123,17 @@ class ListBranchStoreReport extends ListRecords
                 ->whereIn('orders.status', [
                     Order::DELEVIRED,
                     Order::READY_FOR_DELEVIRY
-                ])
-                ->whereBetween('orders.created_at', [$start_date, $end_date])
-                ->where('orders.branch_id', $branch_id);
+                ]);
+            if (!is_null($start_date) && !is_null($end_date)) {
+                $query->whereBetween('orders.created_at', [$start_date, $end_date]);
+            }
+            $query->where('orders.branch_id', $branch_id);
             if (count($product_ids) > 0) {
                 $query->whereIn('orders_details.product_id', $product_ids);
             }
             $results = $query->groupBy('products.id', 'products.name', 'units.id', 'units.name', 'orders.branch_id')
                 ->get();
         }
-        // dd($results,$branch_id);
         return $results;
     }
 }

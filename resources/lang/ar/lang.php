@@ -92,4 +92,5 @@ return [
     'start_date' => 'من تاريخ',
     'end_date' => 'إلى تاريخ',
     'unit_price' => 'سعر الوحدة',
+    'date_is_unspecified' => 'التاريخ غير محدد',
 ];

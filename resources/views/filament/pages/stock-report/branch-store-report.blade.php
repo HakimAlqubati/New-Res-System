@@ -12,6 +12,7 @@
                 </th>
                 <th colspan="2" class="no_border_right_left">
                     <p>{{ __('lang.start_date') . ': ' . $start_date }}</p>
+                    <br>
                     <p>{{ __('lang.end_date') . ': ' . $end_date }}</p>
                 </th>
                 <th style="text-align: center; vertical-align: middle;"

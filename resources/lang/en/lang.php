@@ -92,4 +92,5 @@ return [
     'start_date' => 'Start date',
     'end_date' => 'End date',
     'unit_price' => 'Unit price',
+    'date_is_unspecified' => 'Date is unspecified',
 ];
