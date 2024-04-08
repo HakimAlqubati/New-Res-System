@@ -93,4 +93,6 @@ return [
     'end_date' => 'End date',
     'unit_price' => 'Unit price',
     'date_is_unspecified' => 'Date is unspecified',
+    'inventory_management' => 'Inventory magagement',
+    'add_item' => 'Add item',
 ];

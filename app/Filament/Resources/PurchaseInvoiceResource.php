@@ -52,8 +52,8 @@ class PurchaseInvoiceResource extends Resource
                 TextInput::make('invoice_no')->label(__('lang.invoice_no'))
                     ->required()
                     ->placeholder('Enter invoice number')
-                    // ->disabledOn('edit')
-                    ,
+                // ->disabledOn('edit')
+                ,
                 DatePicker::make('date')
                     ->required()
                     ->placeholder('Select date')
@@ -66,8 +66,8 @@ class PurchaseInvoiceResource extends Resource
                         Supplier::get(['id', 'name'])->pluck('name', 'id')
                     )->searchable()
                     ->required()
-                    // ->disabledOn('edit')
-                    ,
+                // ->disabledOn('edit')
+                ,
                 Select::make('store_id')->label(__('lang.store'))
                     ->searchable()
                     ->options(
@@ -79,6 +79,7 @@ class PurchaseInvoiceResource extends Resource
                     ->placeholder('Enter description')
                     ->columnSpanFull(),
                 Repeater::make('units')
+                    ->createItemButtonLabel(__('lang.add_item'))
                     ->columns(5)
                     ->defaultItems(1)
                     ->hiddenOn([
@@ -124,27 +125,12 @@ class PurchaseInvoiceResource extends Resource
                                 )->where('unit_id', $state)->first()->price;
                                 $set('price', $unitPrice);
 
-                                $set('total_price',  $unitPrice * $get('quantity'));
+                                $set('total_price', ((float) $unitPrice) * ((float) $get('quantity')));
                             }),
                         TextInput::make('quantity')
                             ->label(__('lang.quantity'))
                             ->required()
-                            ->type('number')
-                            ->default(1)
-                            // ->disabledOn('edit')
-                            ->mask(
-                                fn (TextInput\Mask $mask) => $mask
-                                    ->numeric()
-                                    ->decimalPlaces(2)
-                                    ->thousandsSeparator(',')
-                            )->reactive()
-                            ->afterStateUpdated(function (Closure $set, $state, $get) {
-                                $set('total_price', $state * $get('price'));
-                            }),
-                        TextInput::make('price')
-                            ->required()
-                            ->label(__('lang.price'))
-                            ->type('number')
+                            ->type('text')
                             ->default(1)
                             // ->disabledOn('edit')
                             // ->mask(
@@ -155,9 +141,28 @@ class PurchaseInvoiceResource extends Resource
                             // )
                             ->reactive()
                             ->afterStateUpdated(function (Closure $set, $state, $get) {
-                                $set('total_price', $state * $get('quantity'));
+                                $set('total_price', ((float) $state) * ((float)$get('price')));
+                            }),
+                        TextInput::make('price')
+                            ->required()
+                            ->label(__('lang.price'))
+                            ->type('text')
+                            ->default(1)
+                            ->integer()
+                            // ->disabledOn('edit')
+                            // ->mask(
+                            //     fn (TextInput\Mask $mask) => $mask
+                            //         ->numeric()
+                            //         ->decimalPlaces(2)
+                            //         ->thousandsSeparator(',')
+                            // )
+                            ->reactive()
+
+                            ->afterStateUpdated(function (Closure $set, $state, $get) {
+                                $set('total_price', ((float) $state) * ((float)$get('quantity')));
                             }),
                         TextInput::make('total_price')->default(1)
+                            ->type('text')
                             ->extraInputAttributes(['readonly' => true]),
 
                     ])

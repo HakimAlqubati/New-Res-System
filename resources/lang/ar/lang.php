@@ -93,4 +93,6 @@ return [
     'end_date' => 'إلى تاريخ',
     'unit_price' => 'سعر الوحدة',
     'date_is_unspecified' => 'التاريخ غير محدد',
+    'inventory_management' => 'نظام إدارة المخزون',
+    'add_item' => 'إضافة عنصر',
 ];
