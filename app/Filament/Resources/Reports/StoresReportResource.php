@@ -23,7 +23,10 @@ class StoresReportResource extends Resource
     {
         return __('lang.stores_report');
     }
-
+    public static function getPluralLabel(): ?string
+    {
+        return __('lang.stores_report');
+    }
     public static function getPages(): array
     {
         return [

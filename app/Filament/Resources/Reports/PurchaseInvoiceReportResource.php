@@ -24,6 +24,11 @@ class PurchaseInvoiceReportResource extends Resource
         return __('lang.purchase_invoice_report');
     }
 
+    public static function getPluralLabel(): ?string
+    {
+        return __('lang.purchase_invoice_report');
+    }
+
     public static function getPages(): array
     {
         return [
