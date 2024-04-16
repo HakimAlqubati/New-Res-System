@@ -69,7 +69,7 @@ class ListPurchaseInvoiceReport extends ListRecords
         $query = DB::table('purchase_invoices')
             ->select(
                 'purchase_invoice_details.product_id as product_id',
-                'products.name as product_name',
+                DB::raw("IF(JSON_VALID(products.name), REPLACE(JSON_EXTRACT(products.name, '$." . app()->getLocale() . "'), '\"', ''), products.name) AS product_name"),
                 'units.name as unit_name',
                 'purchase_invoice_details.quantity as quantity',
                 'purchase_invoice_details.price as unit_price',

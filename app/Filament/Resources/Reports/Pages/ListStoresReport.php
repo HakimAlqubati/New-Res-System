@@ -33,13 +33,13 @@ class ListStoresReport extends ListRecords
                 ->query(function (Builder $q, $data) {
                     return $q;
                 })->options(Supplier::get()->pluck('name', 'id')),
-            SelectFilter::make("product_id")
-                ->label(__('lang.product'))
-                ->searchable()
-                ->multiple()
-                ->query(function (Builder $q, $data) {
-                    return $q;
-                })->options(Product::get()->pluck('name', 'id')),
+            // SelectFilter::make("product_id")
+            //     ->label(__('lang.product'))
+            //     ->searchable()
+            //     ->multiple()
+            //     ->query(function (Builder $q, $data) {
+            //         return $q;
+            //     })->options(Product::get()->pluck('name', 'id')),
         ];
     }
 
@@ -68,7 +68,7 @@ class ListStoresReport extends ListRecords
         $subquery1 = DB::table('purchase_invoice_details')
             ->select([
                 'purchase_invoice_details.product_id AS product_id',
-                'products.name AS product_name',
+                DB::raw("IF(JSON_VALID(products.name), REPLACE(JSON_EXTRACT(products.name, '$." . app()->getLocale() . "'), '\"', ''), products.name) AS product_name"),
                 'units.name AS unit_name',
                 DB::raw('SUM(purchase_invoice_details.quantity) AS purchase_quantity')
             ])

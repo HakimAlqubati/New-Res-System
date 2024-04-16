@@ -113,7 +113,7 @@ class ListBranchStoreReport extends ListRecords
             $query = DB::table('orders_details')
                 ->select(
                     'products.id as product_id',
-                    DB::raw("IF(JSON_VALID(products.name), REPLACE(JSON_EXTRACT(products.name, '$.ar'), '\"', ''), products.name) AS product_name"),
+                    DB::raw("IF(JSON_VALID(products.name), REPLACE(JSON_EXTRACT(products.name, '$." . app()->getLocale() . "'), '\"', ''), products.name) AS product_name"),
                     'units.name as unit_name',
                     DB::raw('SUM(orders_details.available_quantity) as total_quantity')
                 )
