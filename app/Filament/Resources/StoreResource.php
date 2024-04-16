@@ -12,6 +12,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
@@ -41,6 +42,7 @@ class StoreResource extends Resource
                 TextInput::make('name')->label(__('lang.name'))->required(),
                 TextInput::make('location')->label(__('lang.location'))->required(),
                 Checkbox::make('active')->label(__('lang.active'))->default(1),
+                Checkbox::make('default_store')->label(__('lang.default'))->default(0),
             ]);
     }
 
@@ -52,6 +54,8 @@ class StoreResource extends Resource
                 TextColumn::make('name')->searchable()->label(__('lang.name')),
                 TextColumn::make('location')->searchable()->label(__('lang.location')),
                 CheckboxColumn::make('active')->label(__('lang.active')),
+                CheckboxColumn::make('default_store')->label(__('lang.default'))->disableClick(),
+
             ])
             ->filters([
                 Tables\Filters\Filter::make('active')
@@ -59,6 +63,11 @@ class StoreResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                Action::make('report')
+                    ->label(__('lang.open_report'))
+                    ->action(function ($record) {
+                        redirect('admin/fake-model-reports/store-report-reports?tableFilters[store_id][value]=' . $record->id);
+                    }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
@@ -98,5 +107,4 @@ class StoreResource extends Resource
     {
         return static::getModel()::count();
     }
-
 }

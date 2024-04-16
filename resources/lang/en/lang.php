@@ -95,4 +95,6 @@ return [
     'date_is_unspecified' => 'Date is unspecified',
     'inventory_management' => 'Inventory management',
     'add_item' => 'Add item',
+    'open_report' => 'Report',
+    'default' => 'Default?',
 ];

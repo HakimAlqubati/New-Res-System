@@ -46,7 +46,6 @@ class PurchaseInvoiceResource extends Resource
     }
     public static function form(Form $form): Form
     {
-
         return $form
             ->schema([
                 TextInput::make('invoice_no')->label(__('lang.invoice_no'))
@@ -70,6 +69,7 @@ class PurchaseInvoiceResource extends Resource
                 ,
                 Select::make('store_id')->label(__('lang.store'))
                     ->searchable()
+                    ->default(getDefaultStore())
                     ->options(
                         Store::where('active', 1)->get(['id', 'name'])->pluck('name', 'id')
                     )->required()

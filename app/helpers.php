@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Store;
 use App\Models\User;
 
 function getName()
@@ -190,4 +191,16 @@ function getAdminsToNotify()
     })->select('id', 'name')->get()->pluck('id')->toArray();
     $recipients = User::whereIn('id', $adminIds)->get(['id', 'name']);
     return $recipients;
+}
+
+/**
+ * get default store
+ */
+function getDefaultStore()
+{
+    $defaultStoreId = Store::where('default_store', 1)->where('active', 1)->select('id')->first()?->id;
+    if (is_null($defaultStoreId)) {
+        $defaultStoreId = 0;
+    }
+    return $defaultStoreId;
 }

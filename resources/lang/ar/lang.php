@@ -95,4 +95,6 @@ return [
     'date_is_unspecified' => 'التاريخ غير محدد',
     'inventory_management' => 'نظام إدارة المخزون',
     'add_item' => 'إضافة عنصر',
+    'open_report' => 'التقرير',
+    'default' => 'إفتراضي?',
 ];

@@ -13,5 +13,6 @@ class Store extends Model
         'name',
         'location',
         'active',
+        'default_store',
     ];
 }

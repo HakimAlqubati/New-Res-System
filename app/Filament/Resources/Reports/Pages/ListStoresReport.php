@@ -25,14 +25,18 @@ class ListStoresReport extends ListRecords
         return [
             SelectFilter::make("store_id")
                 ->label(__('lang.store'))
+
+                ->default(getDefaultStore())
                 ->query(function (Builder $q, $data) {
                     return $q;
                 })->options(Store::get()->pluck('name', 'id')),
-            SelectFilter::make("supplier_id")
-                ->label(__('lang.supplier'))
-                ->query(function (Builder $q, $data) {
-                    return $q;
-                })->options(Supplier::get()->pluck('name', 'id')),
+
+            // SelectFilter::make("supplier_id")
+            //     ->label(__('lang.supplier'))
+            //     ->query(function (Builder $q, $data) {
+            //         return $q;
+            //     })->options(Supplier::get()->pluck('name', 'id')),
+
             // SelectFilter::make("product_id")
             //     ->label(__('lang.product'))
             //     ->searchable()
@@ -65,6 +69,7 @@ class ListStoresReport extends ListRecords
 
     public function getStoresReportData($product_id, $store_id, $supplier_id)
     {
+
         $subquery1 = DB::table('purchase_invoice_details')
             ->select([
                 'purchase_invoice_details.product_id AS product_id',
@@ -74,8 +79,11 @@ class ListStoresReport extends ListRecords
             ])
             ->join('purchase_invoices', 'purchase_invoice_details.purchase_invoice_id', '=', 'purchase_invoices.id')
             ->join('products', 'purchase_invoice_details.product_id', '=', 'products.id')
-            ->join('units', 'purchase_invoice_details.unit_id', '=', 'units.id')
-            ->groupBy('purchase_invoice_details.product_id', 'purchase_invoice_details.unit_id', 'products.name', 'units.name');
+            ->join('units', 'purchase_invoice_details.unit_id', '=', 'units.id');
+        if (isset($store_id) && $store_id != '' && $store_id != 0 && $store_id != 'all') {
+            $subquery1->where('purchase_invoices.store_id', $store_id);
+        }
+        $subquery1 = $subquery1->groupBy('purchase_invoice_details.product_id', 'purchase_invoice_details.unit_id', 'products.name', 'units.name');
 
         $subquery2 = DB::table('orders_details')
             ->select([
