@@ -201,16 +201,13 @@ class ProductRepository implements ProductRepositoryInterface
                 'orders_details.product_id',
                 'products.category_id',
                 'orders_details.unit_id',
-                // 'orders_details.available_quantity',
                 'products.name',
                 'units.name',
-                //             DB::raw('YEAR(orders.created_at)'),
-                // DB::raw('MONTH(orders.created_at)')
             )
             ->get([
                 'products.category_id',
                 'orders_details.product_id',
-                'products.name as product_name',
+                DB::raw("IF(JSON_VALID(products.name), REPLACE(JSON_EXTRACT(products.name, '$." . app()->getLocale() . "'), '\"', ''), products.name) as product_name"),
                 'units.name as unit_name',
                 'orders_details.unit_id as unit_id',
                 DB::raw('ROUND(SUM(orders_details.available_quantity), 0) as available_quantity'),
@@ -313,8 +310,8 @@ class ProductRepository implements ProductRepositoryInterface
             ->get();
         // Apply number_format() to the quantity value
         foreach ($data as &$item) {
-             
-            $item->quantity  = number_format($item->quantity , 2);
+
+            $item->quantity  = number_format($item->quantity, 2);
         }
         return $data;
     }
