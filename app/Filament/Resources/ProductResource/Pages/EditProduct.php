@@ -11,13 +11,13 @@ class EditProduct extends EditRecord
     protected static string $resource = ProductResource::class;
 
 
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        $data['name'] = isset($data['name'][app()->getLocale()]) ? $data['name'][app()->getLocale()] : '';
-        $data['description'] =  isset($data['description'][app()->getLocale()]) ? $data['description'][app()->getLocale()] : '';
+    // protected function mutateFormDataBeforeFill(array $data): array
+    // {
+    //     $data['name'] = isset($data['name'][app()->getLocale()]) ? $data['name'][app()->getLocale()] : '';
+    //     $data['description'] =  isset($data['description'][app()->getLocale()]) ? $data['description'][app()->getLocale()] : '';
 
-        return $data;
-    }
+    //     return $data;
+    // }
 
     protected function getActions(): array
     {
