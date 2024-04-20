@@ -1,13 +1,16 @@
 <x-filament::page>
     {{ $this->getTableFiltersForm() }}
     {{-- @if (isset($branch_id)) --}}
-    <x-tables::table class="w-full text-sm text-left pretty  branch_store_report">
+    <x-tables::table class="w-full text-sm text-left pretty  ">
         <thead>
 
+
+
+
             <x-tables::row class="header_report">
-                <th colspan="1" class="{{ app()->getLocale() == 'en' ? 'no_border_right' : 'no_border_left' }}">
-                    <p>{{ __('lang.branch_store_report') }}</p>
-                    <p>({{ isset($branch_id) && is_numeric($branch_id) ? \App\Models\Branch::find($branch_id)->name : __('lang.choose_branch') }})
+                <th class="{{ app()->getLocale() == 'en' ? 'no_border_right' : 'no_border_left' }}">
+                    <p>{{ __('lang.report_product_quantities') }}</p>
+                    <p>({{ isset($product_id) && is_numeric($product_id) ? \App\Models\Product::find($product_id)->name : __('lang.choose_product') }})
                     </p>
                 </th>
                 <th colspan="2" class="no_border_right_left">
@@ -23,31 +26,32 @@
                 </th>
             </x-tables::row>
             <x-tables::row>
-                <th>{{ __('lang.product_id') }} </th>
-                <th>{{ __('lang.product') }}</th>
+                <th>{{ __('lang.branch') }}</th>
                 <th>{{ __('lang.unit') }}</th>
-                <th> {{ __('lang.qty_in_stock') }}</th>
+                <th>{{ __('lang.quantity') }}</th>
+                <th>{{ __('lang.price') }}</th>
             </x-tables::row>
         </thead>
         <tbody>
-
-            @foreach ($branch_store_report_data as $key => $report_item)
+            @foreach ($report_data as $data)
                 <x-tables::row>
-                    <x-tables::cell> {{ $report_item?->product_id }} </x-tables::cell>
-                    <x-tables::cell> {{ $report_item?->product_name }} </x-tables::cell>
-                    <x-tables::cell> {{ $report_item?->unit_name }} </x-tables::cell>
-                    <x-tables::cell> {{ $report_item?->total_quantity }} </x-tables::cell>
+
+                    <x-tables::cell> {{ $data?->branch }} </x-tables::cell>
+                    <x-tables::cell> {{ $data?->unit }} </x-tables::cell>
+                    <x-tables::cell> {{ $data?->quantity }} </x-tables::cell>
+                    <x-tables::cell> {{ $data?->price }} </x-tables::cell>
+
+
                 </x-tables::row>
             @endforeach
+
             <x-tables::row>
-                <x-tables::cell colspan="3">{{ __('lang.total_quantity') }}</x-tables::cell>
-                <x-tables::cell>{{ $total_quantity }}</x-tables::cell>
+                <x-tables::cell colspan="2"> {{ __('lang.total_quantity') }} </x-tables::cell>
+
+                <x-tables::cell> {{ $total_quantity }} </x-tables::cell>
+                <x-tables::cell> {{ $total_price }} </x-tables::cell>
             </x-tables::row>
         </tbody>
 
     </x-tables::table>
 </x-filament::page>
-
-<style>
-  
-</style>

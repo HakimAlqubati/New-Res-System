@@ -97,4 +97,12 @@ return [
     'add_item' => 'Add item',
     'open_report' => 'Report',
     'default' => 'Default?',
+    'reports' => 'Reports',
+    'order_reports' => 'Order reports',
+    'report_product_quantities' => 'Report product quantities',
+    'general_report_of_products' => 'General report of products',
+    'choose_product' => 'Choose product',
+    'total' => 'Total',
+    'report_details' => 'Report details',
+    'total_price' => 'Total price',
 ];

@@ -97,4 +97,12 @@ return [
     'add_item' => 'إضافة عنصر',
     'open_report' => 'التقرير',
     'default' => 'إفتراضي?',
+    'reports' => 'التقارير',
+    'order_reports' => 'تقارير الطلبية',
+    'report_product_quantities' => 'تقرير كميات منتج',
+    'general_report_of_products' => 'التقرير العام للمنتجات',
+    'choose_product' => 'إختر منتج',
+    'total' => 'الإجمالي',
+    'report_details' => 'تفاصيل التقرير',
+    'total_price' => 'السعر الإجمالي',
 ];

@@ -204,3 +204,11 @@ function getDefaultStore()
     }
     return $defaultStoreId;
 }
+
+/**
+ * to get default currency
+ */
+function getDefaultCurrency()
+{
+    return 'RM';
+}

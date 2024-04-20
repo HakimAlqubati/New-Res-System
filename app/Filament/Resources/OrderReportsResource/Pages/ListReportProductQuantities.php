@@ -1,0 +1,149 @@
+<?php
+
+namespace App\Filament\Resources\OrderReportsResource\Pages;
+
+use App\Filament\Resources\OrderReportsResource\ReportProductQuantitiesResource;
+use App\Models\Branch;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\Store;
+use App\Models\Supplier;
+
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\DatePicker;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Layout;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Support\Facades\DB;
+
+class ListReportProductQuantities extends ListRecords
+{
+    protected static string $resource = ReportProductQuantitiesResource::class;
+    protected static string $view = 'filament.pages.order-reports.report-product-quantities';
+
+
+    protected function getTableFilters(): array
+    {
+        return [
+
+            SelectFilter::make("product_id")
+                ->label(__('lang.product'))
+                ->searchable()
+                ->query(function (Builder $q, $data) {
+                    return $q;
+                })->options(Product::where('active', 1)
+                    ->get()->pluck('name', 'id')),
+            SelectFilter::make("branch_id")
+                ->label(__('lang.branch'))
+                ->multiple()
+                ->query(function (Builder $q, $data) {
+                    return $q;
+                })->options(Branch::where('active', 1)
+                    ->get()->pluck('name', 'id')),
+            Filter::make('date')
+                ->form([
+                    DatePicker::make('start_date')
+                        ->label(__('lang.start_date')),
+                    DatePicker::make('end_date')
+                        ->label(__('lang.end_date')),
+                ])
+                ->query(function (Builder $query, array $data): Builder {
+                    return $query;
+                }),
+        ];
+    }
+
+
+    protected function getViewData(): array
+    {
+        $branch_ids = [];
+        $total_quantity = 0;
+        $total_price = 0;
+        $report_data = [];
+        $product_id = __filament_request_select('product_id', 'choose');
+        $branch_ids = __filament_request_select_multiple('branch_id', [], true);
+
+        $start_date =  __filament_request_key("date.start_date", null);
+        $end_date = __filament_request_key("date.end_date", null);
+
+
+        $report_data = $this->getReportData($product_id, $start_date, $end_date, $branch_ids);
+
+        if (count($report_data) > 0) {
+            $total_quantity = array_reduce($report_data, function ($carry, $item) {
+                return $carry + $item->quantity;
+            }, 0);
+        }
+
+        if (count($report_data) > 0) {
+            $total_price = array_reduce($report_data, function ($carry, $item) {
+                return $carry + $item->price;
+            }, 0);
+        }
+
+        $start_date = (!is_null($start_date) ? date('Y-m-d', strtotime($start_date))  : __('lang.date_is_unspecified'));
+        $end_date = (!is_null($end_date) ? date('Y-m-d', strtotime($end_date))  : __('lang.date_is_unspecified'));
+
+
+
+        return [
+            'report_data' => $report_data,
+            'product_id' => $product_id,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'total_quantity' => number_format($total_quantity,2) ,
+            'total_price' => number_format($total_price,2) ,
+        ];
+    }
+
+    protected function getTableFiltersLayout(): ?string
+    {
+        return Layout::AboveContent;
+    }
+
+
+
+    public function getReportData($product_id, $start_date, $end_date, $branch_ids)
+    {
+        // $currnetRole = getCurrentRole();
+        // if ($currnetRole == 7)
+        //     $branch_id = [getBranchId()];
+        // else
+        //     $branch_id = explode(',', $request->input('branch_id'));
+
+        $data = DB::table('orders_details')
+            ->select(
+                'products.name AS product',
+                'branches.name AS branch',
+                'units.name AS unit',
+                DB::raw('SUM(orders_details.available_quantity) AS quantity'),
+                DB::raw('SUM(orders_details.price) AS price')
+            )
+            ->join('products', 'orders_details.product_id', '=', 'products.id')
+            ->join('orders', 'orders_details.order_id', '=', 'orders.id')
+            ->join('branches', 'orders.branch_id', '=', 'branches.id')
+            ->join('units', 'orders_details.unit_id', '=', 'units.id')
+            ->where('orders_details.product_id', '=', $product_id)
+            ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
+                return $query->whereBetween('orders.created_at', [$start_date, $end_date]);
+            })
+            ->when($branch_ids && is_array($branch_ids), function ($query) use ($branch_ids) {
+                return $query->whereIn('orders.branch_id', $branch_ids);
+            })
+            ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            ->groupBy('orders.branch_id', 'products.name', 'branches.name', 'units.name')
+            ->get();
+        $final = [];
+        foreach ($data as   $val) {
+            $obj = new \stdClass();
+            $obj->product = $val->product;
+            $obj->branch = $val->branch;
+            $obj->unit = $val->unit;
+            $obj->quantity = number_format($val->quantity, 2);
+            $obj->price = number_format($val->price, 2);
+            $final[] = $obj;
+        }
+        return $final;
+    }
+}

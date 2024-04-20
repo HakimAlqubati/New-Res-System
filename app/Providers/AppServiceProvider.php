@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Filament\Reports\Orders\OrderReportResource;
 use App\Filament\Resources\BranchResource;
 use App\Filament\Resources\CategoryResource;
+use App\Filament\Resources\OrderReportsResource\GeneralReportOfProductsResource;
+use App\Filament\Resources\OrderReportsResource\ReportProductQuantitiesResource;
 use App\Filament\Resources\OrderResource;
 use App\Filament\Resources\ProductResource;
 use App\Filament\Resources\PurchaseInvoiceResource;
@@ -76,6 +78,13 @@ class AppServiceProvider extends ServiceProvider
                         ->items([
                             ...OrderResource::getNavigationItems(),
                             ...TransferOrderResource::getNavigationItems(),
+                        ]),
+                ])
+                ->groups([
+                    NavigationGroup::make(__('lang.order_reports'))
+                        ->items([
+                            ...ReportProductQuantitiesResource::getNavigationItems(),
+                            ...GeneralReportOfProductsResource::getNavigationItems(),
                         ]),
                 ])
                 ->groups([
