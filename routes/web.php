@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\OrderController;
+use App\Models\OrderDetails;
+use App\Models\UnitPrice;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +17,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+Route::get('/totest', function () {
+
+    $units_prices = UnitPrice::get();
+    foreach ($units_prices as $key => $value) {
+        $product_id = $value->product_id;
+        $unit_id = $value->unit_id;
+        $price = $value->price;
+        OrderDetails::where('product_id', $product_id)->where('unit_id', $unit_id)->update(['price' => $price]);
+    }
+
+    // return redirect(url('/admin'));
+});
 
 Route::get('/', function () {
 

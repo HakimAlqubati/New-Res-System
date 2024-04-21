@@ -29,7 +29,7 @@
                     <th>{{ __('lang.category') }}</th>
 
                     <th>{{ __('lang.quantity') }}</th>
-                    <th>{{ __('lang.total') }}</th>
+                    <th>{{ __('lang.price') }}</th>
                 </x-tables::row>
             </thead>
             <tbody>
