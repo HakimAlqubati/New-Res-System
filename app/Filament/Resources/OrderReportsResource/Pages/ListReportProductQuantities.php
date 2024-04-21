@@ -60,7 +60,7 @@ class ListReportProductQuantities extends ListRecords
         $branch_ids = [];
         $total_quantity = 0;
         $total_price = 0;
-        $report_data = [];
+        $report_data['data'] = [];
         $product_id = __filament_request_select('product_id', 'choose');
         $branch_ids = __filament_request_select_multiple('branch_id', [], true);
 
@@ -70,30 +70,27 @@ class ListReportProductQuantities extends ListRecords
 
         $report_data = $this->getReportData($product_id, $start_date, $end_date, $branch_ids);
 
-        if (count($report_data) > 0) {
-            $total_quantity = array_reduce($report_data, function ($carry, $item) {
-                return $carry + $item->quantity;
-            }, 0);
+        if (isset($report_data['total_price'])) {
+            $total_price = $report_data['total_price'];
+        }
+        if (isset($report_data['total_quantity'])) {
+            $total_quantity = $report_data['total_quantity'];
         }
 
-        if (count($report_data) > 0) {
-            $total_price = array_reduce($report_data, function ($carry, $item) {
-                return $carry + $item->price;
-            }, 0);
-        }
+     
+// dd($report_data);
 
         $start_date = (!is_null($start_date) ? date('Y-m-d', strtotime($start_date))  : __('lang.date_is_unspecified'));
         $end_date = (!is_null($end_date) ? date('Y-m-d', strtotime($end_date))  : __('lang.date_is_unspecified'));
 
-
-
+ 
         return [
-            'report_data' => $report_data,
+            'report_data' => $report_data['data'],
             'product_id' => $product_id,
             'start_date' => $start_date,
             'end_date' => $end_date,
-            'total_quantity' => number_format($total_quantity,2) ,
-            'total_price' => number_format($total_price,2) ,
+            'total_quantity' =>  $total_quantity,
+            'total_price' =>  $total_price
         ];
     }
 
@@ -134,16 +131,24 @@ class ListReportProductQuantities extends ListRecords
             ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
             ->groupBy('orders.branch_id', 'products.name', 'branches.name', 'units.name')
             ->get();
-        $final = [];
+        $final['data'] = [];
+        $total_price = 0;
+        $total_quantity = 0;
         foreach ($data as   $val) {
             $obj = new \stdClass();
             $obj->product = $val->product;
             $obj->branch = $val->branch;
             $obj->unit = $val->unit;
             $obj->quantity = number_format($val->quantity, 2);
-            $obj->price = number_format($val->price, 2);
-            $final[] = $obj;
+            $obj->price = number_format($val->price, 2) . ' ' . getDefaultCurrency();
+            $total_price += $val->price;
+            $total_quantity += $val->quantity;
+            $final['data'][] = $obj;
         }
+
+        $final['total_price'] = number_format($total_price, 2) . ' ' . getDefaultCurrency();
+        $final['total_quantity'] = number_format($total_quantity, 2);
+
         return $final;
     }
 }

@@ -105,4 +105,6 @@ return [
     'total' => 'Total',
     'report_details' => 'Report details',
     'total_price' => 'Total price',
+    'please_select_branch' => 'Please Select a Branch',
+    'please_select_product' => 'Please Select a Product',
 ];
