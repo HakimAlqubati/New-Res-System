@@ -46,7 +46,7 @@
                 @endforeach
 
                 <x-tables::row>
-                    <x-tables::cell colspan="2"> {{ __('lang.total_quantity') }} </x-tables::cell>
+                    <x-tables::cell colspan="2"> {{ __('lang.total') }} </x-tables::cell>
 
                     <x-tables::cell> {{ $total_quantity }} </x-tables::cell>
                     <x-tables::cell> {{ $total_price }} </x-tables::cell>

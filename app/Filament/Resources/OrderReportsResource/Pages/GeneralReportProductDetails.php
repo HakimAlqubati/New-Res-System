@@ -17,8 +17,8 @@ class GeneralReportProductDetails extends Page
     public $branch_id;
     function __construct()
     {
-        $this->start_date  = $_GET['start_date'];
-        $this->end_date = $_GET['end_date'];
+        $this->start_date  = $_GET['start_date'] ?? '';
+        $this->end_date = $_GET['end_date'] ?? '';
         $this->category_id = $_GET['category_id'];
         $this->branch_id = $_GET['branch_id'];
     }
