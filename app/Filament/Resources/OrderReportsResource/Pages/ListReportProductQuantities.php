@@ -77,13 +77,13 @@ class ListReportProductQuantities extends ListRecords
             $total_quantity = $report_data['total_quantity'];
         }
 
-     
-// dd($report_data);
+
+        // dd($report_data);
 
         $start_date = (!is_null($start_date) ? date('Y-m-d', strtotime($start_date))  : __('lang.date_is_unspecified'));
         $end_date = (!is_null($end_date) ? date('Y-m-d', strtotime($end_date))  : __('lang.date_is_unspecified'));
 
- 
+
         return [
             'report_data' => $report_data['data'],
             'product_id' => $product_id,
@@ -115,7 +115,7 @@ class ListReportProductQuantities extends ListRecords
                 'branches.name AS branch',
                 'units.name AS unit',
                 DB::raw('SUM(orders_details.available_quantity) AS quantity'),
-                DB::raw('SUM(orders_details.price) AS price')
+                DB::raw('SUM(orders_details.available_quantity) * orders_details.price AS price')
             )
             ->join('products', 'orders_details.product_id', '=', 'products.id')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
@@ -129,8 +129,9 @@ class ListReportProductQuantities extends ListRecords
                 return $query->whereIn('orders.branch_id', $branch_ids);
             })
             ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
-            ->groupBy('orders.branch_id', 'products.name', 'branches.name', 'units.name')
+            ->groupBy('orders.branch_id', 'products.name', 'branches.name', 'units.name','orders_details.price')
             ->get();
+        
         $final['data'] = [];
         $total_price = 0;
         $total_quantity = 0;
