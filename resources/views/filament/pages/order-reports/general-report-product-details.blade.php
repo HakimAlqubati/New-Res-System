@@ -5,7 +5,7 @@
     <x-tables::table class="w-full text-sm text-left pretty  ">
         <thead>
             <x-tables::row class="header_report">
-                <th colspan="2" class="{{ app()->getLocale() == 'en' ? 'no_border_right' : 'no_border_left' }}">
+                <th class="{{ app()->getLocale() == 'en' ? 'no_border_right' : 'no_border_left' }}">
                     <p>{{ __('lang.general_report_of_products') }}</p>
                     <p>({{ $branch }})
                     </p>
@@ -31,7 +31,7 @@
                 <th>{{ __('lang.unit') }}</th>
                 <th>{{ __('lang.quantity') }}</th>
                 <th>{{ __('lang.price') }}</th>
-                <th>{{ __('lang.total_price') }}</th>
+                {{-- <th>{{ __('lang.total_price') }}</th> --}}
             </x-tables::row>
         </thead>
         <tbody>
@@ -41,7 +41,7 @@
                     <x-tables::cell> {{ $data?->unit_name }} </x-tables::cell>
                     <x-tables::cell> {{ $data?->quantity }} </x-tables::cell>
                     <x-tables::cell> {{ $data?->price }} </x-tables::cell>
-                    <x-tables::cell> {{ $data?->total_price }} </x-tables::cell>
+                    {{-- <x-tables::cell> {{ $data?->total_price }} </x-tables::cell> --}}
                 </x-tables::row>
             @endforeach
         </tbody>
