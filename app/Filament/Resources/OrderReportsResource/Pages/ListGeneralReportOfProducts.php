@@ -117,7 +117,7 @@ class ListGeneralReportOfProducts extends ListRecords
         foreach ($categories as $cat_id => $cat_name) {
             $obj = new \stdClass();
             $obj->category_id = $cat_id;
-            $obj->url_report_details = "admin/fake-model-reports/general-report-of-products/details/$cat_id?start_date=$start_date&end_date=$end_date&branch_id=$branch_id&category_id=$cat_id'";
+            $obj->url_report_details = "admin/general-report-products/details/$cat_id?start_date=$start_date&end_date=$end_date&branch_id=$branch_id&category_id=$cat_id'";
             $obj->category = $cat_name;
             $obj->quantity =  round(isset($data[$cat_id]) ? $data[$cat_id]['available_quantity'] : 0, 0);
             $price = (isset($data[$cat_id]) ? $data[$cat_id]['price'] : '0.00');
