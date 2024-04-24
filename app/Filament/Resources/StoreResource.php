@@ -66,7 +66,7 @@ class StoreResource extends Resource
                 Action::make('report')
                     ->label(__('lang.open_report'))
                     ->action(function ($record) {
-                        redirect('admin/fake-model-reports/store-report-reports?tableFilters[store_id][value]=' . $record->id);
+                        redirect('admin/stores-report?tableFilters[store_id][value]=' . $record->id);
                     }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

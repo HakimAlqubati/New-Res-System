@@ -33,7 +33,9 @@
                 </x-tables::row>
             </thead>
             <tbody>
+
                 @foreach ($report_data as $data)
+                    
                     <x-tables::row>
 
                         <x-tables::cell>
@@ -43,6 +45,11 @@
                         <x-tables::cell> {{ $data?->amount . ' ' . $data?->symbol }} </x-tables::cell>
                     </x-tables::row>
                 @endforeach
+                <x-tables::row>
+                    <x-tables::cell> {{ __('lang.total') }} </x-tables::cell>
+                    <x-tables::cell> {{ $total_quantity }} </x-tables::cell>
+                    <x-tables::cell> {{ $total_price }} </x-tables::cell>
+                </x-tables::row>
             </tbody>
 
         </x-tables::table>

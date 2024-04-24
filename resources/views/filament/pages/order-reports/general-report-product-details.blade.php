@@ -31,7 +31,6 @@
                 <th>{{ __('lang.unit') }}</th>
                 <th>{{ __('lang.quantity') }}</th>
                 <th>{{ __('lang.price') }}</th>
-                {{-- <th>{{ __('lang.total_price') }}</th> --}}
             </x-tables::row>
         </thead>
         <tbody>
@@ -41,9 +40,13 @@
                     <x-tables::cell> {{ $data?->unit_name }} </x-tables::cell>
                     <x-tables::cell> {{ $data?->quantity }} </x-tables::cell>
                     <x-tables::cell> {{ $data?->price }} </x-tables::cell>
-                    {{-- <x-tables::cell> {{ $data?->total_price }} </x-tables::cell> --}}
                 </x-tables::row>
             @endforeach
+            <x-tables::row>
+                <x-tables::cell colspan="2"> {{ __('lang.total') }} </x-tables::cell>
+                <x-tables::cell> {{ $total_quantity }} </x-tables::cell>
+                <x-tables::cell> {{ $total_price }} </x-tables::cell>
+            </x-tables::row>
         </tbody>
 
     </x-tables::table>

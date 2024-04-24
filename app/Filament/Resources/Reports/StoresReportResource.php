@@ -9,7 +9,7 @@ use Filament\Resources\Resource;
 class StoresReportResource extends Resource
 {
     protected static ?string $model = StoreReportReport::class;
-
+    protected static ?string $slug = 'stores-report';
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
     /**

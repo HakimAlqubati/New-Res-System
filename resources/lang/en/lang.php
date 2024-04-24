@@ -107,4 +107,6 @@ return [
     'total_price' => 'Total price',
     'please_select_branch' => 'Please Select a Branch',
     'please_select_product' => 'Please Select a Product',
+    'all_stores' => 'All Stores',
+    'all_suppliers' => 'All suppliers',
 ];

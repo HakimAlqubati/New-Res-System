@@ -50,25 +50,33 @@ class ListGeneralReportOfProducts extends ListRecords
 
     protected function getViewData(): array
     {
-        $report_data = [];
+
         $branch_id = __filament_request_select('branch_id', 'choose');
         $start_date =  __filament_request_key("date.start_date", null);
         $end_date = __filament_request_key("date.end_date", null);
 
-
-        $report_data = $this->getReportData($start_date, $end_date, $branch_id);
+        $report_data['data'] = [];
+        $total_quantity = 0;
+        $total_price = 0;
+        $report_data  = $this->getReportData($start_date, $end_date, $branch_id);
 
 
         $start_date = (!is_null($start_date) ? date('Y-m-d', strtotime($start_date))  : __('lang.date_is_unspecified'));
         $end_date = (!is_null($end_date) ? date('Y-m-d', strtotime($end_date))  : __('lang.date_is_unspecified'));
-
-
-
+        if (isset($report_data['total_price'])) {
+            $total_price = $report_data['total_price'];
+        }
+        if (isset($report_data['total_quantity'])) {
+            $total_quantity = $report_data['total_quantity'];
+        }
+        
         return [
-            'report_data' => $report_data,
+            'report_data' => $report_data['data'],
             'branch_id' => $branch_id,
             'start_date' => $start_date,
             'end_date' => $end_date,
+            'total_quantity' =>  $total_quantity,
+            'total_price' =>  $total_price
         ];
     }
 
@@ -114,6 +122,9 @@ class ListGeneralReportOfProducts extends ListRecords
             ->all();
         $categories = DB::table('categories')->where('active', 1)->get(['id', 'name'])->pluck('name', 'id');
 
+        $final_result['data'] = [];
+        $total_price = 0;
+        $total_quantity = 0;
         foreach ($categories as $cat_id => $cat_name) {
             $obj = new \stdClass();
             $obj->category_id = $cat_id;
@@ -124,8 +135,13 @@ class ListGeneralReportOfProducts extends ListRecords
             $obj->price =  formatMoney($price, getDefaultCurrency());
             $obj->amount = number_format($price, 2);
             $obj->symbol = getDefaultCurrency();
-            $final_result[] = $obj;
+            $total_price += $price;
+            $total_quantity += $obj->quantity;
+            $final_result['data'][] = $obj;
         }
+        $final_result['total_price'] = number_format($total_price, 2) . ' ' . getDefaultCurrency();
+        $final_result['total_quantity'] = number_format($total_quantity, 2);
+
         return $final_result;
     }
 }

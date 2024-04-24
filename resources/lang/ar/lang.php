@@ -107,4 +107,6 @@ return [
     'total_price' => 'السعر الإجمالي',
     'please_select_branch' => 'يرجى اختيار فرع',
     'please_select_product' => 'يرجى اختيار منتج',
+    'all_stores' => 'كل المخازن',
+    'all_suppliers' => 'كل الموردين',
 ];
