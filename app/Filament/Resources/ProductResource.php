@@ -31,6 +31,10 @@ class ProductResource extends Resource
 
     protected static ?string $navigationGroup = 'Products - units';
 
+    public static function getPluralLabel(): ?string
+    {
+        return __('lang.products');
+    }
     protected static function getNavigationLabel(): string
     {
         return __('lang.products');

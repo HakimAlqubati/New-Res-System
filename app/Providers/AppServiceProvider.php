@@ -17,6 +17,7 @@ use App\Filament\Resources\Shield\RoleResource;
 use App\Filament\Resources\StockReportResource;
 use App\Filament\Resources\StoreResource;
 use App\Filament\Resources\SupplierResource;
+use App\Filament\Resources\SystemSettingResource;
 use App\Filament\Resources\TransferOrderResource;
 use App\Filament\Resources\UnitResource;
 use App\Filament\Resources\UserResource;
@@ -127,6 +128,15 @@ class AppServiceProvider extends ServiceProvider
                             ...StoresReportResource::getNavigationItems(),
                             ...BranchStoreReportResource::getNavigationItems(),
 
+                        ]),
+                ]);
+            }
+
+            if (getCurrentRole() == 1) {
+                $menu = $builder->groups([
+                    NavigationGroup::make(__('system_settings.system_settings'))
+                        ->items([
+                            ...SystemSettingResource::getNavigationItems(),
                         ]),
                 ]);
             }

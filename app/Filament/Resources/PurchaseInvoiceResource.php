@@ -36,6 +36,12 @@ class PurchaseInvoiceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
+    public static function getPluralLabel(): ?string
+    {
+        return __('lang.purchase_invoice');
+    }
+
+
     public static function getLabel(): ?string
     {
         return __('lang.purchase_invoice');
@@ -50,6 +56,7 @@ class PurchaseInvoiceResource extends Resource
             ->schema([
                 TextInput::make('invoice_no')->label(__('lang.invoice_no'))
                     ->required()
+                    ->unique()
                     ->placeholder('Enter invoice number')
                 // ->disabledOn('edit')
                 ,

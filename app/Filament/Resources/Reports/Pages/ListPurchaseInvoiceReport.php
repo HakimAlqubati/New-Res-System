@@ -7,7 +7,7 @@ use App\Models\Product;
 use App\Models\Store;
 use App\Models\Supplier;
 
-use Filament\Forms\Components\Builder; 
+use Filament\Forms\Components\Builder;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
@@ -23,22 +23,24 @@ class ListPurchaseInvoiceReport extends ListRecords
     {
         return [
             SelectFilter::make("store_id")
+                ->searchable()
                 ->label(__('lang.store'))
                 ->query(function (Builder $q, $data) {
                     return $q;
                 })->options(Store::get()->pluck('name', 'id')),
             SelectFilter::make("supplier_id")
+                ->searchable()
                 ->label(__('lang.supplier'))
                 ->query(function (Builder $q, $data) {
                     return $q;
                 })->options(Supplier::get()->pluck('name', 'id')),
             SelectFilter::make("product_id")
-                ->label(__('lang.product'))
                 ->searchable()
+                ->label(__('lang.product'))
                 ->multiple()
                 ->query(function (Builder $q, $data) {
                     return $q;
-                })->options(Product::get()->pluck('name', 'id')),
+                })->options(Product::where('active', 1)->get()->pluck('name', 'id')),
         ];
     }
 
@@ -47,9 +49,10 @@ class ListPurchaseInvoiceReport extends ListRecords
     {
         $store_id = __filament_request_select('store_id', 'all');
         $supplier_id = __filament_request_select('supplier_id', 'all');
-        $product_id = __filament_request_select('product_id', 'all');
+        $product_ids = [];
+        $product_ids = __filament_request_select_multiple('product_id', [], true);
 
-        $purchase_invoice_data = $this->getPurchasesInvoiceData($product_id, $store_id, $supplier_id);
+        $purchase_invoice_data = $this->getPurchasesInvoiceData($product_ids, $store_id, $supplier_id);
 
 
         return [
@@ -60,9 +63,9 @@ class ListPurchaseInvoiceReport extends ListRecords
     protected function getTableFiltersLayout(): ?string
     {
         return Layout::AboveContent;
-    } 
+    }
 
-    public function getPurchasesInvoiceData($product_id, $store_id, $supplier_id)
+    public function getPurchasesInvoiceData($product_ids, $store_id, $supplier_id)
     {
         $store_name = 'All';
         $supplier_name = 'All';
@@ -94,8 +97,8 @@ class ListPurchaseInvoiceReport extends ListRecords
             $supplier_name = Supplier::find($supplier_id)?->name;
         }
 
-        if (is_numeric($product_id)) {
-            $query->where('purchase_invoice_details.product_id', $product_id);
+        if (count($product_ids) > 0) {
+            $query->whereIn('purchase_invoice_details.product_id', $product_ids);
         }
 
         $results = $query->get();
