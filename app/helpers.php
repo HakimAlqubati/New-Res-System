@@ -2,6 +2,7 @@
 
 use App\Models\Store;
 use App\Models\SystemSetting;
+use App\Models\UnitPrice;
 use App\Models\User;
 
 function getName()
@@ -230,4 +231,15 @@ function getCalculatingPriceOfOrdersMethod()
         $defaultMethod = $systemSettingsCalculatingMethod->calculating_orders_price_method;
     }
     return $defaultMethod;
+}
+
+/**
+ * get price from unit price by product_id & unit_id
+ */
+function getUnitPrice($product_id, $unit_id)
+{
+    return  UnitPrice::where(
+        'product_id',
+        $product_id
+    )->where('unit_id', $unit_id)->first()->price;
 }

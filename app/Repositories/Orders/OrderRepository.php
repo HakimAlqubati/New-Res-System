@@ -124,12 +124,7 @@ class OrderRepository implements OrderRepositoryInterface
                             'quantity' => $newQuantity,
                             'available_quantity' => $newQuantity,
                             'price' =>
-                            UnitPrice::where(
-                                'product_id',
-                                $orderDetail['product_id']
-                            )->where('unit_id', $orderDetail['unit_id'])->first()->price
-                            //  * ($newQuantity)
-                            ,
+                            getUnitPrice($orderDetail['product_id'], $orderDetail['unit_id']),
                         ]);
                         continue;
                     }
@@ -141,14 +136,7 @@ class OrderRepository implements OrderRepositoryInterface
                     'quantity' => $orderDetail['quantity'],
                     'available_quantity' => $orderDetail['quantity'],
                     'created_by' => auth()->user()->id,
-                    'price' => (UnitPrice::where(
-                        'product_id',
-                        $orderDetail['product_id']
-                    )->where('unit_id', $orderDetail['unit_id'])->first()->price)
-                    // * $orderDetail['quantity']
-                    ,
-                    // 'created_at' => $order->created_at,
-                    // 'updated_at' => $order->created_at,
+                    'price' => (getUnitPrice($orderDetail['product_id'], $orderDetail['unit_id']))
                 ];
             }
             if (count($orderDetailsData) > 0) {
