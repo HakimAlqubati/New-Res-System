@@ -99,7 +99,7 @@ class ListStoresReport extends ListRecords
                 DB::raw('SUM(orders_details.available_quantity) AS ordered_quantity')
             ])
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
-            ->where('orders.created_at', '>=', DB::raw("DATE('2024-03-11')"))
+            // ->where('orders.created_at', '>=', DB::raw("DATE('2024-03-11')"))
             ->whereIn('orders.status', [
                 Order::READY_FOR_DELEVIRY,
                 Order::DELEVIRED

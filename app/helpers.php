@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Store;
+use App\Models\SystemSetting;
 use App\Models\User;
 
 function getName()
@@ -210,5 +211,23 @@ function getDefaultStore()
  */
 function getDefaultCurrency()
 {
-    return 'RM';
+    $defaultCurrency = 'RM';
+    $systemSettingsCurrency = SystemSetting::select('currency_symbol')->first();
+    if ($systemSettingsCurrency) {
+        $defaultCurrency = $systemSettingsCurrency->currency_symbol;
+    }
+    return $defaultCurrency;
+}
+
+/**
+ * to get method of calculating prices of orders
+ */
+function getCalculatingPriceOfOrdersMethod()
+{
+    $defaultMethod = 'from_unit_prices';
+    $systemSettingsCalculatingMethod = SystemSetting::select('calculating_orders_price_method')->first();
+    if ($systemSettingsCalculatingMethod && ($systemSettingsCalculatingMethod->calculating_orders_price_method != $defaultMethod)) {
+        $defaultMethod = $systemSettingsCalculatingMethod->calculating_orders_price_method;
+    }
+    return $defaultMethod;
 }

@@ -134,7 +134,7 @@ class AppServiceProvider extends ServiceProvider
 
             if (getCurrentRole() == 1) {
                 $menu = $builder->groups([
-                    NavigationGroup::make(__('lang.system_settings'))
+                    NavigationGroup::make(__('system_settings.system_settings'))
                         ->items([
                             ...SystemSettingResource::getNavigationItems(),
                         ]),

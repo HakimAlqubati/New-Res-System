@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 class PurchaseInvoiceReportResource extends Resource
 {
     protected static ?string $model = PurchaseInvoiceReport::class;
+    protected static ?string $slug = 'purchase-invoice-reports';
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
