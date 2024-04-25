@@ -58,7 +58,7 @@ class OrdersExport implements FromView
             array_push($finalResult, $obj);
         }
         return view(
-            'export.export_excel_old',
+            'export.export_excel',
             compact('finalResult')
         );
     }
