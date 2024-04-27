@@ -110,4 +110,7 @@ return [
     'all_stores' => 'All Stores',
     'all_suppliers' => 'All suppliers',
     'system_settings' => 'System settings',
+    'attachment' => 'Attachment',
+    'download_attachment' => 'Download attachment',
+    'has_attachment' => 'Has attachment?',
 ];

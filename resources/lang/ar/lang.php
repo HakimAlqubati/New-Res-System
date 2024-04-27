@@ -109,4 +109,7 @@ return [
     'please_select_product' => 'يرجى اختيار منتج',
     'all_stores' => 'كل المخازن',
     'all_suppliers' => 'كل الموردين',
+    'attachment' => 'مرفقات',
+    'download_attachment' => 'تحميل المرفق',
+    'has_attachment' => 'مع المرفقات؟',
 ];
