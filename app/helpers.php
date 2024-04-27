@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Order;
+use App\Models\PurchaseInvoiceDetail;
 use App\Models\Store;
 use App\Models\SystemSetting;
 use App\Models\UnitPrice;
@@ -250,10 +252,28 @@ function getUnitPrice($product_id, $unit_id)
  */
 function getPurchaseInvoicesRemaningQuantities($product_id, $unit_id)
 {
+}
+
+/**
+ * get sum qty of specific product with (product_id,unit_id) from purchase invoices
+ */
+function getSumQtyOfProductFromPurchases($product_id, $unit_id)
+{
 
     $result = DB::table('purchase_invoice_details')
-        ->select(DB::raw('SUM(quantity) as total_quantity'), 'price', 'purchase_invoice_id')
+        ->select(
+            DB::raw('SUM(quantity) as total_quantity'),
+            'price',
+            'purchase_invoice_id'
+        )
+        ->join(
+            'purchase_invoices',
+            'purchase_invoice_details.purchase_invoice_id',
+            '=',
+            'purchase_invoices.id'
+        )
         ->where('product_id', $product_id)
+        ->where('purchase_invoices.active', 1)
         ->where('unit_id', $unit_id)
         ->groupBy('price', 'purchase_invoice_id')
         ->orderBy('purchase_invoice_id', 'asc')
@@ -262,15 +282,116 @@ function getPurchaseInvoicesRemaningQuantities($product_id, $unit_id)
 }
 
 /**
- * get sum qty of specific product with (product_id,unit_id) from purchase invoices
+ * get sum qty of specific product with (product_id,unit_id) from orders
  */
-function getSumQtyOfProductFromPurchases($product_id, $unit_id)
+function getSumQtyOfProductFromOrders($product_id, $unit_id, $purchase_invoic_id)
 {
+
+    $orderdQty = DB::table('orders_details')
+        ->join('orders', 'orders_details.order_id', '=', 'orders.id')
+        ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+        ->where('orders_details.product_id', $product_id)
+        ->where('orders_details.unit_id', $unit_id)
+        ->where('orders_details.purchase_invoice_id', $purchase_invoic_id)
+        ->select(DB::raw('SUM(available_quantity) as total_available_quantity'))
+        ->first()->total_available_quantity;
+    if ($orderdQty == null) {
+        $orderdQty = 0;
+    }
+    return $orderdQty;
+}
+
+
+
+/**
+ * to compare purchased quantities with orderd quantities
+ */
+function comparePurchasedWithOrderdQties($product_id, $unit_id)
+{
+
+    $data = getSumQtyOfProductFromPurchases($product_id, $unit_id);
+    foreach ($data as   $value) {
+        $purchased_qty = $value->total_quantity;
+        $price = $value->price;
+        $purchase_invoice_id = $value->purchase_invoice_id;
+        $ordersQty = getSumQtyOfProductFromOrders($product_id, $unit_id, $purchase_invoice_id);
+        if ($purchased_qty > $ordersQty) {
+            $fdata[] = [
+                'purchased_qty' => $purchased_qty,
+                'price' => $price,
+                'purchase_invoice_id' => $purchase_invoice_id,
+                'orderd_qty' => $ordersQty,
+                'remaning_qty' => $purchased_qty - $ordersQty,
+            ];
+        }
+    }
+    return $fdata;
 }
 
 /**
- * get sum qty of specific product with (product_id,unit_id) from orders
+ * calculate using fifo
  */
-function getSumQtyOfProductFromOrders($product_id, $unit_id)
+function calculateFifoMethod($product_id, $unit_id, $already_ordered_qty, $orderId)
 {
+    $comparedData =  comparePurchasedWithOrderdQties($product_id, $unit_id);
+
+    $orderDetailsData = [];
+    foreach ($comparedData as $key => $value) {
+        $price = $value['price'];
+        $purchase_invoice_id = $value['purchase_invoice_id'];
+        $remaning_qty = $value['remaning_qty'];
+
+        if ($already_ordered_qty <= $remaning_qty) {
+            $orderDetailsData = [
+                'order_id' => $orderId,
+                'product_id' => $product_id,
+                'unit_id' => $unit_id,
+                'quantity' => $already_ordered_qty,
+                'available_quantity' => $already_ordered_qty,
+                'created_by' => auth()?->user()?->id,
+                'purchase_invoice_id' => $purchase_invoice_id,
+                'price' =>  $price
+            ];
+            break;
+        } else if ($already_ordered_qty > $remaning_qty) {
+            $orderDetailsData = calculateIfAlreadyQtyBiggerThanRemaning($comparedData, $already_ordered_qty, $product_id, $unit_id);
+        }
+    }
+    return $orderDetailsData;
+}
+
+/**
+ * function does that 
+ * calculate the price if already ordered quantity is bigger than remaning quantity
+ */
+function calculateIfAlreadyQtyBiggerThanRemaning($comparedData, $already_ordered_qty, $product_id, $unit_id)
+{
+    $orderDetailsData = [];
+    for ($i = 0; $i < count($comparedData); $i++) {
+
+
+        if ($already_ordered_qty > $comparedData[$i]['remaning_qty']) {
+            $qty = ($comparedData[$i]['purchased_qty'] - $comparedData[$i]['orderd_qty']);
+        } else if ($already_ordered_qty <= $comparedData[$i]['remaning_qty']) {
+            $qty = $already_ordered_qty;
+        }
+        $orderDetailsData[] = [
+            'order_id' => 0,
+            'product_id' => $product_id,
+            'unit_id' => $unit_id,
+            'quantity' => $qty,
+            'available_quantity' => $qty,
+            'created_by' => auth()?->user()?->id,
+            'purchase_invoice_id' => $comparedData[$i]['purchase_invoice_id'],
+            'price' => $comparedData[$i]['price']
+        ];
+        $already_ordered_qty = ($already_ordered_qty - $qty);
+
+        if ($already_ordered_qty > 0) {
+            continue;
+        } else {
+            break;
+        }
+    }
+    return $orderDetailsData;
 }

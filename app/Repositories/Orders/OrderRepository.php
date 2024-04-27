@@ -103,51 +103,28 @@ class OrderRepository implements OrderRepositoryInterface
             }
 
             // Map order details data from request body
-            $orderDetailsData = [];
-            foreach ($request->input('order_details') as $orderDetail) {
-
-                $pricing_method = getCalculatingPriceOfOrdersMethod();
-                $purchase_invoice_id = null;
-                if ($pricing_method == 'from_unit_prices') {
+            $pricing_method = getCalculatingPriceOfOrdersMethod();
+            if ($pricing_method == 'from_unit_prices') {
+                $orderDetailsData = [];
+                foreach ($request->input('order_details') as $orderDetail) {
                     $price = getUnitPrice($orderDetail['product_id'], $orderDetail['unit_id']);
-                } else if ($pricing_method == 'fifo') {
-                    
+                    $orderDetailsData[] = [
+                        'order_id' => $orderId,
+                        'product_id' => $orderDetail['product_id'],
+                        'unit_id' => $orderDetail['unit_id'],
+                        'quantity' => $orderDetail['quantity'],
+                        'available_quantity' => $orderDetail['quantity'],
+                        'created_by' => auth()->user()->id,
+                        'price' => ($price)
+                    ];
                 }
-
-                if ($pendingOrderId) {
-                    $existOrderDetail = OrderDetails::where(
-                        'order_id',
-                        $pendingOrderId
-                    )->where(
-                        'product_id',
-                        $orderDetail['product_id']
-                    )->where(
-                        'unit_id',
-                        $orderDetail['unit_id']
-                    )->first();
-                    if ($existOrderDetail) {
-                        $newQuantity = $existOrderDetail->quantity + $orderDetail['quantity'];
-                        $existOrderDetail->update([
-                            'updated_by' => auth()->user()->id,
-                            'quantity' => $newQuantity,
-                            'available_quantity' => $newQuantity,
-                            'price' =>
-                            $price,
-                        ]);
-                        continue;
-                    }
+            } else if ($pricing_method == 'fifo') {
+                foreach ($request->input('order_details') as $orderDetail) {
+                    $orderDetailsData = calculateFifoMethod($orderDetail['product_id'], $orderDetail['unit_id'], $orderDetail['quantity'], $orderId);
                 }
-                $orderDetailsData[] = [
-                    'order_id' => $orderId,
-                    'product_id' => $orderDetail['product_id'],
-                    'unit_id' => $orderDetail['unit_id'],
-                    'quantity' => $orderDetail['quantity'],
-                    'available_quantity' => $orderDetail['quantity'],
-                    'created_by' => auth()->user()->id,
-                    'purchase_invoice_id' => $purchase_invoice_id,
-                    'price' => ($price)
-                ];
             }
+            dd($orderDetailsData);
+
             if (count($orderDetailsData) > 0) {
                 OrderDetails::insert($orderDetailsData);
             }

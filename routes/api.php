@@ -8,7 +8,9 @@ use App\Http\Controllers\ProductController;
 use App\Models\Branch;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,9 +24,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test_result', function () {
+Route::get('/test_result', function (Request $request) {
 
-    return getPurchaseInvoicesRemaningQuantities(1, 1);
+    $qty = $request->input('qty');
+    $product_id = $request->input('product_id');
+    $unit_id = $request->input('unit_id');
+    // return $data;
+
+    $fdata = comparePurchasedWithOrderdQties($product_id, $unit_id, $qty);
+    return $fdata;
+});
+Route::get('/to_try', function (Request $request) {
+
+    $fdata = [];
+    foreach ($request->input('order_details') as $orderDetail) {
+        $fdata = calculateFifoMethod($orderDetail['product_id'], $orderDetail['unit_id'], $orderDetail['qty'], 0);
+    }
+    return $fdata;
 });
 
 Route::post('/login', [AuthController::class, 'login']);

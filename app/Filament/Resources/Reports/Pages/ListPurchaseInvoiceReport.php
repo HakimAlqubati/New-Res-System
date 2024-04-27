@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PurchaseInvoiceReportResource\Reports\Pages;
 
 use App\Filament\Resources\Reports\PurchaseInvoiceReportResource;
 use App\Models\Product;
+use App\Models\PurchaseInvoice;
 use App\Models\Store;
 use App\Models\Supplier;
 
@@ -28,6 +29,7 @@ class ListPurchaseInvoiceReport extends ListRecords
                 ->query(function (Builder $q, $data) {
                     return $q;
                 })->options(Store::get()->pluck('name', 'id')),
+
             SelectFilter::make("supplier_id")
                 ->searchable()
                 ->label(__('lang.supplier'))
@@ -41,6 +43,13 @@ class ListPurchaseInvoiceReport extends ListRecords
                 ->query(function (Builder $q, $data) {
                     return $q;
                 })->options(Product::where('active', 1)->get()->pluck('name', 'id')),
+
+            SelectFilter::make("invoice_no")
+                ->searchable()
+                ->label(__('lang.invoice_no'))
+                ->query(function (Builder $q, $data) {
+                    return $q;
+                })->options(PurchaseInvoice::get()->pluck('invoice_no', 'invoice_no')),
         ];
     }
 
@@ -52,7 +61,8 @@ class ListPurchaseInvoiceReport extends ListRecords
         $product_ids = [];
         $product_ids = __filament_request_select_multiple('product_id', [], true);
 
-        $purchase_invoice_data = $this->getPurchasesInvoiceData($product_ids, $store_id, $supplier_id);
+        $invoice_no = __filament_request_select('invoice_no', 'all');
+        $purchase_invoice_data = $this->getPurchasesInvoiceData($product_ids, $store_id, $supplier_id, $invoice_no);
 
 
         return [
@@ -65,7 +75,7 @@ class ListPurchaseInvoiceReport extends ListRecords
         return Layout::AboveContent;
     }
 
-    public function getPurchasesInvoiceData($product_ids, $store_id, $supplier_id)
+    public function getPurchasesInvoiceData($product_ids, $store_id, $supplier_id, $invoice_no)
     {
         $store_name = 'All';
         $supplier_name = 'All';
@@ -100,6 +110,15 @@ class ListPurchaseInvoiceReport extends ListRecords
         if (count($product_ids) > 0) {
             $query->whereIn('purchase_invoice_details.product_id', $product_ids);
         }
+        if (isset($invoice_no) && $invoice_no != 'all') {
+            $query->where('purchase_invoices.invoice_no', $invoice_no);
+        }
+        // $query->groupBy(
+        //     'purchase_invoice_details.product_id',
+        //     'purchase_invoice_details.unit_id',
+        //     'products.name',
+        //     'units.name',
+        // );
 
         $results = $query->get();
         return [

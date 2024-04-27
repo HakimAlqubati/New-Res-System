@@ -21,6 +21,7 @@ class OrderDetails extends Model
         'updated_at',
         'created_at',
         'updated_by',
+        'purchase_invoice_id'
     ];
 
 
