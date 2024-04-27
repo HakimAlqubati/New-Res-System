@@ -106,6 +106,14 @@ class OrderRepository implements OrderRepositoryInterface
             $orderDetailsData = [];
             foreach ($request->input('order_details') as $orderDetail) {
 
+                $pricing_method = getCalculatingPriceOfOrdersMethod();
+                $purchase_invoice_id = null;
+                if ($pricing_method == 'from_unit_prices') {
+                    $price = getUnitPrice($orderDetail['product_id'], $orderDetail['unit_id']);
+                } else if ($pricing_method == 'fifo') {
+                    
+                }
+
                 if ($pendingOrderId) {
                     $existOrderDetail = OrderDetails::where(
                         'order_id',
@@ -124,7 +132,7 @@ class OrderRepository implements OrderRepositoryInterface
                             'quantity' => $newQuantity,
                             'available_quantity' => $newQuantity,
                             'price' =>
-                            getUnitPrice($orderDetail['product_id'], $orderDetail['unit_id']),
+                            $price,
                         ]);
                         continue;
                     }
@@ -136,7 +144,8 @@ class OrderRepository implements OrderRepositoryInterface
                     'quantity' => $orderDetail['quantity'],
                     'available_quantity' => $orderDetail['quantity'],
                     'created_by' => auth()->user()->id,
-                    'price' => (getUnitPrice($orderDetail['product_id'], $orderDetail['unit_id']))
+                    'purchase_invoice_id' => $purchase_invoice_id,
+                    'price' => ($price)
                 ];
             }
             if (count($orderDetailsData) > 0) {

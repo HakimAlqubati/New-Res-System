@@ -22,6 +22,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/test_result', function () {
+
+    return getPurchaseInvoicesRemaningQuantities(1, 1);
+});
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/products', [ProductController::class, 'index']);

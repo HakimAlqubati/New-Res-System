@@ -4,6 +4,7 @@ use App\Models\Store;
 use App\Models\SystemSetting;
 use App\Models\UnitPrice;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 function getName()
 {
@@ -242,4 +243,34 @@ function getUnitPrice($product_id, $unit_id)
         'product_id',
         $product_id
     )->where('unit_id', $unit_id)->first()->price;
+}
+
+/**
+ * get remaning quantities from orders - purchases invoices
+ */
+function getPurchaseInvoicesRemaningQuantities($product_id, $unit_id)
+{
+
+    $result = DB::table('purchase_invoice_details')
+        ->select(DB::raw('SUM(quantity) as total_quantity'), 'price', 'purchase_invoice_id')
+        ->where('product_id', $product_id)
+        ->where('unit_id', $unit_id)
+        ->groupBy('price', 'purchase_invoice_id')
+        ->orderBy('purchase_invoice_id', 'asc')
+        ->get();
+    return $result;
+}
+
+/**
+ * get sum qty of specific product with (product_id,unit_id) from purchase invoices
+ */
+function getSumQtyOfProductFromPurchases($product_id, $unit_id)
+{
+}
+
+/**
+ * get sum qty of specific product with (product_id,unit_id) from orders
+ */
+function getSumQtyOfProductFromOrders($product_id, $unit_id)
+{
 }
