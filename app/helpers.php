@@ -308,9 +308,10 @@ function getSumQtyOfProductFromOrders($product_id, $unit_id, $purchase_invoic_id
  */
 function comparePurchasedWithOrderdQties($product_id, $unit_id)
 {
-
+    $fdata = [];
     $data = getSumQtyOfProductFromPurchases($product_id, $unit_id);
-    foreach ($data as   $value) {
+
+    foreach ($data as $i => $value) {
         $purchased_qty = $value->total_quantity;
         $price = $value->price;
         $purchase_invoice_id = $value->purchase_invoice_id;
@@ -322,6 +323,19 @@ function comparePurchasedWithOrderdQties($product_id, $unit_id)
                 'purchase_invoice_id' => $purchase_invoice_id,
                 'orderd_qty' => $ordersQty,
                 'remaning_qty' => $purchased_qty - $ordersQty,
+                'product_id' => $product_id,
+                'unit_id' => $unit_id,
+            ];
+        } else if ($purchased_qty <= $ordersQty) {
+            $orderdQty = getSumQtyOfProductFromOrders($product_id, $unit_id, $purchase_invoice_id);
+            $fdata[] = [
+                'purchased_qty' => $data[count($data) - 1]->total_quantity,
+                'price' => $data[count($data) - 1]->price,
+                'purchase_invoice_id' => $data[count($data) - 1]->purchase_invoice_id,
+                'orderd_qty' => $orderdQty,
+                'remaning_qty' => ($data[count($data) - 1]->total_quantity) - $ordersQty,
+                'product_id' => $product_id,
+                'unit_id' => $unit_id,
             ];
         }
     }
@@ -331,40 +345,47 @@ function comparePurchasedWithOrderdQties($product_id, $unit_id)
 /**
  * calculate using fifo
  */
-function calculateFifoMethod($product_id, $unit_id, $already_ordered_qty, $orderId)
+function calculateFifoMethod($req_array, $orderId)
 {
-    $comparedData =  comparePurchasedWithOrderdQties($product_id, $unit_id);
 
     $orderDetailsData = [];
-    foreach ($comparedData as $key => $value) {
-        $price = $value['price'];
-        $purchase_invoice_id = $value['purchase_invoice_id'];
-        $remaning_qty = $value['remaning_qty'];
-
-        if ($already_ordered_qty <= $remaning_qty) {
-            $orderDetailsData = [
-                'order_id' => $orderId,
-                'product_id' => $product_id,
-                'unit_id' => $unit_id,
-                'quantity' => $already_ordered_qty,
-                'available_quantity' => $already_ordered_qty,
-                'created_by' => auth()?->user()?->id,
-                'purchase_invoice_id' => $purchase_invoice_id,
-                'price' =>  $price
-            ];
-            break;
-        } else if ($already_ordered_qty > $remaning_qty) {
-            $orderDetailsData = calculateIfAlreadyQtyBiggerThanRemaning($comparedData, $already_ordered_qty, $product_id, $unit_id);
+    $finalOrderDetailData = [];
+    foreach ($req_array as  $req_val) {
+        $comparedData =  comparePurchasedWithOrderdQties($req_val['product_id'], $req_val['unit_id']);
+        foreach ($comparedData as $key => $value) {
+            $price = $value['price'];
+            $purchase_invoice_id = $value['purchase_invoice_id'];
+            $remaning_qty = $value['remaning_qty'];
+            $already_ordered_qty = $req_val['quantity'];
+            if ($already_ordered_qty <= $remaning_qty) {
+                $orderDetailsData  = [
+                    'order_id' => $orderId,
+                    'product_id' => $value['product_id'],
+                    'unit_id' => $value['unit_id'],
+                    'quantity' => $already_ordered_qty,
+                    'available_quantity' => $already_ordered_qty,
+                    'created_by' => auth()?->user()?->id,
+                    'purchase_invoice_id' => $purchase_invoice_id,
+                    'price' =>  $price,
+                    'negative_inventory_quantity' => false,
+                ];
+                break;
+            } else if ($already_ordered_qty > $remaning_qty) {
+                $orderDetailsData = calculateIfAlreadyQtyBiggerThanRemaning($comparedData, $already_ordered_qty, $value['product_id'], $value['unit_id'], $orderId);
+            }
         }
+        $finalOrderDetailData[] = $orderDetailsData;
     }
-    return $orderDetailsData;
+
+
+    return fixResultOfCalculating($finalOrderDetailData);
 }
 
 /**
  * function does that 
  * calculate the price if already ordered quantity is bigger than remaning quantity
  */
-function calculateIfAlreadyQtyBiggerThanRemaning($comparedData, $already_ordered_qty, $product_id, $unit_id)
+function calculateIfAlreadyQtyBiggerThanRemaning($comparedData, $already_ordered_qty, $product_id, $unit_id, $orderId)
 {
     $orderDetailsData = [];
     for ($i = 0; $i < count($comparedData); $i++) {
@@ -375,17 +396,35 @@ function calculateIfAlreadyQtyBiggerThanRemaning($comparedData, $already_ordered
         } else if ($already_ordered_qty <= $comparedData[$i]['remaning_qty']) {
             $qty = $already_ordered_qty;
         }
+
+
+
         $orderDetailsData[] = [
-            'order_id' => 0,
+            'order_id' => $orderId,
             'product_id' => $product_id,
             'unit_id' => $unit_id,
             'quantity' => $qty,
             'available_quantity' => $qty,
             'created_by' => auth()?->user()?->id,
             'purchase_invoice_id' => $comparedData[$i]['purchase_invoice_id'],
-            'price' => $comparedData[$i]['price']
+            'price' => $comparedData[$i]['price'],
+            'negative_inventory_quantity' => false,
         ];
         $already_ordered_qty = ($already_ordered_qty - $qty);
+
+        if ($already_ordered_qty > 0  && $i == count($comparedData) - 1 && isOrderCompletedIfQtyLessThanZero()) {
+            $orderDetailsData[] = [
+                'order_id' => $orderId,
+                'product_id' => $product_id,
+                'unit_id' => $unit_id,
+                'quantity' => $already_ordered_qty,
+                'available_quantity' => $already_ordered_qty,
+                'created_by' => auth()?->user()?->id,
+                'purchase_invoice_id' => $comparedData[$i]['purchase_invoice_id'],
+                'price' => $comparedData[$i]['price'],
+                'negative_inventory_quantity' => true,
+            ];
+        }
 
         if ($already_ordered_qty > 0) {
             continue;
@@ -393,5 +432,36 @@ function calculateIfAlreadyQtyBiggerThanRemaning($comparedData, $already_ordered
             break;
         }
     }
+
     return $orderDetailsData;
+}
+
+
+/**
+ * fixing the result of calculating function
+ */
+function fixResultOfCalculating($finalOrderDetailData)
+{
+    $mergedArray = [];
+    foreach ($finalOrderDetailData as $i => $item) {
+
+        if (!isset($item['order_id'])) {
+            foreach ($item as $subItem) {
+                $mergedArray[] = (array) $subItem;
+            }
+        } else {
+            $mergedArray[] = (array) $item;
+        }
+    }
+    return $mergedArray;
+}
+
+
+/**
+ * complete order if the quantities less than zero
+ * that means the prices will be equal the last products
+ */
+function isOrderCompletedIfQtyLessThanZero()
+{
+    return true;
 }

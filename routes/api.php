@@ -24,22 +24,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test_result', function (Request $request) {
+Route::get('/compare', function (Request $request) {
 
     $qty = $request->input('qty');
     $product_id = $request->input('product_id');
     $unit_id = $request->input('unit_id');
-    // return $data;
+    // $fdata = getSumQtyOfProductFromPurchases($product_id, $unit_id);
+    $fdata = comparePurchasedWithOrderdQties($product_id, $unit_id);
 
-    $fdata = comparePurchasedWithOrderdQties($product_id, $unit_id, $qty);
     return $fdata;
 });
-Route::get('/to_try', function (Request $request) {
-
+Route::get('/to_try_order', function (Request $request) {
+    $req_array = $request->all();
     $fdata = [];
-    foreach ($request->input('order_details') as $orderDetail) {
-        $fdata = calculateFifoMethod($orderDetail['product_id'], $orderDetail['unit_id'], $orderDetail['qty'], 0);
-    }
+    $fdata  = calculateFifoMethod($req_array['order_details'], 15);
+
     return $fdata;
 });
 

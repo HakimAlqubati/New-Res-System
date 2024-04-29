@@ -104,26 +104,11 @@ class OrderRepository implements OrderRepositoryInterface
 
             // Map order details data from request body
             $pricing_method = getCalculatingPriceOfOrdersMethod();
-            if ($pricing_method == 'from_unit_prices') {
-                $orderDetailsData = [];
-                foreach ($request->input('order_details') as $orderDetail) {
-                    $price = getUnitPrice($orderDetail['product_id'], $orderDetail['unit_id']);
-                    $orderDetailsData[] = [
-                        'order_id' => $orderId,
-                        'product_id' => $orderDetail['product_id'],
-                        'unit_id' => $orderDetail['unit_id'],
-                        'quantity' => $orderDetail['quantity'],
-                        'available_quantity' => $orderDetail['quantity'],
-                        'created_by' => auth()->user()->id,
-                        'price' => ($price)
-                    ];
-                }
-            } else if ($pricing_method == 'fifo') {
-                foreach ($request->input('order_details') as $orderDetail) {
-                    $orderDetailsData = calculateFifoMethod($orderDetail['product_id'], $orderDetail['unit_id'], $orderDetail['quantity'], $orderId);
-                }
+            if ($pricing_method == 'fifo') {
+
+                $orderDetailsData = calculateFifoMethod($request->input('order_details'), $orderId);
             }
-            dd($orderDetailsData);
+          
 
             if (count($orderDetailsData) > 0) {
                 OrderDetails::insert($orderDetailsData);
