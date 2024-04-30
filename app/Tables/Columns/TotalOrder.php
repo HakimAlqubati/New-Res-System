@@ -11,7 +11,8 @@ class TotalOrder extends Column
     public function getState()
     {
         $order = Order::withSum('orderDetails', 'price')->find($this?->record?->id);
-        $sum = $order->order_details_sum_price;
+        
+        $sum = $order?->order_details_sum_price;
         return $sum;
     }
 }

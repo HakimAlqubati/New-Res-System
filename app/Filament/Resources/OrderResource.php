@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms\Components\Textarea;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OrderResource extends Resource implements HasShieldPermissions
 {
@@ -155,12 +156,15 @@ class OrderResource extends Resource implements HasShieldPermissions
                                 $data['created_until'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
-                    })
+                    }),
+                Tables\Filters\TrashedFilter::make(),
 
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 ExportBulkAction::make()

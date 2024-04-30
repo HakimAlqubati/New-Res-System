@@ -100,10 +100,12 @@ class ListStoresReport extends ListRecords
             ])
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             // ->where('orders.created_at', '>=', DB::raw("DATE('2024-03-11')"))
-            ->whereIn('orders.status', [
-                Order::READY_FOR_DELEVIRY,
-                Order::DELEVIRED
-            ])
+            // ->whereIn('orders.status', [
+            //     Order::READY_FOR_DELEVIRY,
+            //     Order::DELEVIRED
+            // ])
+            ->where('orders.active', 1)
+            ->whereNull('orders.deleted_at')
             ->groupBy('orders_details.product_id', 'orders_details.unit_id');
 
         $query = DB::table(DB::raw("({$subquery1->toSql()}) AS p"))
