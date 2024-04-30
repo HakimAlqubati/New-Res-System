@@ -17,18 +17,22 @@ use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Actions\ActionGroup;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
+use Livewire\TemporaryUploadedFile;
 
 class PurchaseInvoiceResource extends Resource
 {
@@ -85,6 +89,16 @@ class PurchaseInvoiceResource extends Resource
                 Textarea::make('description')->label(__('lang.description'))
                     ->placeholder('Enter description')
                     ->columnSpanFull(),
+                FileUpload::make('attachment')
+                    ->label(__('lang.attachment'))
+                    ->enableOpen()
+                    ->enableDownload()
+                    ->directory('purchase-invoices')
+                    ->columnSpanFull()
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+                        return (string) str($file->getClientOriginalName())->prepend('purchase-invoice-');
+                    }),
                 Repeater::make('units')
                     ->createItemButtonLabel(__('lang.add_item'))
                     ->columns(5)
@@ -186,17 +200,37 @@ class PurchaseInvoiceResource extends Resource
                 TextColumn::make('store.name')->label('Store'),
                 TextColumn::make('date')->sortable(),
                 TextColumn::make('description')->searchable(),
+                IconColumn::make('has_attachment')->label(__('lang.has_attachment'))
+                    ->boolean()
+                    ->trueIcon('heroicon-o-badge-check')
+                    ->falseIcon('heroicon-o-x-circle'),
+
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+
+                    Tables\Actions\EditAction::make()
+                        ->icon('heroicon-s-pencil'),
+                    Tables\Actions\Action::make('download')
+                        ->label(__('lang.download_attachment'))
+                        ->action(function ($record) {
+                            if (strlen($record['attachment']) > 0) {
+                                return redirect(url(url('storage/' . $record['attachment'])));
+                            }
+                        })->hidden(fn ($record) => !(strlen($record['attachment']) > 0))
+                        ->icon('heroicon-o-download')
+                        ->color('green')
+                ]),
             ])
             ->bulkActions([
                 // Tables\Actions\DeleteBulkAction::make(),
-            ]);
+            ])
+            ->poll('10s');
     }
+ 
 
     public static function getRelations(): array
     {
@@ -204,7 +238,6 @@ class PurchaseInvoiceResource extends Resource
             PurchaseInvoiceDetailsRelationManager::class,
         ];
     }
-
     public static function getPages(): array
     {
         return [
