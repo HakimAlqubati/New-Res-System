@@ -120,10 +120,13 @@ class ListBranchStoreReport extends ListRecords
                 ->join('orders', 'orders_details.order_id', '=', 'orders.id')
                 ->join('products', 'orders_details.product_id', '=', 'products.id')
                 ->join('units', 'orders_details.unit_id', '=', 'units.id')
-                ->whereIn('orders.status', [
-                    Order::DELEVIRED,
-                    Order::READY_FOR_DELEVIRY
-                ]);
+                ->where('orders.active', 1)
+                ->whereNull('orders.deleted_at')
+                // ->whereIn('orders.status', [
+                //     Order::DELEVIRED,
+                //     Order::READY_FOR_DELEVIRY
+                // ])
+            ;
             if (!is_null($start_date) && !is_null($end_date)) {
                 $query->whereBetween('orders.created_at', [$start_date, $end_date]);
             }

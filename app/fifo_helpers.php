@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Order;
+use App\Models\SystemSetting;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -239,5 +240,6 @@ function fixResultOfCalculating($finalOrderDetailData)
  */
 function isOrderCompletedIfQtyLessThanZero()
 {
-    return true;
+
+    return   SystemSetting::select('completed_order_if_not_qty')->first()->completed_order_if_not_qty;
 }

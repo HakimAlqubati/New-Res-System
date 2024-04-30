@@ -231,9 +231,11 @@ function getDefaultCurrency()
 function getCalculatingPriceOfOrdersMethod()
 {
     $defaultMethod = 'from_unit_prices';
-    $systemSettingsCalculatingMethod = SystemSetting::select('calculating_orders_price_method')->first();
-    if ($systemSettingsCalculatingMethod && ($systemSettingsCalculatingMethod->calculating_orders_price_method != $defaultMethod)) {
-        $defaultMethod = $systemSettingsCalculatingMethod->calculating_orders_price_method;
+
+    $systemSettingsCalculatingMethod = SystemSetting::select('calculating_orders_price_method')->first()->calculating_orders_price_method;
+
+    if ($systemSettingsCalculatingMethod != null && ($systemSettingsCalculatingMethod != $defaultMethod)) {
+        $defaultMethod = $systemSettingsCalculatingMethod;
     }
     return $defaultMethod;
 }

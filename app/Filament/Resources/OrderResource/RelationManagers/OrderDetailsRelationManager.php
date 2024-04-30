@@ -7,6 +7,8 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -34,13 +36,23 @@ class OrderDetailsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('product_id')->label(__('lang.id')),
-                Tables\Columns\TextColumn::make('product.name')->label(__('lang.product')),
-                Tables\Columns\TextColumn::make('product.code')->label(__('lang.product_code')),
-                Tables\Columns\TextColumn::make('unit.name')->label(__('lang.unit')),
-                Tables\Columns\TextColumn::make('quantity')->label(__('lang.ordered_quantity_by_branch')),
-                Tables\Columns\TextColumn::make('available_quantity')->label(__('lang.quantity_after_modification')),
-                Tables\Columns\TextColumn::make('price')->label(__('lang.unit_price')),
+                TextColumn::make('product_id')->label(__('lang.id')),
+                TextColumn::make('product.name')->label(__('lang.product')),
+                TextColumn::make('product.code')->label(__('lang.product_code')),
+                TextColumn::make('unit.name')->label(__('lang.unit')),
+                TextColumn::make('quantity')->label(__('lang.ordered_quantity_by_branch')),
+                TextColumn::make('available_quantity')->label(__('lang.quantity_after_modification')),
+                TextColumn::make('price')->label(__('lang.unit_price')),
+                IconColumn::make('negative_inventory_quantity')
+                    ->options([
+                        'heroicon-o-check' => fn ($state, $record): bool => $record->negative_inventory_quantity === 1,
+                        // 'heroicon-o-pencil' => fn ($state, $record): bool => $record->status === 2,
+                        // 'heroicon-o-clock' => fn ($state): bool => $state === 'reviewing',
+                        // 'heroicon-o-check-circle' => fn ($state): bool => $state === 'published',
+                    ])
+                    ->label(__('Ordered with negative quantity'))
+                // ->boolean()
+                ,
             ])
             ->filters([
                 //

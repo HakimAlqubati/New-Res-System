@@ -25,7 +25,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/compare', function (Request $request) {
-
     $qty = $request->input('qty');
     $product_id = $request->input('product_id');
     $unit_id = $request->input('unit_id');

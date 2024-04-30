@@ -6,4 +6,6 @@ return [
     'from_unit_prices' => 'الطريقة العادية (من وحدات التسعير)',
     'fifo' => 'الداخل أولاً الخارج أولاً',
     'currency_symbol' => 'رمز العملة',
+    'completed_order_if_not_qty' => 'إمكانية إكمال الطلب إذا الكمية أقل من الصفر',
+    'note_if_order_completed_if_not_qty' => 'سيتم احتساب الأسعار بحسب آخر فاتورة شراء للمنتج',
 ];
