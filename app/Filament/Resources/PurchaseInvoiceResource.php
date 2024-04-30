@@ -218,7 +218,12 @@ class PurchaseInvoiceResource extends Resource
                         ->label(__('lang.download_attachment'))
                         ->action(function ($record) {
                             if (strlen($record['attachment']) > 0) {
-                                return redirect(url(url('storage/' . $record['attachment'])));
+                                if (env('APP_ENV') == 'local') {
+                                    $file_link = url('storage/' . $record['attachment']);
+                                } else if (env('APP_ENV') == 'production') {
+                                    $file_link = url('New-Res-System/public/storage/' . $record['attachment']);
+                                }
+                                return redirect(url($file_link));
                             }
                         })->hidden(fn ($record) => !(strlen($record['attachment']) > 0))
                         ->icon('heroicon-o-download')
@@ -230,7 +235,7 @@ class PurchaseInvoiceResource extends Resource
             ])
             ->poll('10s');
     }
- 
+
 
     public static function getRelations(): array
     {
