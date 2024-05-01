@@ -26,7 +26,11 @@ class OrderDetailsRepository implements OrderDetailsRepositoryInterface
         $this->model = $model;
     }
 
-    public function update($request)
+    public function updateWithFifo($request)
+    {
+        dd($request->all());
+    }
+    public function updateWithUnitPrices($request)
     {
         // Validate the request data.
         $data = $request->validate([
@@ -99,7 +103,6 @@ class OrderDetailsRepository implements OrderDetailsRepositoryInterface
             } elseif ($orderDetailData['operation'] === 'destroy') {
                 // Delete the order detail.
                 $orderDetail->delete();
-
                 $responses[] = [
                     'success' => true,
                     'id' => $orderDetailData['id'],

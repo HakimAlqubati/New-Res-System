@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Order;
+use App\Models\OrderDetails;
 use App\Models\SystemSetting;
 use Illuminate\Support\Facades\DB;
 
@@ -87,9 +88,11 @@ function comparePurchasedWithOrderdQties($product_id, $unit_id)
             ];
         }
     }
+
     if (isOrderCompletedIfQtyLessThanZero() && count($fdata) == 0) {
 
         $latestProductPurchased = getSumQtyOfProductFromPurchases($product_id, $unit_id, true);
+
         $fdata[] = [
             'purchased_qty' => 0,
             'price' => $latestProductPurchased->price,
@@ -100,6 +103,7 @@ function comparePurchasedWithOrderdQties($product_id, $unit_id)
             'unit_id' => $unit_id,
         ];
     }
+
     return $fdata;
 }
 
@@ -108,11 +112,11 @@ function comparePurchasedWithOrderdQties($product_id, $unit_id)
  */
 function calculateFifoMethod($req_array, $orderId)
 {
-
     $orderDetailsData = [];
     $finalOrderDetailData = [];
     foreach ($req_array as  $req_val) {
         $comparedData =  comparePurchasedWithOrderdQties($req_val['product_id'], $req_val['unit_id']);
+       
         if (count($comparedData) == 1 && $comparedData[0]['purchased_qty'] == 0 && isOrderCompletedIfQtyLessThanZero()) {
 
             $orderDetailsData  = [
@@ -122,13 +126,14 @@ function calculateFifoMethod($req_array, $orderId)
                 'quantity' => $req_val['quantity'],
                 'available_quantity' => $req_val['quantity'],
                 'created_by' => auth()?->user()?->id,
-                'purchase_invoice_id' => $comparedData[0]['product_id'],
-                'price' =>  $comparedData[0]['product_id'],
+                'purchase_invoice_id' => $comparedData[0]['purchase_invoice_id'],
+                'price' =>  $comparedData[0]['price'],
                 'negative_inventory_quantity' => true,
             ];
             $finalOrderDetailData[] = $orderDetailsData;
             continue;
         }
+
         foreach ($comparedData as $key => $value) {
             $price = $value['price'];
             $purchase_invoice_id = $value['purchase_invoice_id'];
@@ -242,4 +247,49 @@ function isOrderCompletedIfQtyLessThanZero()
 {
 
     return   SystemSetting::select('completed_order_if_not_qty')->first()->completed_order_if_not_qty;
+}
+
+
+/**
+ * handle pending order details
+ */
+function handlePendingOrderDetails($pendingOrderDetails)
+{
+    $newOrderDetailsInPendingOrder = [];
+    foreach ($pendingOrderDetails as $key => $value) {
+        $existOrderDetail = OrderDetails::where(
+            'order_id',
+            $value['order_id']
+        )->where(
+            'product_id',
+            $value['product_id']
+        )->where(
+            'unit_id',
+            $value['unit_id']
+        )
+            ->where(
+                'purchase_invoice_id',
+                $value['purchase_invoice_id']
+            )
+            ->where(
+                'negative_inventory_quantity',
+                $value['negative_inventory_quantity']
+            )
+            ->first();
+        if ($existOrderDetail) {
+            $newQuantity = $existOrderDetail->quantity + $value['quantity'];
+            $existOrderDetail->update([
+                'updated_by' => auth()->user()->id,
+                'quantity' => $newQuantity,
+                'available_quantity' => $newQuantity,
+                'price' => $value['price'],
+            ]);
+        } else {
+            $newOrderDetailsInPendingOrder[] = $value;
+        }
+    }
+     
+    if (count($newOrderDetailsInPendingOrder) > 0) {
+        OrderDetails::insert($newOrderDetailsInPendingOrder);
+    }
 }

@@ -63,12 +63,7 @@ class OrderRepository implements OrderRepositoryInterface
                     'message' => 'you dont have any role'
                 ], 500);
             }
-            if ($currnetRole == 8) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Not allowed now, contact your branch manager'
-                ], 500);
-            }
+
 
             $pendingOrderId = 0;
             $message = '';
@@ -100,29 +95,37 @@ class OrderRepository implements OrderRepositoryInterface
             ];
 
             // Create new order
-            if ($pendingOrderId > 0) {
-                $orderId = $pendingOrderId;
-                Order::find($orderId)->update([
-                    'updated_by' => auth()->user()->id,
-                ]);
-                $message = 'Your order has been submited on pending approval order no ' . $orderId;
-            } else {
+            if (!($pendingOrderId > 0)) {
                 $order = Order::create($orderData);
                 $orderId = $order->id;
                 $message = 'done successfully';
+            } else if ($pendingOrderId > 0) {
+                $orderDetailsData = calculateFifoMethod($request->input('order_details'), $pendingOrderId);
+                handlePendingOrderDetails($orderDetailsData);
+                $orderId = $pendingOrderId;
+                if ($currnetRole == 8) {
+                    Order::find($orderId)->update([
+                        'updated_by' => auth()->user()->id,
+                    ]);
+                    $message = 'Your order has been submited on pending approval order no ' . $orderId;
+                } else if ($currnetRole == 7) {
+                    Order::find($orderId)->update([
+                        'updated_by' => auth()->user()->id,
+                        'status' => Order::ORDERED,
+                    ]);
+                    $message = 'done successfully';
+                }
             }
 
             $orderDetailsData = calculateFifoMethod($request->input('order_details'), $orderId);
 
-            if (count($orderDetailsData) > 0) {
+
+            if (count($orderDetailsData) > 0 && !($pendingOrderId > 0)) {
+                // to store (order details) new order 
                 OrderDetails::insert($orderDetailsData);
             }
 
             //to calculate the total of order when store it
-            $totalPrice = array_reduce($orderDetailsData, function ($carry, $item) {
-                return $carry + $item['price'];
-            }, 0);
-            Order::find($orderId)->update(['total' => $totalPrice]);
             DB::commit();
 
             return response()->json([

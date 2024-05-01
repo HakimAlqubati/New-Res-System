@@ -71,7 +71,7 @@ class SystemSettingResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
@@ -90,4 +90,11 @@ class SystemSettingResource extends Resource
             'edit' => Pages\EditSystemSetting::route('/{record}/edit'),
         ];
     }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+   
 }
