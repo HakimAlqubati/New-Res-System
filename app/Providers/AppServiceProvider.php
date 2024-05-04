@@ -117,20 +117,20 @@ class AppServiceProvider extends ServiceProvider
                     ]),
             ]);
 
-            if (getCurrentRole() == 1) {
-                $menu = $builder->groups([
-                    NavigationGroup::make(__('lang.inventory_management'))
-                        ->items([
-                            ...SupplierResource::getNavigationItems(),
-                            ...PurchaseInvoiceResource::getNavigationItems(),
-                            ...PurchaseInvoiceReportResource::getNavigationItems(),
-                            ...StoreResource::getNavigationItems(),
-                            ...StoresReportResource::getNavigationItems(),
-                            ...BranchStoreReportResource::getNavigationItems(),
 
-                        ]),
-                ]);
-            }
+            $menu = $builder->groups([
+                NavigationGroup::make(__('lang.inventory_management'))
+                    ->items([
+                        ...SupplierResource::getNavigationItems(),
+                        ...PurchaseInvoiceResource::getNavigationItems(),
+                        ...PurchaseInvoiceReportResource::getNavigationItems(),
+                        ...StoreResource::getNavigationItems(),
+                        ...StoresReportResource::getNavigationItems(),
+                        ...BranchStoreReportResource::getNavigationItems(),
+
+                    ]),
+            ]);
+
 
             if (getCurrentRole() == 1) {
                 $menu = $builder->groups([

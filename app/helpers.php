@@ -248,7 +248,7 @@ function getUnitPrice($product_id, $unit_id)
     return  UnitPrice::where(
         'product_id',
         $product_id
-    )->where('unit_id', $unit_id)->first()->price;
+    )->where('unit_id', $unit_id)?->first()?->price;
 }
 
 /**

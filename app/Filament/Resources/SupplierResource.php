@@ -36,6 +36,8 @@ class SupplierResource extends Resource
 
                 TextInput::make('name')->label(__('lang.name'))->required(),
                 TextInput::make('email')->label(__('lang.email'))->email()->required(),
+                TextInput::make('whatsapp_number')->label(__('lang.whatsapp_number')),
+                TextInput::make('phone_number')->label(__('lang.phone_number')),
 
 
             ]);
@@ -52,6 +54,12 @@ class SupplierResource extends Resource
                     ->sortable()->searchable()
                     ->searchable(isIndividual: true, isGlobal: false),
                 TextColumn::make('email')
+                    ->sortable()->searchable()
+                    ->searchable(isIndividual: true, isGlobal: false),
+                TextColumn::make('phone_number')
+                    ->sortable()->searchable()
+                    ->searchable(isIndividual: true, isGlobal: false),
+                TextColumn::make('whatsapp_number')
                     ->sortable()->searchable()
                     ->searchable(isIndividual: true, isGlobal: false),
             ])

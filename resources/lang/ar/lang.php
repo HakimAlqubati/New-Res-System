@@ -112,4 +112,6 @@ return [
     'attachment' => 'مرفقات',
     'download_attachment' => 'تحميل المرفق',
     'has_attachment' => 'مع المرفقات؟',
+    'whatsapp_number' => 'رقم الواتساب',
+    'phone_number' => 'رقم الجوال',
 ];

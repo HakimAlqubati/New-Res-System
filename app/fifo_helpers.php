@@ -92,16 +92,29 @@ function comparePurchasedWithOrderdQties($product_id, $unit_id)
     if (isOrderCompletedIfQtyLessThanZero() && count($fdata) == 0) {
 
         $latestProductPurchased = getSumQtyOfProductFromPurchases($product_id, $unit_id, true);
-
-        $fdata[] = [
-            'purchased_qty' => 0,
-            'price' => $latestProductPurchased->price,
-            'purchase_invoice_id' => $latestProductPurchased->purchase_invoice_id,
-            'orderd_qty' => 0,
-            'remaning_qty' => 0,
-            'product_id' => $product_id,
-            'unit_id' => $unit_id,
-        ];
+        if (!is_null($latestProductPurchased)) {
+            $fdata[] = [
+                'purchased_qty' => 0,
+                'price' => $latestProductPurchased->price,
+                'purchase_invoice_id' => $latestProductPurchased->purchase_invoice_id,
+                'orderd_qty' => 0,
+                'remaning_qty' => 0,
+                'product_id' => $product_id,
+                'unit_id' => $unit_id,
+            ];
+        } else {
+            if (is_numeric(getUnitPrice($product_id, $unit_id)) && getUnitPrice($product_id, $unit_id) > 0) {
+                $fdata[] = [
+                    'purchased_qty' => 0,
+                    'price' => getUnitPrice($product_id, $unit_id),
+                    'purchase_invoice_id' => null,
+                    'orderd_qty' => 0,
+                    'remaning_qty' => 0,
+                    'product_id' => $product_id,
+                    'unit_id' => $unit_id,
+                ];
+            }
+        }
     }
 
     return $fdata;
@@ -116,7 +129,7 @@ function calculateFifoMethod($req_array, $orderId)
     $finalOrderDetailData = [];
     foreach ($req_array as  $req_val) {
         $comparedData =  comparePurchasedWithOrderdQties($req_val['product_id'], $req_val['unit_id']);
-       
+
         if (count($comparedData) == 1 && $comparedData[0]['purchased_qty'] == 0 && isOrderCompletedIfQtyLessThanZero()) {
 
             $orderDetailsData  = [
@@ -288,7 +301,7 @@ function handlePendingOrderDetails($pendingOrderDetails)
             $newOrderDetailsInPendingOrder[] = $value;
         }
     }
-     
+
     if (count($newOrderDetailsInPendingOrder) > 0) {
         OrderDetails::insert($newOrderDetailsInPendingOrder);
     }

@@ -113,4 +113,6 @@ return [
     'attachment' => 'Attachment',
     'download_attachment' => 'Download attachment',
     'has_attachment' => 'Has attachment?',
+    'whatsapp_number' => 'Whatsapp number',
+    'phone_number' => 'Phone number',
 ];
