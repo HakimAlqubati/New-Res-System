@@ -167,6 +167,7 @@ function calculateFifoMethod($req_array, $orderId)
                 break;
             } else if ($already_ordered_qty > $remaning_qty) {
                 $orderDetailsData = calculateIfAlreadyQtyBiggerThanRemaning($comparedData, $already_ordered_qty, $value['product_id'], $value['unit_id'], $orderId);
+                break;
             }
         }
         $finalOrderDetailData[] = $orderDetailsData;
