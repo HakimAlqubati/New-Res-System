@@ -63,4 +63,19 @@ class OrderDetails extends Model
             'available_in_store' => $this->available_in_store,
         ];
     }
+
+    public function purchaseInvoice()
+    {
+        return $this->belongsTo(PurchaseInvoice::class);
+    }
+
+    public function getPurchaseInvoiceNoAttribute()
+    {
+        $invoiceNo = 'None';
+        $purchaseInvoice = $this->purchaseInvoice;
+        if ($purchaseInvoice) {
+            $invoiceNo = '(' . $purchaseInvoice->id . ') ' . $purchaseInvoice->invoice_no;
+        }
+        return $invoiceNo;
+    }
 }

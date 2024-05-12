@@ -2,6 +2,8 @@
 
 use App\Models\Order;
 use App\Models\OrderDetails;
+use App\Models\PurchaseInvoice;
+use App\Models\PurchaseInvoiceDetail;
 use App\Models\SystemSetting;
 use Illuminate\Support\Facades\DB;
 
@@ -306,4 +308,73 @@ function handlePendingOrderDetails($pendingOrderDetails)
     if (count($newOrderDetailsInPendingOrder) > 0) {
         OrderDetails::insert($newOrderDetailsInPendingOrder);
     }
+}
+
+/**
+ * get price of product from purchase invoice using (product_id, unit_id, purchase_invoice_id)
+ */
+function getProductPriceByProductUnitPurchaseInvoiceId($productId, $unitId, $purchaseInvoiceId)
+{
+    $price = 0;
+    $purchaseInvoiceDetail = PurchaseInvoiceDetail::where([
+        'purchase_invoice_id' => $purchaseInvoiceId,
+        'product_id' => $productId,
+        'unit_id' => $unitId,
+
+    ])->first();
+    if ($purchaseInvoiceDetail) {
+        $price = $purchaseInvoiceDetail->price;
+    }
+    return $price;
+}
+
+
+function getProductQuantities($productId, $unitId, $orderDetailId, $purchaseInvoiceId)
+{
+    $result = [];
+    $checkIfPurchaseInvoiceId = PurchaseInvoice::find($purchaseInvoiceId);
+    if ($checkIfPurchaseInvoiceId) {
+        $data = DB::select("
+        SELECT 
+        (
+            SELECT SUM(od.available_quantity) 
+            FROM orders_details AS od
+            JOIN orders AS o ON od.order_id = o.id 
+            WHERE od.product_id = $productId
+            AND o.deleted_at IS NULL 
+            AND od.unit_id = $unitId
+            and od.id <= $orderDetailId
+            and od.purchase_invoice_id = $purchaseInvoiceId
+        ) AS total_ordered_qty,
+        
+        (
+            SELECT SUM(pd.quantity) 
+            FROM purchase_invoice_details AS pd
+            JOIN purchase_invoices AS p ON pd.purchase_invoice_id = p.id 
+            WHERE pd.product_id = $productId
+            AND p.deleted_at IS NULL 
+            AND pd.unit_id = $unitId
+            and pd.purchase_invoice_id = $purchaseInvoiceId
+        ) AS total_purchased_qty
+        
+        
+    FROM 
+        orders_details AS ord_dts
+    WHERE 
+        ord_dts.product_id = $productId
+      and   ord_dts.unit_id  = $unitId
+        
+    GROUP BY 
+        ord_dts.product_id
+        ;
+        ");
+        if (count($data) > 0) {
+            $result = [
+                'total_purchased_qty' => $data[0]->total_purchased_qty,
+                'total_ordered_qty' => $data[0]->total_ordered_qty,
+                'remaning_qty' => $data[0]->total_purchased_qty - $data[0]->total_ordered_qty,
+            ];
+        }
+    }
+    return $result;
 }

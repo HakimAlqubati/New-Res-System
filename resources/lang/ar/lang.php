@@ -115,4 +115,7 @@ return [
     'whatsapp_number' => 'رقم الواتساب',
     'phone_number' => 'رقم الجوال',
     'show_invoice_no' => 'إظهار رقم الفاتورة؟',
+    'change_or_add_purchase_supplier' => 'تعديل أو إضافة فاتورة مشتروات',
+    'there_is_no_purchase' => 'خطأ برقم الفاتورة',
+    'please_type_an_invoice_no_exist' => 'من فضلك قم بإدخال رقم فاتورة صحيح',
 ];
