@@ -115,4 +115,5 @@ return [
     'has_attachment' => 'Has attachment?',
     'whatsapp_number' => 'Whatsapp number',
     'phone_number' => 'Phone number',
+    'show_invoice_no' => 'Show invoice no?',
 ];

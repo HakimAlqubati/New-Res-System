@@ -114,4 +114,5 @@ return [
     'has_attachment' => 'مع المرفقات؟',
     'whatsapp_number' => 'رقم الواتساب',
     'phone_number' => 'رقم الجوال',
+    'show_invoice_no' => 'إظهار رقم الفاتورة؟',
 ];

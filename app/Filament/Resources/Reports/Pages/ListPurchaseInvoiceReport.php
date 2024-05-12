@@ -10,6 +10,7 @@ use App\Models\Supplier;
 
 use Filament\Forms\Components\Builder;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\DB;
@@ -50,6 +51,7 @@ class ListPurchaseInvoiceReport extends ListRecords
                 ->query(function (Builder $q, $data) {
                     return $q;
                 })->options(PurchaseInvoice::get()->pluck('invoice_no', 'invoice_no')),
+            Filter::make('show_invoice_no')->label(__('lang.show_invoice_no')),
         ];
     }
 
@@ -60,13 +62,14 @@ class ListPurchaseInvoiceReport extends ListRecords
         $supplier_id = __filament_request_select('supplier_id', 'all');
         $product_ids = [];
         $product_ids = __filament_request_select_multiple('product_id', [], true);
-
+        $show_invoice_no = $this->getTable()->getFilters()['show_invoice_no']->getState()['isActive'];
         $invoice_no = __filament_request_select('invoice_no', 'all');
         $purchase_invoice_data = $this->getPurchasesInvoiceData($product_ids, $store_id, $supplier_id, $invoice_no);
 
 
         return [
             'purchase_invoice_data' => $purchase_invoice_data,
+            'show_invoice_no' => $show_invoice_no,
         ];
     }
 
@@ -87,6 +90,8 @@ class ListPurchaseInvoiceReport extends ListRecords
                 'purchase_invoice_details.quantity as quantity',
                 'purchase_invoice_details.price as unit_price',
                 'purchase_invoices.date as purchase_date',
+                'purchase_invoices.id as purchase_invoice_id',
+                'purchase_invoices.invoice_no as invoice_no',
                 'users.name as supplier_name',
                 'stores.name as store_name'
             )
@@ -121,6 +126,7 @@ class ListPurchaseInvoiceReport extends ListRecords
         // );
 
         $results = $query->get();
+
         return [
             'results' => $results,
             'supplier_name' => $supplier_name,

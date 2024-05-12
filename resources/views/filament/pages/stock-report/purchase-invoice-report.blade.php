@@ -8,7 +8,7 @@
                 <th colspan="3">
                     {{ __('lang.store') }}: ({{ $purchase_invoice_data['store_name'] }})
                 </th>
-                <th colspan="3">
+                <th colspan="{{$show_invoice_no == true ? '4' : '3'}}">
                     {{ __('lang.supplier') }}: ({{ $purchase_invoice_data['supplier_name'] }})
                 </th>
             </x-tables::row>
@@ -17,6 +17,9 @@
                 <th>{{ __('lang.product') }}</th>
                 <th>{{ __('lang.unit') }}</th>
                 <th>{{ __('lang.quantity') }}</th>
+                @if ($show_invoice_no == true)
+                    <th>{{ __('lang.invoice_no') }}</th>
+                @endif
                 <th>{{ __('lang.unit_price') }}</th>
                 <th>{{ __('lang.total_amount') }}</th>
             </x-tables::row>
@@ -42,13 +45,18 @@
                     <x-tables::cell> {{ $invoice_item?->product_name }} </x-tables::cell>
                     <x-tables::cell> {{ $invoice_item?->unit_name }} </x-tables::cell>
                     <x-tables::cell> {{ $invoice_item?->quantity }} </x-tables::cell>
+                    @if ($show_invoice_no == true)
+                        <x-tables::cell>
+                            {{ '(' . $invoice_item->purchase_invoice_id . ') ' . $invoice_item->invoice_no }}
+                        </x-tables::cell>
+                    @endif
                     <x-tables::cell> {{ $unit_price }} </x-tables::cell>
                     <x-tables::cell> {{ $sub_total }} </x-tables::cell>
                 </x-tables::row>
             @endforeach
 
             <x-tables::row>
-                <x-tables::cell colspan="4"> {{ __('lang.total_quantity') }} </x-tables::cell>
+                <x-tables::cell colspan="{{$show_invoice_no == true ? '5' : '4'}}"> {{ __('lang.total') }} </x-tables::cell>
                 <x-tables::cell> {{ $sum_unit_price }} </x-tables::cell>
                 <x-tables::cell> {{ $total_sub_total }} </x-tables::cell>
             </x-tables::row>
