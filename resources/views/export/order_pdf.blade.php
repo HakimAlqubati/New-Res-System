@@ -90,8 +90,8 @@
 
     <div>
         <div style="width: 33%;float: left;text-align: left">
-            <img src="https://w7.pngwing.com/pngs/882/726/png-transparent-chef-cartoon-chef-photography-cooking-fictional-character-thumbnail.png"
-                style="width: 8rem;height: 8rem;">
+            {{-- <img src="https://w7.pngwing.com/pngs/882/726/png-transparent-chef-cartoon-chef-photography-cooking-fictional-character-thumbnail.png"
+                style="width: 8rem;height: 8rem;"> --}}
         </div>
 
         <div style="width: 34%;float: center">

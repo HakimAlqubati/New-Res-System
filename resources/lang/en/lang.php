@@ -113,7 +113,7 @@ return [
     'attachment' => 'Attachment',
     'download_attachment' => 'Download attachment',
     'has_attachment' => 'Has attachment?',
-    'whatsapp_number' => 'Whatsapp number',
+    'whatsapp_number' => 'WhatsApp number',
     'phone_number' => 'Phone number',
     'show_invoice_no' => 'Show invoice no?',
     'change_or_add_purchase_supplier' => 'Change or add purchase supplier',

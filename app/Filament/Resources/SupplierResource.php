@@ -4,8 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SupplierResource\Pages;
 use App\Models\Supplier;
-use App\Models\User;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -14,9 +13,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class SupplierResource extends Resource
@@ -38,6 +34,7 @@ class SupplierResource extends Resource
                 TextInput::make('email')->label(__('lang.email'))->email()->required(),
                 TextInput::make('whatsapp_number')->label(__('lang.whatsapp_number')),
                 TextInput::make('phone_number')->label(__('lang.phone_number')),
+                Textarea::make('supplier_address')->label(__('lang.address'))->columnSpanFull()
 
 
             ]);
