@@ -11,11 +11,13 @@ use App\Models\Supplier;
 
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DatePicker;
+use Filament\Pages\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\DB;
+use niklasravnsborg\LaravelPdf\Facades\Pdf;
 
 class ListBranchStoreReport extends ListRecords
 {
@@ -138,5 +140,32 @@ class ListBranchStoreReport extends ListRecords
                 ->get();
         }
         return $results;
+    }
+
+    protected function getActions(): array
+    {
+        return  [Action::make('Export to PDF')->label(__('lang.export_pdf'))
+            ->action('exportToPdf')
+            ->color('success'),];
+    }
+
+    public function exportToPdf()
+    {
+        $data = $this->getViewData();
+
+        $data = [
+            'branch_store_report_data' => $data['branch_store_report_data'],
+            'branch_id' => $data['branch_id'],
+            'total_quantity' => $data['total_quantity'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+        ];
+
+        $pdf = Pdf::loadView('export.reports.branch-store-report', $data);
+
+        return response()
+            ->streamDownload(function () use ($pdf) {
+                $pdf->stream("branch-store-report" . '.pdf');
+            }, "branch-store-report" . '.pdf');
     }
 }

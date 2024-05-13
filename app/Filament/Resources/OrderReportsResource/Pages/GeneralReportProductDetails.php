@@ -4,8 +4,10 @@ namespace App\Filament\Resources\OrderReportsResource\Pages;
 
 use App\Filament\Resources\OrderReportsResource\GeneralReportOfProductsResource;
 use App\Models\Order;
+use Filament\Pages\Actions\Action;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
+use niklasravnsborg\LaravelPdf\Facades\Pdf;
 
 class GeneralReportProductDetails extends Page
 {
@@ -19,8 +21,8 @@ class GeneralReportProductDetails extends Page
     {
         $this->start_date  = $_GET['start_date'] ?? '';
         $this->end_date = $_GET['end_date'] ?? '';
-        $this->category_id = $_GET['category_id'];
-        $this->branch_id = $_GET['branch_id'];
+        $this->category_id = $_GET['category_id'] ?? '';
+        $this->branch_id = $_GET['branch_id'] ?? '';
     }
     protected static string $view = 'filament.pages.order-reports.general-report-product-details';
     protected function getViewData(): array
@@ -127,5 +129,34 @@ class GeneralReportProductDetails extends Page
     public function goBack()
     {
         return back();
+    }
+
+    protected function getActions(): array
+    {
+        return  [Action::make('Export to PDF')->label(__('lang.export_pdf'))
+            ->action('exportToPdf')
+            ->color('success'),];
+    }
+
+    public function exportToPdf()
+    {
+        $data = $this->getViewData();
+
+        $data = [
+            'report_data' => $data['report_data'],
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
+            'category' => \App\Models\Category::find($this->category_id)?->name,
+            'branch' => \App\Models\Branch::find($this->branch_id)?->name,
+            'total_quantity' =>  $data['total_quantity'],
+            'total_price' =>  $data['total_price']
+        ];
+        
+        $pdf = Pdf::loadView('export.reports.general-report-product-details', $data);
+
+        return response()
+            ->streamDownload(function () use ($pdf) {
+                $pdf->stream("general-report-product-details" . '.pdf');
+            }, "general-report-product-details" . '.pdf');
     }
 }

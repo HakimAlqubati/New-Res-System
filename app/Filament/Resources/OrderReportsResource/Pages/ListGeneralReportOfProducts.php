@@ -5,10 +5,6 @@ namespace App\Filament\Resources\OrderReportsResource\Pages;
 use App\Filament\Resources\OrderReportsResource\GeneralReportOfProductsResource;
 
 use App\Models\Branch;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\Store;
-use App\Models\Supplier;
 
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DatePicker;
@@ -17,6 +13,8 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\DB;
+use niklasravnsborg\LaravelPdf\Facades\Pdf;
+use Filament\Pages\Actions\Action;
 
 class ListGeneralReportOfProducts extends ListRecords
 {
@@ -108,7 +106,7 @@ class ListGeneralReportOfProducts extends ListRecords
             // ->when($year && $month, function ($query) use ($year, $month) {
             //     return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
             // })
-            ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            // ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
             ->where('orders.active', 1)
             ->whereNull('orders.deleted_at')
             ->groupBy('products.category_id')
@@ -145,5 +143,37 @@ class ListGeneralReportOfProducts extends ListRecords
         $final_result['total_quantity'] = number_format($total_quantity, 2);
 
         return $final_result;
+    }
+
+
+
+    protected function getActions(): array
+    {
+        return  [Action::make('Export to PDF')->label(__('lang.export_pdf'))
+            ->action('exportToPdf')
+            ->color('success'),];
+    }
+
+    public function exportToPdf()
+    {
+
+        $data = $this->getViewData();
+
+        $data = [
+            'report_data' => $data['report_data'],
+            'branch_id' => $data['branch_id'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'total_quantity' => $data['total_quantity'],
+            'total_price' => $data['total_price']
+        ];
+
+
+        $pdf = Pdf::loadView('export.reports.general-report-products', $data);
+
+        return response()
+            ->streamDownload(function () use ($pdf) {
+                $pdf->stream("general-report-products" . '.pdf');
+            }, "general-report-products" . '.pdf');
     }
 }

@@ -9,11 +9,13 @@ use App\Models\Store;
 use App\Models\Supplier;
 
 use Filament\Forms\Components\Builder;
+use Filament\Pages\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\DB;
+use niklasravnsborg\LaravelPdf\Facades\Pdf;
 
 class ListPurchaseInvoiceReport extends ListRecords
 {
@@ -132,5 +134,28 @@ class ListPurchaseInvoiceReport extends ListRecords
             'supplier_name' => $supplier_name,
             'store_name' => $store_name,
         ];
+    }
+
+    protected function getActions(): array
+    {
+        return  [Action::make('Export to PDF')->label(__('lang.export_pdf'))
+            ->action('exportToPdf')
+            ->color('success'),];
+    }
+
+    public function exportToPdf()
+    {
+        $data = $this->getViewData();
+        $data =    [
+            'purchase_invoice_data' => $data['purchase_invoice_data'],
+            'show_invoice_no' => $data['show_invoice_no'],
+        ];
+        
+        $pdf = Pdf::loadView('export.reports.purchase-invoice-report', $data);
+
+        return response()
+            ->streamDownload(function () use ($pdf) {
+                $pdf->stream("purchase-invoice-report" . '.pdf');
+            }, "purchase-invoice-report" . '.pdf');
     }
 }

@@ -3,19 +3,18 @@
 namespace App\Filament\Resources\OrderReportsResource\Pages;
 
 use App\Filament\Resources\OrderReportsResource\ReportProductQuantitiesResource;
-use App\Models\Branch;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\Store;
-use App\Models\Supplier;
+use App\Models\Branch; 
+use App\Models\Product; 
 
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DatePicker;
+use Filament\Pages\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\DB;
+use niklasravnsborg\LaravelPdf\Facades\Pdf;
 
 class ListReportProductQuantities extends ListRecords
 {
@@ -153,5 +152,34 @@ class ListReportProductQuantities extends ListRecords
         $final['total_quantity'] = number_format($total_quantity, 2);
 
         return $final;
+    }
+
+    protected function getActions(): array
+    {
+        return  [Action::make('Export to PDF')->label(__('lang.export_pdf'))
+            ->action('exportToPdf')
+            ->color('success'),];
+    }
+
+    public function exportToPdf()
+    {
+
+        $data = $this->getViewData();
+
+        $data = [
+            'report_data' => $data['report_data'],
+            'product_id' => $data['product_id'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'total_quantity' => $data['total_quantity'],
+            'total_price' => $data['total_price']
+        ];
+
+        $pdf = Pdf::loadView('export.reports.report-product-quantities', $data);
+
+        return response()
+            ->streamDownload(function () use ($pdf) {
+                $pdf->stream("report-product-quantities" . '.pdf');
+            }, "report-product-quantities" . '.pdf');
     }
 }

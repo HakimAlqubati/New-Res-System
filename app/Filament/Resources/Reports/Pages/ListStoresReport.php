@@ -9,10 +9,12 @@ use App\Models\Store;
 use App\Models\Supplier;
 
 use Filament\Forms\Components\Builder;
+use Filament\Pages\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\DB;
+use niklasravnsborg\LaravelPdf\Facades\Pdf;
 
 class ListStoresReport extends ListRecords
 {
@@ -124,4 +126,30 @@ class ListStoresReport extends ListRecords
         $results = $query->get();
         return $results;
     }
+
+    protected function getActions(): array
+    {
+        return  [Action::make('Export to PDF')->label(__('lang.export_pdf'))
+            ->action('exportToPdf')
+            ->color('success'),];
+    }
+
+    public function exportToPdf()
+    {
+        $data = $this->getViewData();
+
+        $data = [
+            'stores_report_data' => $data['stores_report_data'],
+            'store_id' => $data['store_id'],
+            'supplier_id' => $data['supplier_id'],
+        ];
+        
+        $pdf = Pdf::loadView('export.reports.stores-report', $data);
+
+        return response()
+            ->streamDownload(function () use ($pdf) {
+                $pdf->stream("stores-report" . '.pdf');
+            }, "stores-report" . '.pdf');
+    }
+    
 }
