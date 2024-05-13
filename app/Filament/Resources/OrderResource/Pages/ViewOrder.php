@@ -6,6 +6,7 @@ use App\Filament\Resources\OrderResource;
 use App\Models\Order;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Actions\EditAction;
 use niklasravnsborg\LaravelPdf\Facades\Pdf;
 
 class ViewOrder extends ViewRecord
@@ -15,6 +16,7 @@ class ViewOrder extends ViewRecord
     protected function getActions(): array
     {
         return [
+            EditAction::make(),
             Action::make('Export to Excel')->label(__('lang.export_excel'))
                 ->action('exportToExcel'),
             Action::make('Export to PDF')->label(__('lang.export_pdf'))

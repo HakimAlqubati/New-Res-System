@@ -114,4 +114,9 @@ class OrderDetailsRelationManager extends RelationManager
     {
         return false;
     }
+
+    protected function isTablePaginationEnabled(): bool 
+    {
+        return false;
+    } 
 }
