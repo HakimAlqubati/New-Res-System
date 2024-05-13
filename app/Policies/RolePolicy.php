@@ -18,6 +18,7 @@ class RolePolicy
      */
     public function viewAny(User $user)
     {
+        return 1;
         return $user->can('view_any_role');
     }
 
@@ -53,6 +54,7 @@ class RolePolicy
      */
     public function update(User $user, Role $role)
     {
+        return true;
         return $user->can('update_role');
     }
 

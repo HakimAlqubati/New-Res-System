@@ -113,7 +113,7 @@ class AppServiceProvider extends ServiceProvider
                 NavigationGroup::make(__('lang.user_and_roles'))
                     ->items([
                         ...UserResource::getNavigationItems(),
-                        ...(RoleResource::canViewAny() ? RoleResource::getNavigationItems() : [])
+                        ...(  RoleResource::getNavigationItems()  )
                     ]),
             ]);
 
