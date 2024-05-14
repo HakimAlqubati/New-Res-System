@@ -19,7 +19,7 @@
             <td>{{ $value?->product_code }}</td>
             <td>{{ $value?->product_name }}</td>
             <td>{{ $value?->unit_name }}</td>
-            <td>{{ $value?->qty }}</td>
+            <td>{{ $value?->available_qty }}</td>
         </tr>
         <?php
        

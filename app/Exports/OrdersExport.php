@@ -55,6 +55,7 @@ class OrdersExport implements FromView
             $obj->unit_name = Unit::find($value->unit_id)->name;
             $obj->price =  $value->price;
             $obj->qty = $value->quantity;
+            $obj->available_qty = $value->available_quantity;
             array_push($finalResult, $obj);
         }
         return view(
