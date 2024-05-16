@@ -207,7 +207,7 @@ class PurchaseInvoiceResource extends Resource
 
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make()
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -227,13 +227,17 @@ class PurchaseInvoiceResource extends Resource
                             }
                         })->hidden(fn ($record) => !(strlen($record['attachment']) > 0))
                         ->icon('heroicon-o-download')
-                        ->color('green')
+                        ->color('green'),
+                    Tables\Actions\RestoreAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+
+
                 ]),
             ])
             ->bulkActions([
-                // Tables\Actions\DeleteBulkAction::make(),
-            ])
-            ->poll('10s');
+                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\RestoreBulkAction::make()
+            ]);
     }
 
 

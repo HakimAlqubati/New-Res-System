@@ -63,17 +63,23 @@ class SupplierResource extends Resource
             ->filters([
                 Tables\Filters\Filter::make('active')
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('active')),
-                // Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\RestoreAction::make(),
+                Tables\Actions\RestoreAction::make()->hidden(
+                    (getCurrentRole() != 1)
+                ),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
                 ExportBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
+
+                Tables\Actions\RestoreBulkAction::make()
+                    ->hidden(
+                        (getCurrentRole() != 1)
+                    ),
             ]);
     }
 
