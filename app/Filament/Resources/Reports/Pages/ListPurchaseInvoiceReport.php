@@ -126,7 +126,7 @@ class ListPurchaseInvoiceReport extends ListRecords
         //     'products.name',
         //     'units.name',
         // );
-
+        $query->whereNull('purchase_invoices.deleted_at');
         $results = $query->get();
 
         return [
@@ -150,7 +150,7 @@ class ListPurchaseInvoiceReport extends ListRecords
             'purchase_invoice_data' => $data['purchase_invoice_data'],
             'show_invoice_no' => $data['show_invoice_no'],
         ];
-        
+
         $pdf = Pdf::loadView('export.reports.purchase-invoice-report', $data);
 
         return response()

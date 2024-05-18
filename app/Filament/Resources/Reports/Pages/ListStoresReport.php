@@ -92,7 +92,7 @@ class ListStoresReport extends ListRecords
         if (isset($supplier_id) && $supplier_id != '' && $supplier_id != 0 && $supplier_id != 'all') {
             $subquery1->where('purchase_invoices.supplier_id', $supplier_id);
         }
-
+        $subquery1->whereNull('purchase_invoices.deleted_at');
         $subquery1 = $subquery1->groupBy('purchase_invoice_details.product_id', 'purchase_invoice_details.unit_id', 'products.name', 'units.name');
 
         $subquery2 = DB::table('orders_details')
@@ -122,7 +122,7 @@ class ListStoresReport extends ListRecords
                 DB::raw('COALESCE(o.ordered_quantity, 0) AS ordered'),
                 DB::raw('(COALESCE(p.purchase_quantity, 0) - COALESCE(o.ordered_quantity, 0)) AS remaining')
             ]);
-
+        
         $results = $query->get();
         return $results;
     }
@@ -143,7 +143,7 @@ class ListStoresReport extends ListRecords
             'store_id' => $data['store_id'],
             'supplier_id' => $data['supplier_id'],
         ];
-        
+
         $pdf = Pdf::loadView('export.reports.stores-report', $data);
 
         return response()
@@ -151,5 +151,4 @@ class ListStoresReport extends ListRecords
                 $pdf->stream("stores-report" . '.pdf');
             }, "stores-report" . '.pdf');
     }
-    
 }

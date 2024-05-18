@@ -30,6 +30,7 @@ function getSumQtyOfProductFromPurchases($product_id, $unit_id, $latest = false)
         ->where('unit_id', $unit_id)
         ->groupBy('price', 'purchase_invoice_id')
         ->orderBy('purchase_invoice_id', 'asc');
+        $query->whereNull('purchase_invoices.deleted_at');
     if (!$latest) {
         $result = $query->get();
     } else {
@@ -363,7 +364,7 @@ function getProductQuantities($productId, $unitId, $orderDetailId, $purchaseInvo
     WHERE 
         ord_dts.product_id = $productId
       and   ord_dts.unit_id  = $unitId
-        
+      and purchase_invoices.deleted_at is null
     GROUP BY 
         ord_dts.product_id
         ;
