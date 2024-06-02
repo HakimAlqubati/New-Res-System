@@ -57,6 +57,12 @@ Route::post('/import_products', [
     'importProducts'
 ])->name('import_products');
 
+Route::get('/import_page_purchase_invoice_details', [ImportController::class, 'import_purchase_invoice_details_view']);
+Route::post('/import_purchase_invoice_details', [
+    ImportController::class,
+    'importpurchaseInvoiceDetails'
+])->name('import_purchase_invoice_details');
+
 Route::get('/import_page_item_types', [ImportController::class, 'import_item_types_view']);
 Route::post('/import_item_types', [
     ImportController::class,
