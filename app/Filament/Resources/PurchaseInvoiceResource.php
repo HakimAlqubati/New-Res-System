@@ -91,8 +91,8 @@ class PurchaseInvoiceResource extends Resource
                     ->columnSpanFull(),
                 FileUpload::make('attachment')
                     ->label(__('lang.attachment'))
-                    ->enableOpen()
-                    ->enableDownload()
+                    // ->enableOpen()
+                    // ->enableDownload()
                     ->directory('purchase-invoices')
                     ->columnSpanFull()
                     ->acceptedFileTypes(['application/pdf'])
