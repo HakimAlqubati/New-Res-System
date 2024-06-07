@@ -139,7 +139,7 @@ class OrderResource extends Resource implements HasShieldPermissions
                     ->searchable()
                     ->multiple()
                     ->label(__('lang.branch'))->relationship('branch', 'name'),
-                Filter::make('active')->label(__('lang.active')),
+                // Filter::make('active')->label(__('lang.active')),
                 Filter::make('created_at')
                     ->label(__('lang.created_at'))
                     ->form([
