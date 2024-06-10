@@ -106,7 +106,7 @@ class ListStoresReport extends ListRecords
             //     Order::READY_FOR_DELEVIRY,
             //     Order::DELEVIRED
             // ])
-            ->where('orders.active', 1)
+            // ->where('orders.active', 1)
             ->whereNull('orders.deleted_at')
             ->groupBy('orders_details.product_id', 'orders_details.unit_id');
 
@@ -123,8 +123,21 @@ class ListStoresReport extends ListRecords
                 DB::raw('(COALESCE(p.purchase_quantity, 0) - COALESCE(o.ordered_quantity, 0)) AS remaining')
             ]);
         
+
         $results = $query->get();
-        return $results;
+        $results2 = Product::where('active',1)->select('id','name')->get()->toArray();
+        foreach ($results2 as $key => $value) { 
+             $obj = new \stdClass();
+             $obj->product_id = $value['product_id'];
+             $obj->product_name = $value['product_name'];
+             $obj->unit_name = null;
+             $obj->income = null;
+             $obj->ordered = null;
+             $obj->remaining = null;
+             $results3[] = $obj;
+        }
+        // dd($results,$results2,$results3);
+        return $results3;
     }
 
     protected function getActions(): array
