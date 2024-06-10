@@ -125,19 +125,19 @@ class ListStoresReport extends ListRecords
         
 
         $results = $query->get();
-        $results2 = Product::where('active',1)->select('id','name')->get()->toArray();
-        foreach ($results2 as $key => $value) { 
-             $obj = new \stdClass();
-             $obj->product_id = $value['product_id'];
-             $obj->product_name = $value['product_name'];
-             $obj->unit_name = null;
-             $obj->income = null;
-             $obj->ordered = null;
-             $obj->remaining = null;
-             $results3[] = $obj;
-        }
-        // dd($results,$results2,$results3);
-        return $results3;
+        // $results2 = Product::where('active',1)->select('id','name')->get()->toArray();
+        // foreach ($results2 as $key => $value) { 
+        //      $obj = new \stdClass();
+        //      $obj->product_id = $value['product_id'];
+        //      $obj->product_name = $value['product_name'];
+        //      $obj->unit_name = null;
+        //      $obj->income = null;
+        //      $obj->ordered = null;
+        //      $obj->remaining = null;
+        //      $results3[] = $obj;
+        // }
+        // // dd($results,$results2,$results3);
+        return $results;
     }
 
     protected function getActions(): array
