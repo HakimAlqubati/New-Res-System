@@ -4,6 +4,8 @@ use App\Http\Controllers\ImportController;
 use App\Http\Controllers\OrderController;
 use App\Models\Order;
 use App\Models\OrderDetails;
+use App\Models\Product;
+use App\Models\PurchaseInvoiceDetail;
 use App\Models\UnitPrice;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -88,8 +90,84 @@ Route::get('/toviewrepeated', function () {
                 // ];
             }
         }
-    } 
+    }
     return $ress;
+});
+Route::get('/tomodifypricinginpurchaseinvoices', function () {
+    $purchase_invoice_details = PurchaseInvoiceDetail::get();
+    // return $purchase_invoice_details;
+    foreach ($purchase_invoice_details as $key => $value) {
+        $val = (object)$value;
+        $unit_price = UnitPrice::where('product_id', $val->product_id)->where('unit_id', $val->unit_id)?->first()?->price;
+
+        // $res[] = [
+        //     'id' => $val->id,
+        //     'product_id' => $val->product_id,
+        //     'product_name' =>  Product::find($val->product_id)->name,
+        //     'unit_id' => $val->unit_id,
+        //     'quantity' => $val->quantity,
+        //     'price' => $val->price,
+        //     'unit_price' => $unit_price,
+        //     'product_unit_prices' => UnitPrice::where('product_id', $val->product_id)->get()->toArray(),
+        // ];
+
+        if ($unit_price == null) {
+            $res['nullable'][] = [
+                'id' => $val->id,
+                'product_id' => $val->product_id,
+                'product_name' =>  Product::find($val->product_id)->name,
+                'unit_id' => $val->unit_id,
+                'quantity' => $val->quantity,
+                'price' => $val->price,
+                'unit_price' => $unit_price,
+                'product_unit_prices' => UnitPrice::where('product_id', $val->product_id)->get()->toArray(),
+            ];
+        } else {
+            $res['have'][] = [
+                'id' => $val->id,
+                'product_id' => $val->product_id,
+                'product_name' =>  Product::find($val->product_id)->name,
+                'unit_id' => $val->unit_id,
+                'quantity' => $val->quantity,
+                'price' => $val->price,
+                'unit_price' => $unit_price,
+                'product_unit_prices' => UnitPrice::where('product_id', $val->product_id)->get()->toArray(),
+            ];
+        }
+    }
+
+    foreach ($res['have'] as $kn => $vn) {
+
+        // if (count($vn['product_unit_prices']) > 0 && !in_array($vn['unit_id'], array_column($vn['product_unit_prices'], 'unit_id'))) {
+        if ($vn['price'] == 1 && count($vn['product_unit_prices']) > 0 && in_array($vn['unit_id'], array_column($vn['product_unit_prices'], 'unit_id'))) {
+            // PurchaseInvoiceDetail::find($vn['id'])->update(
+            //     [
+            //         'unit_id' => $vn['product_unit_prices'][0]['unit_id'],
+            //         'price' => $vn['product_unit_prices'][0]['price'],
+            //     ]
+            // );
+
+            // $res2[] = [
+            //     'product_id' => $vn['product_id'],
+            //     'product_name' => $vn['product_name']
+            // ];
+            $res2[] = $vn;
+        }
+        // if ($vn['unit_id'] == 0) {
+
+        //     PurchaseInvoiceDetail::find($vn['id'])->update(
+        //         [
+        //             'unit_id' => $vn['product_unit_prices'][0]->unit_id,
+        //             'price' => $vn['product_unit_prices'][0]->price,
+        //         ]
+        //     );
+        // }
+    }
+    return $res2;
+    return  $res['nullable'];
+    return  $res;
+    return  $res['have'];
+    return $purchase_invoice_details;
 });
 Route::get('/', function () {
 
