@@ -5,6 +5,7 @@ namespace App\Repositories\Orders;
 use App\Exports\OrdersExport;
 use App\Http\Resources\OrderResource;
 use App\Interfaces\Orders\OrderRepositoryInterface;
+use App\Models\Branch;
 use App\Models\Order;
 use App\Models\OrderDetails;
 use App\Models\UnitPrice;
@@ -321,12 +322,14 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function export($id)
     {
-        $order_status = Order::find($id)->status;
+        $order = Order::find($id);
+        $order_branch = Branch::find($order->branch_id)->name;
+        $order_status = $order->status;
         $file_name = __('lang.order-no-') . $id;
         if (in_array($order_status, [Order::READY_FOR_DELEVIRY, Order::DELEVIRED])) {
             $file_name = __('lang.transfer-no-') . $id;
         }
-        return Excel::download(new OrdersExport($id), $file_name . '.xlsx');
+        return Excel::download(new OrdersExport($id), $order_branch.' - '. $file_name . '.xlsx');
     }
     public function exportTransfer($id)
     {
