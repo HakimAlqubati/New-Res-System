@@ -4,8 +4,7 @@
             <th>Product code </th>
             <th>Product name </th>
             <th>Unit </th>
-            <th>Quantity</th>
-            <th>Branch</th>
+            <th>Quantity</th> 
         </tr>
     </thead>
     <tbody>
@@ -21,13 +20,6 @@
             <td>{{ $value?->product_name }}</td>
             <td>{{ $value?->unit_name }}</td>
             <td>{{ $value?->available_qty }}</td>
-            <td>
-                @php
-                    if ($key == 1) {
-                        echo $finalResult[0]->branch_name;
-                    }
-                @endphp
-            </td>
         </tr>
         <?php
        
