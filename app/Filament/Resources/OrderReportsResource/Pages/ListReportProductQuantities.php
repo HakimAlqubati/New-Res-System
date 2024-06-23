@@ -128,7 +128,7 @@ class ListReportProductQuantities extends ListRecords
                 return $query->whereIn('orders.branch_id', $branch_ids);
             })
             // ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
-            ->where('orders.active', 1)
+            // ->where('orders.active', 1)
             ->whereNull('orders.deleted_at')
             ->groupBy('orders.branch_id', 'products.name', 'branches.name', 'units.name', 'orders_details.price')
             ->get();
