@@ -88,44 +88,65 @@ class ListGeneralReportOfProducts extends ListRecords
     function getReportData($start_date, $end_date, $branch_id)
     {
 
-        $data = DB::table('orders_details')
+        $get_data = DB::table('orders_details')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             ->join('products', 'orders_details.product_id', '=', 'products.id')
             ->select(
                 'products.category_id',
                 DB::raw('SUM(orders_details.available_quantity) as available_quantity'),
-                DB::raw('SUM(orders_details.price) as price'),
-                // DB::raw('SUM(orders_details.available_quantity) * SUM(orders_details.price) as total_revenue')
+                // DB::raw('SUM(orders_details.price) as price'),
+                'orders_details.price as price',
+                DB::raw('SUM(orders_details.available_quantity) * orders_details.price as total_price')
             )
 
             ->when($branch_id, function ($query) use ($branch_id) {
                 return $query->where('orders.branch_id', $branch_id);
             })
             ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
-                
+
                 $s_d = date('Y-m-d', strtotime($start_date)) . ' 00:00:00';
                 $e_d = date('Y-m-d', strtotime($end_date)) . ' 23:59:59';
-                
+
                 return $query->whereBetween('orders.created_at', [$s_d, $e_d]);
             })
             // ->when($year && $month, function ($query) use ($year, $month) {
             //     return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
             // })
             // ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
-            // ->where('orders.active', 1)
+            // ->where('products.category_id', 13)
             ->whereNull('orders.deleted_at')
-            ->groupBy('products.category_id')
+            ->groupBy(
+                'products.category_id',
+                'orders_details.price',
+                'orders_details.unit_id'
+            )
             ->get()
-            ->mapWithKeys(function ($item) {
-                if (is_object($item)) {
-                    return [$item->category_id => [
-                        'available_quantity' => $item->available_quantity,
-                        // 'price' => ($item->price * $item->available_quantity)
-                        'price' => ($item->price )
-                    ]];
-                }
-            })
-            ->all();
+            // ->mapWithKeys(function ($item) {
+            //     if (is_object($item)) {
+            //         $sum_qty = 0;
+            //         $sum_qty += $item->available_quantity;
+            //         return [$item->category_id => [
+            //             'available_quantity' => $sum_qty,
+            //             // 'price' => ($item->price * $item->available_quantity)
+            //             'price' => ($item->price)
+            //         ]];
+            //     }
+            // })
+            ->toArray();
+        $sum_price = 0;
+        $sum_qty = 0;
+
+        $data = [];
+        foreach ($get_data as $val) {
+            if (!isset($data[$val->category_id])) {
+                $data[$val->category_id] = [
+                    'price' => 0,
+                    'available_quantity' => 0,
+                ];
+            }
+            $data[$val->category_id]['price'] += $val->total_price;
+            $data[$val->category_id]['available_quantity'] += $val->available_quantity;
+        }
 
         $categories = DB::table('categories')->where('active', 1)->get(['id', 'name'])->pluck('name', 'id');
 

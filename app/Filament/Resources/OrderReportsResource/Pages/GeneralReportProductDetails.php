@@ -68,7 +68,7 @@ class GeneralReportProductDetails extends Page
 
     public function getReportDetails($start_date, $end_date, $branch_id, $category_id)
     {
-        
+
         $data = DB::table('orders_details')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             ->join('products', 'orders_details.product_id', '=', 'products.id')
@@ -78,7 +78,7 @@ class GeneralReportProductDetails extends Page
                 return $query->where('orders.branch_id', $branch_id);
             })
             ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
-                  
+
                 $s_d = date('Y-m-d', strtotime($start_date)) . ' 00:00:00';
                 $e_d = date('Y-m-d', strtotime($end_date)) . ' 23:59:59';
                 return $query->whereBetween('orders.created_at', [$s_d, $e_d]);
@@ -96,6 +96,7 @@ class GeneralReportProductDetails extends Page
                 'orders_details.unit_id',
                 'products.name',
                 'units.name',
+                'orders_details.price',
             )
             ->get([
                 'products.category_id',
@@ -104,8 +105,10 @@ class GeneralReportProductDetails extends Page
                 'units.name as unit_name',
                 'orders_details.unit_id as unit_id',
                 DB::raw('ROUND(SUM(orders_details.available_quantity), 0) as available_quantity'),
-                DB::raw('(SUM(orders_details.price)) as price'),
+                // DB::raw('(SUM(orders_details.price)) as price'),
+                'orders_details.price as price',
             ]);
+
         $final_result['data'] = [];
         $total_price = 0;
         $total_quantity = 0;
@@ -117,16 +120,16 @@ class GeneralReportProductDetails extends Page
             $obj->unit_name = $val_data->unit_name;
             $obj->unit_id = $val_data->unit_id;
             $obj->quantity = $val_data->available_quantity;
-            $obj->price = formatMoney($val_data->price, getDefaultCurrency());
-            $obj->amount = number_format($val_data->price, 2);
-            $total_price += ($val_data->price);
+            $obj->price = formatMoney(($val_data->price * $val_data->available_quantity), getDefaultCurrency());
+            $obj->amount = number_format(($val_data->price * $val_data->available_quantity), 2);
+            $total_price += (($val_data->price * $val_data->available_quantity));
             $total_quantity += $obj->quantity;
             $obj->symbol = getDefaultCurrency();
             $final_result['data'][] = $obj;
         }
         $final_result['total_price'] = number_format($total_price, 2) . ' ' . getDefaultCurrency();
         $final_result['total_quantity'] = number_format($total_quantity, 2);
-
+        
         return $final_result;
     }
 
@@ -155,7 +158,7 @@ class GeneralReportProductDetails extends Page
             'total_quantity' =>  $data['total_quantity'],
             'total_price' =>  $data['total_price']
         ];
-        
+
         $pdf = Pdf::loadView('export.reports.general-report-product-details', $data);
 
         return response()
