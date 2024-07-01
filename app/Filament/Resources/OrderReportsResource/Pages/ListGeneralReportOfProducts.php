@@ -94,7 +94,8 @@ class ListGeneralReportOfProducts extends ListRecords
             ->select(
                 'products.category_id',
                 DB::raw('SUM(orders_details.available_quantity) as available_quantity'),
-                DB::raw('SUM(orders_details.price) as price')
+                DB::raw('SUM(orders_details.price) as price'),
+                // DB::raw('SUM(orders_details.available_quantity) * SUM(orders_details.price) as total_revenue')
             )
 
             ->when($branch_id, function ($query) use ($branch_id) {
@@ -119,7 +120,7 @@ class ListGeneralReportOfProducts extends ListRecords
                 if (is_object($item)) {
                     return [$item->category_id => [
                         'available_quantity' => $item->available_quantity,
-                        'price' => $item->price
+                        'price' => ($item->price * $item->available_quantity)
                     ]];
                 }
             })
