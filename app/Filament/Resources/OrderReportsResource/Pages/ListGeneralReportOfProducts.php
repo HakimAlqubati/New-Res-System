@@ -101,7 +101,7 @@ class ListGeneralReportOfProducts extends ListRecords
                 return $query->where('orders.branch_id', $branch_id);
             })
             ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
-                return $query->whereBetween('orders.created_at', [$start_date, $end_date]);
+                return $query->whereBetween('orders.created_at', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
             })
             // ->when($year && $month, function ($query) use ($year, $month) {
             //     return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
@@ -120,6 +120,7 @@ class ListGeneralReportOfProducts extends ListRecords
                 }
             })
             ->all();
+        
         $categories = DB::table('categories')->where('active', 1)->get(['id', 'name'])->pluck('name', 'id');
 
         $final_result['data'] = [];
