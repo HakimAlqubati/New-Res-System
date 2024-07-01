@@ -68,6 +68,7 @@ class GeneralReportProductDetails extends Page
 
     public function getReportDetails($start_date, $end_date, $branch_id, $category_id)
     {
+        
         $data = DB::table('orders_details')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             ->join('products', 'orders_details.product_id', '=', 'products.id')
@@ -77,7 +78,10 @@ class GeneralReportProductDetails extends Page
                 return $query->where('orders.branch_id', $branch_id);
             })
             ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
-                return $query->whereBetween('orders.created_at', [$start_date, $end_date]);
+                  
+                $s_d = date('Y-m-d', strtotime($start_date)) . ' 00:00:00';
+                $e_d = date('Y-m-d', strtotime($end_date)) . ' 23:59:59';
+                return $query->whereBetween('orders.created_at', [$s_d, $e_d]);
             })
             // ->when($year && $month, function ($query) use ($year, $month) {
             //     return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);

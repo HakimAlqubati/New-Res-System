@@ -120,7 +120,8 @@ class ListGeneralReportOfProducts extends ListRecords
                 if (is_object($item)) {
                     return [$item->category_id => [
                         'available_quantity' => $item->available_quantity,
-                        'price' => ($item->price * $item->available_quantity)
+                        // 'price' => ($item->price * $item->available_quantity)
+                        'price' => ($item->price )
                     ]];
                 }
             })
