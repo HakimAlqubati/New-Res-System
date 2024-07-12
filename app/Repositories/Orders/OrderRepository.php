@@ -8,7 +8,6 @@ use App\Interfaces\Orders\OrderRepositoryInterface;
 use App\Models\Branch;
 use App\Models\Order;
 use App\Models\OrderDetails;
-use App\Models\UnitPrice;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
@@ -58,7 +57,7 @@ class OrderRepository implements OrderRepositoryInterface
             if (!isset($currnetRole)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'you dont have any role'
+                    'message' => 'you dont have any role',
                 ], 500);
             }
             $pendingOrderId = 0;
@@ -70,7 +69,7 @@ class OrderRepository implements OrderRepositoryInterface
                 if (!isset($branchId)) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'You are not manager of any branch'
+                        'message' => 'You are not manager of any branch',
                     ], 500);
                 }
                 $orderStatus = Order::ORDERED;
@@ -79,9 +78,9 @@ class OrderRepository implements OrderRepositoryInterface
                 $branchId = auth()->user()->owner->branch->id;
                 $customerId = auth()->user()->owner->id;
             }
-            $pendingOrderId  =   $this->checkIfUserHasPendingForApprovalOrder($branchId);
+            $pendingOrderId = $this->checkIfUserHasPendingForApprovalOrder($branchId);
 
-            // Map order data from request body 
+            // Map order data from request body
             $orderData = [
                 'status' => $orderStatus,
                 'customer_id' => $customerId,
@@ -137,7 +136,7 @@ class OrderRepository implements OrderRepositoryInterface
                     'quantity' => $orderDetail['quantity'],
                     'available_quantity' => $orderDetail['quantity'],
                     'created_by' => auth()->user()->id,
-                    'price' => (getUnitPrice($orderDetail['product_id'], $orderDetail['unit_id']))
+                    'price' => (getUnitPrice($orderDetail['product_id'], $orderDetail['unit_id'])),
                 ];
             }
             if (count($orderDetailsData) > 0) {
@@ -151,8 +150,6 @@ class OrderRepository implements OrderRepositoryInterface
             Order::find($orderId)->update(['total' => $totalPrice]);
             DB::commit();
 
-
-
             return response()->json([
                 'success' => true,
                 'message' => $message,
@@ -162,7 +159,7 @@ class OrderRepository implements OrderRepositoryInterface
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -177,6 +174,7 @@ class OrderRepository implements OrderRepositoryInterface
     }
     public function update($request, $id)
     {
+
         try {
             // Start a database transaction
             DB::beginTransaction();
@@ -204,14 +202,20 @@ class OrderRepository implements OrderRepositoryInterface
                         Order::READY_FOR_DELEVIRY,
                         Order::DELEVIRED,
                         Order::ORDERED,
-                    ])
+                    ]),
                 ],
                 'notes' => 'string',
                 'full_quantity' => 'boolean',
-                'active' => 'boolean'
+                'active' => 'boolean',
             ]);
             $order->updated_by = auth()->user()->id;
             // Fill the order with the validated data and save it to the database
+
+            if (in_array($request->status, [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])) {
+                $order->update([
+                    'transfer_date' => now(),
+                ]);
+            }
             $order->fill($validatedData)->save();
 
             // Commit the transaction
@@ -221,7 +225,7 @@ class OrderRepository implements OrderRepositoryInterface
             return [
                 'success' => true,
                 'orderId' => $order->id,
-                'message' => 'done successfully'
+                'message' => 'done successfully',
             ];
         } catch (\Exception $e) {
             // Roll back the transaction in case of an error
@@ -231,7 +235,7 @@ class OrderRepository implements OrderRepositoryInterface
             return response()->json([
                 'success' => false,
                 'orderId' => $order->id,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -243,9 +247,9 @@ class OrderRepository implements OrderRepositoryInterface
         $order_status = $order->status;
         $file_name = __('lang.order-no-') . $id;
         if (in_array($order_status, [Order::READY_FOR_DELEVIRY, Order::DELEVIRED])) {
-            $file_name = __('lang.transfer-no-') . $id;
+            $file_name = __('lang.transfer-no-') . $id. ' - '. $order->transfer_date;
         }
-        return Excel::download(new OrdersExport($id), $order_branch .' - ' . $file_name . '.xlsx');
+        return Excel::download(new OrdersExport($id), $order_branch . ' - ' . $file_name . '.xlsx');
     }
     public function exportTransfer($id)
     {

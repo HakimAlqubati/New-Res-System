@@ -110,4 +110,5 @@ return [
     'all_stores' => 'All Stores',
     'all_suppliers' => 'All suppliers',
     'system_settings' => 'System settings',
+    'transfer_date' => 'Transfer date',
 ];

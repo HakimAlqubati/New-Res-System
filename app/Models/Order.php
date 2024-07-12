@@ -26,6 +26,7 @@ class Order extends Model
         'active',
         'updated_by',
         'storeuser_id_update',
+        'transfer_date',
     ];
 
     public function orderDetails()

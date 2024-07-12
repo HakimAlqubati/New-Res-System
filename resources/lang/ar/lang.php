@@ -109,4 +109,5 @@ return [
     'please_select_product' => 'يرجى اختيار منتج',
     'all_stores' => 'كل المخازن',
     'all_suppliers' => 'كل الموردين',
+    'transfer_date' => 'تاريخ المناقلة',
 ];

@@ -71,8 +71,8 @@ class TransferOrderResource extends Resource
 
                 CountItemsTransfer::make('item_counts')->label(__('lang.item_counts')),
                 TotalTransfer::make('total_amount')->label(__('lang.total_amount')),
-                TextColumn::make('created_at')
-                    ->label(__('lang.created_at'))
+                TextColumn::make('transfer_date')
+                    ->label(__('lang.transfer_date'))
                     ->sortable(),
                 // TextColumn::make('recorded'),
                 // TextColumn::make('orderDetails'),
