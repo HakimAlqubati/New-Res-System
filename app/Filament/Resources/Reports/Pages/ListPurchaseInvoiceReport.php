@@ -62,7 +62,7 @@ class ListPurchaseInvoiceReport extends ListRecords
 
     protected function getTableFiltersLayout(): ?string
     {
-        return Layout::AboveContent;
+        return \Filament\Tables\Enums\FiltersLayout::AboveContent;
     }
 
     public function getPurchasesInvoiceData($product_ids, $store_id, $supplier_id)

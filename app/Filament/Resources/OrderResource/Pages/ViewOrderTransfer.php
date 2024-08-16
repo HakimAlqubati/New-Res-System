@@ -10,7 +10,7 @@ class ViewOrderTransfer extends ViewRecord
 {
     protected static string $resource = TransferOrderResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Action::make('Export to Excel')

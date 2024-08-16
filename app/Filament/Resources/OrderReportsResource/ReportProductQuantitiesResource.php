@@ -10,7 +10,7 @@ class ReportProductQuantitiesResource extends Resource
 {
     protected static ?string $model = ReportProductQuantities::class;
     protected static ?string $slug = 'report-product-quantities';
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     /**
      * @deprecated Use `getModelLabel()` instead.
@@ -19,7 +19,7 @@ class ReportProductQuantitiesResource extends Resource
     {
         return __('lang.report_product_quantities');
     }
-    protected static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string
     {
         return __('lang.report_product_quantities');
     }

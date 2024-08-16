@@ -21,9 +21,9 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
@@ -34,7 +34,7 @@ class PurchaseInvoiceResource extends Resource
 {
     protected static ?string $model = PurchaseInvoice::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getPluralLabel(): ?string
     {
@@ -46,7 +46,7 @@ class PurchaseInvoiceResource extends Resource
     {
         return __('lang.purchase_invoice');
     }
-    protected static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string
     {
         return __('lang.purchase_invoice');
     }
@@ -125,7 +125,7 @@ class PurchaseInvoiceResource extends Resource
                             )
                             ->searchable()
                             ->reactive()
-                            ->afterStateUpdated(function (Closure $set, $state, $get) {
+                            ->afterStateUpdated(function (\Filament\Forms\Set $set, $state, $get) {
                                 $unitPrice = UnitPrice::where(
                                     'product_id',
                                     $get('product_id')
@@ -147,7 +147,7 @@ class PurchaseInvoiceResource extends Resource
                             //         ->thousandsSeparator(',')
                             // )
                             ->reactive()
-                            ->afterStateUpdated(function (Closure $set, $state, $get) {
+                            ->afterStateUpdated(function (\Filament\Forms\Set $set, $state, $get) {
                                 $set('total_price', ((float) $state) * ((float)$get('price')));
                             }),
                         TextInput::make('price')
@@ -165,7 +165,7 @@ class PurchaseInvoiceResource extends Resource
                             // )
                             ->reactive()
 
-                            ->afterStateUpdated(function (Closure $set, $state, $get) {
+                            ->afterStateUpdated(function (\Filament\Forms\Set $set, $state, $get) {
                                 $set('total_price', ((float) $state) * ((float)$get('quantity')));
                             }),
                         TextInput::make('total_price')->default(1)
@@ -228,7 +228,7 @@ class PurchaseInvoiceResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
-    protected static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
     }

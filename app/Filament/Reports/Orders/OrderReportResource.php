@@ -12,7 +12,7 @@ class OrderReportResource extends  Resource
 
     public static ?string $permissionSlug = "order_report";
     protected static ?string $model = OrderReport::class;
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $slug = 'order-report';
   
  

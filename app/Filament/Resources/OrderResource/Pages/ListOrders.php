@@ -10,11 +10,11 @@ class ListOrders extends ListRecords
 {
     protected static string $resource = OrderResource::class;
 
-    protected function getTitle(): string
+    public function getTitle(): string
     {
         return __('lang.orders');
     }
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

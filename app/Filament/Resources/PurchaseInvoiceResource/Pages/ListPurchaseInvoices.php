@@ -10,7 +10,7 @@ class ListPurchaseInvoices extends ListRecords
 {
     protected static string $resource = PurchaseInvoiceResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

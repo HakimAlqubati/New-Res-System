@@ -16,9 +16,9 @@ use Filament\Forms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -26,7 +26,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+// use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms\Components\Textarea;
 
@@ -48,10 +48,10 @@ class OrderResource extends Resource implements HasShieldPermissions
 
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Orders';
     protected static ?string $recordTitleAttribute = 'id';
-    protected static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string
     {
         return __('lang.orders');
     }
@@ -163,7 +163,7 @@ class OrderResource extends Resource implements HasShieldPermissions
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                ExportBulkAction::make()
+                // ExportBulkAction::make()
             ]);
     }
 
@@ -200,7 +200,7 @@ class OrderResource extends Resource implements HasShieldPermissions
     }
 
 
-    protected static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
     }

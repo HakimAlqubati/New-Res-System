@@ -3,11 +3,12 @@
 namespace App\Filament\Resources\OrderResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OrderDetailsRelationManager extends RelationManager
@@ -16,11 +17,11 @@ class OrderDetailsRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'order_id';
 
-    public static function getTitle(): string
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('lang.order_details');
     }
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -30,7 +31,7 @@ class OrderDetailsRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([

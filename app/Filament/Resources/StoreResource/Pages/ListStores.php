@@ -10,7 +10,7 @@ class ListStores extends ListRecords
 {
     protected static string $resource = StoreResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

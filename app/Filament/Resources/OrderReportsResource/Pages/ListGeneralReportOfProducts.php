@@ -82,7 +82,7 @@ class ListGeneralReportOfProducts extends ListRecords
 
     protected function getTableFiltersLayout(): ?string
     {
-        return Layout::AboveContent;
+        return \Filament\Tables\Enums\FiltersLayout::AboveContent;
     }
 
 

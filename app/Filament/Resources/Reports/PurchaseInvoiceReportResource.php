@@ -11,7 +11,7 @@ class PurchaseInvoiceReportResource extends Resource
     protected static ?string $model = PurchaseInvoiceReport::class;
     protected static ?string $slug = 'purchase-invoice-reports';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     /**
      * @deprecated Use `getModelLabel()` instead.
@@ -20,7 +20,7 @@ class PurchaseInvoiceReportResource extends Resource
     {
         return __('lang.purchase_invoice_report');
     }
-    protected static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string
     {
         return __('lang.purchase_invoice_report');
     }

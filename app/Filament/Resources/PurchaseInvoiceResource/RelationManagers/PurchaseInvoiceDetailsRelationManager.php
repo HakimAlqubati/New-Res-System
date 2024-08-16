@@ -3,11 +3,12 @@
 namespace App\Filament\Resources\PurchaseInvoiceResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PurchaseInvoiceDetailsRelationManager extends RelationManager
@@ -16,7 +17,7 @@ class PurchaseInvoiceDetailsRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'purchase_invoice_id';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -26,11 +27,11 @@ class PurchaseInvoiceDetailsRelationManager extends RelationManager
             ]);
     }
 
-    public static function getTitle(): string
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('lang.purchase_invoice_details');
     }
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([

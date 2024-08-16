@@ -9,9 +9,9 @@
         @if ($heading || $filters)
             <div class="flex items-center justify-between gap-8">
                 @if ($heading)
-                    <x-filament::card.heading>
+                    <filament::card.heading>
                         {{ $heading }}
-                    </x-filament::card.heading>
+                    </filament::card.heading>
                 @endif
 
                 <div>
@@ -91,7 +91,7 @@
                 </div>
             </div>
 
-            <x-filament::hr />
+            <filament::hr />
         @endif
 
         <div {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateChartData\"" : '' !!}>

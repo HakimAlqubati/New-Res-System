@@ -67,7 +67,7 @@ class ListStoresReport extends ListRecords
 
     protected function getTableFiltersLayout(): ?string
     {
-        return Layout::AboveContent;
+        return \Filament\Tables\Enums\FiltersLayout::AboveContent;
     }
 
     public function getStoresReportData($product_id, $store_id, $supplier_id)

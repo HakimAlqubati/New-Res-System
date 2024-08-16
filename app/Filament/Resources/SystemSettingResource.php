@@ -8,9 +8,9 @@ use App\Models\SystemSetting;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,9 +20,9 @@ class SystemSettingResource extends Resource
 {
     protected static ?string $model = SystemSetting::class;
     protected static ?string $slug = 'system-settings';
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string
     {
         return __('system_settings.system_settings');
     }
@@ -75,5 +75,9 @@ class SystemSettingResource extends Resource
             'create' => Pages\CreateSystemSetting::route('/create'),
             'edit' => Pages\EditSystemSetting::route('/{record}/edit'),
         ];
+    }
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

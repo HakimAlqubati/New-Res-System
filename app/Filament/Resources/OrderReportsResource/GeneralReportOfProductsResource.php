@@ -11,7 +11,7 @@ class GeneralReportOfProductsResource extends Resource
 {
     protected static ?string $model = GeneralReportOfProducts::class;
     protected static ?string $slug = 'general-report-products';
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     /**
      * @deprecated Use `getModelLabel()` instead.
@@ -20,7 +20,7 @@ class GeneralReportOfProductsResource extends Resource
     {
         return __('lang.general_report_of_products');
     }
-    protected static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string
     {
         return __('lang.general_report_of_products');
     }

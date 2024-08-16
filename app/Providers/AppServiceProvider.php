@@ -29,6 +29,7 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -66,99 +67,101 @@ class AppServiceProvider extends ServiceProvider
         //     'User & Roles',
         // ]);
 
-        Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
-            $menu =  $builder->items([
-                NavigationItem::make(__('lang.dashboard'))
-                    ->icon('heroicon-o-home')
-                    ->activeIcon('heroicon-s-home')
-                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
-                    ->url(route('filament.pages.dashboard')),
-            ])
-                ->groups([
-                    NavigationGroup::make(__('lang.orders'))
-                        ->items([
-                            ...OrderResource::getNavigationItems(),
-                            ...TransferOrderResource::getNavigationItems(),
-                        ]),
-                ])
-                ->groups([
-                    NavigationGroup::make(__('lang.order_reports'))
-                        ->items([
-                            ...ReportProductQuantitiesResource::getNavigationItems(),
-                            ...GeneralReportOfProductsResource::getNavigationItems(),
-                        ]),
-                ])
-                ->groups([
-                    NavigationGroup::make(__('lang.products_and_units'))
-                        ->items([
-                            ...ProductResource::getNavigationItems(),
-                            ...UnitResource::getNavigationItems(),
-                        ]),
-                ])
-                ->groups([
-                    NavigationGroup::make(__('lang.categories'))
-                        ->items([
-                            ...CategoryResource::getNavigationItems(),
-                        ]),
-                ])
-                ->groups([
-                    NavigationGroup::make(__('lang.branches'))
-                        ->items([
-                            ...BranchResource::getNavigationItems(),
-                        ]),
-                ]);
+       
+        // Filament::getNavigation(function (NavigationBuilder $builder): NavigationBuilder {
+        //     $menu =  $builder->items([
+        //         NavigationItem::make(__('lang.dashboard'))
+        //             ->icon('heroicon-o-home')
+        //             ->activeIcon('heroicon-s-home')
+        //             ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
+        //             ->url(route('filament.pages.dashboard')),
+        //     ])
+        //         ->groups([
+        //             NavigationGroup::make(__('lang.orders'))
+        //                 ->items([
+        //                     ...OrderResource::getNavigationItems(),
+        //                     ...TransferOrderResource::getNavigationItems(),
+        //                 ]),
+        //         ])
+        //         ->groups([
+        //             NavigationGroup::make(__('lang.order_reports'))
+        //                 ->items([
+        //                     ...ReportProductQuantitiesResource::getNavigationItems(),
+        //                     ...GeneralReportOfProductsResource::getNavigationItems(),
+        //                 ]),
+        //         ])
+        //         ->groups([
+        //             NavigationGroup::make(__('lang.products_and_units'))
+        //                 ->items([
+        //                     ...ProductResource::getNavigationItems(),
+        //                     ...UnitResource::getNavigationItems(),
+        //                 ]),
+        //         ])
+        //         ->groups([
+        //             NavigationGroup::make(__('lang.categories'))
+        //                 ->items([
+        //                     ...CategoryResource::getNavigationItems(),
+        //                 ]),
+        //         ])
+        //         ->groups([
+        //             NavigationGroup::make(__('lang.branches'))
+        //                 ->items([
+        //                     ...BranchResource::getNavigationItems(),
+        //                 ]),
+        //         ]);
 
 
-            $menu = $builder->groups([
-                NavigationGroup::make(__('lang.user_and_roles'))
-                    ->items([
-                        ...UserResource::getNavigationItems(),
-                        ...(RoleResource::canViewAny() ? RoleResource::getNavigationItems() : [])
-                    ]),
-            ]);
+        //     $menu = $builder->groups([
+        //         NavigationGroup::make(__('lang.user_and_roles'))
+        //             ->items([
+        //                 ...UserResource::getNavigationItems(),
+        //                 ...(RoleResource::canViewAny() ? RoleResource::getNavigationItems() : [])
+        //             ]),
+        //     ]);
 
-            if (getCurrentRole() == 1) {
-                $menu = $builder->groups([
-                    NavigationGroup::make(__('lang.inventory_management'))
-                        ->items([
-                            ...SupplierResource::getNavigationItems(),
-                            ...PurchaseInvoiceResource::getNavigationItems(),
-                            ...PurchaseInvoiceReportResource::getNavigationItems(),
-                            ...StoreResource::getNavigationItems(),
-                            ...StoresReportResource::getNavigationItems(),
-                            ...BranchStoreReportResource::getNavigationItems(),
+        //     if (getCurrentRole() == 1) {
+        //         $menu = $builder->groups([
+        //             NavigationGroup::make(__('lang.inventory_management'))
+        //                 ->items([
+        //                     ...SupplierResource::getNavigationItems(),
+        //                     ...PurchaseInvoiceResource::getNavigationItems(),
+        //                     ...PurchaseInvoiceReportResource::getNavigationItems(),
+        //                     ...StoreResource::getNavigationItems(),
+        //                     ...StoresReportResource::getNavigationItems(),
+        //                     ...BranchStoreReportResource::getNavigationItems(),
 
-                        ]),
-                ]);
-            }
+        //                 ]),
+        //         ]);
+        //     }
 
-            if (getCurrentRole() == 1) {
-                $menu = $builder->groups([
-                    NavigationGroup::make(__('system_settings.system_settings'))
-                        ->items([
-                            ...SystemSettingResource::getNavigationItems(),
-                        ]),
-                ]);
-            }
-                // ->groups([
-                // NavigationGroup::make(__('lang.reports'))
-                // ->items([
-                // ...OrderReportResource::getNavigationItems(), 
-                // ]),
-                // ])
-            ;
-            return $menu;
-        });
+        //     if (getCurrentRole() == 1) {
+        //         $menu = $builder->groups([
+        //             NavigationGroup::make(__('system_settings.system_settings'))
+        //                 ->items([
+        //                     ...SystemSettingResource::getNavigationItems(),
+        //                 ]),
+        //         ]);
+        //     }
+        //         // ->groups([
+        //         // NavigationGroup::make(__('lang.reports'))
+        //         // ->items([
+        //         // ...OrderReportResource::getNavigationItems(), 
+        //         // ]),
+        //         // ])
+        //     ;
+        //     return $menu;
+        // });
 
+        // Filament::getNavigation();
         Filament::serving(function () {
             // Filament::registerTheme(
             // mix('css/filament.css'),
             // );
         });
 
-        Filament::registerStyles([
-            asset("filament/main.css"),
-            asset("New-Res-System/public/filament/main.css"),
+        FilamentAsset::register([
+            // asset("filament/main.css"),
+            // asset("New-Res-System/public/filament/main.css"),
         ]);
     }
 }

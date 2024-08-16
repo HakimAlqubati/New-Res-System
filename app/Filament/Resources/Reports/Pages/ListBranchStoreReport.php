@@ -23,7 +23,7 @@ class ListBranchStoreReport extends ListRecords
     protected static string $view = 'filament.pages.stock-report.branch-store-report';
 
 
-    protected function getTitle(): string
+    public function getTitle(): string
     {
         return __('lang.branch_store_report');
     }
@@ -102,7 +102,7 @@ class ListBranchStoreReport extends ListRecords
 
     protected function getTableFiltersLayout(): ?string
     {
-        return Layout::AboveContent;
+        return \Filament\Tables\Enums\FiltersLayout::AboveContent;
     }
 
     public function getBranchStoreReportData($branch_id, $start_date, $end_date, $product_ids)

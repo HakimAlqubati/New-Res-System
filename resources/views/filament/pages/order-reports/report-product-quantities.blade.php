@@ -1,13 +1,13 @@
 <x-filament::page>
     {{ $this->getTableFiltersForm() }}
     @if (isset($product_id) && is_numeric($product_id))
-        <x-tables::table class="w-full text-sm text-left pretty  ">
+        <tables::table class="w-full text-sm text-left pretty  ">
             <thead>
 
 
 
 
-                <x-tables::row class="header_report">
+                <tables::row class="header_report">
                     <th class="{{ app()->getLocale() == 'en' ? 'no_border_right' : 'no_border_left' }}">
                         <p>{{ __('lang.report_product_quantities') }}</p>
                         <p>({{ isset($product_id) && is_numeric($product_id) ? \App\Models\Product::find($product_id)->name : __('lang.choose_product') }})
@@ -24,36 +24,36 @@
                             src="https://w7.pngwing.com/pngs/882/726/png-transparent-chef-cartoon-chef-photography-cooking-fictional-character-thumbnail.png"
                             alt="">
                     </th>
-                </x-tables::row>
-                <x-tables::row>
+                </tables::row>
+                <tables::row>
                     <th>{{ __('lang.branch') }}</th>
                     <th>{{ __('lang.unit') }}</th>
                     <th>{{ __('lang.quantity') }}</th>
                     <th>{{ __('lang.price') }}</th>
-                </x-tables::row>
+                </tables::row>
             </thead>
             <tbody>
                 @foreach ($report_data as $data)
-                    <x-tables::row>
+                    <tables::row>
 
-                        <x-tables::cell> {{ $data?->branch }} </x-tables::cell>
-                        <x-tables::cell> {{ $data?->unit }} </x-tables::cell>
-                        <x-tables::cell> {{ $data?->quantity }} </x-tables::cell>
-                        <x-tables::cell> {{ $data?->price }} </x-tables::cell>
+                        <tables::cell> {{ $data?->branch }} </tables::cell>
+                        <tables::cell> {{ $data?->unit }} </tables::cell>
+                        <tables::cell> {{ $data?->quantity }} </tables::cell>
+                        <tables::cell> {{ $data?->price }} </tables::cell>
 
 
-                    </x-tables::row>
+                    </tables::row>
                 @endforeach
 
-                <x-tables::row>
-                    <x-tables::cell colspan="2"> {{ __('lang.total') }} </x-tables::cell>
+                <tables::row>
+                    <tables::cell colspan="2"> {{ __('lang.total') }} </tables::cell>
 
-                    <x-tables::cell> {{ $total_quantity }} </x-tables::cell>
-                    <x-tables::cell> {{ $total_price }} </x-tables::cell>
-                </x-tables::row>
+                    <tables::cell> {{ $total_quantity }} </tables::cell>
+                    <tables::cell> {{ $total_price }} </tables::cell>
+                </tables::row>
             </tbody>
 
-        </x-tables::table>
+        </tables::table>
     @else
         <div class="please_select_message_div" style="text-align: center;">
 

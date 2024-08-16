@@ -47,7 +47,7 @@ class GeneralReportProductDetails extends Page
         ];
     }
 
-    protected static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string
     {
         return __('lang.report_details');
     }
