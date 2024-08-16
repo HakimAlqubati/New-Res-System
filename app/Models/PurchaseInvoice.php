@@ -15,6 +15,7 @@ class PurchaseInvoice extends Model
         'description',
         'invoice_no',
         'store_id',
+        'attachment',
     ];
 
     public function purchaseInvoiceDetails()
@@ -30,5 +31,14 @@ class PurchaseInvoice extends Model
     public function store()
     {
         return $this->belongsTo(Store::class);
+    }
+
+    public function getHasAttachmentAttribute()
+    {
+        if (strlen($this->attachment) > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

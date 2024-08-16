@@ -111,4 +111,7 @@ return [
     'all_suppliers' => 'All suppliers',
     'system_settings' => 'System settings',
     'transfer_date' => 'Transfer date',
+    'attachment' => 'Attachment',
+    'download_attachment' => 'Download attachment',
+    'has_attachment' => 'Has attachment?',
 ];

@@ -110,4 +110,7 @@ return [
     'all_stores' => 'كل المخازن',
     'all_suppliers' => 'كل الموردين',
     'transfer_date' => 'تاريخ المناقلة',
+    'attachment' => 'مرفقات',
+    'download_attachment' => 'تحميل المرفق',
+    'has_attachment' => 'مع المرفقات؟',
 ];

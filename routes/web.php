@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\OrderController;
+use App\Models\Order;
 use App\Models\OrderDetails;
 use App\Models\UnitPrice;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +18,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+Route::get('/totestpdf', function () {
+    $order = Order::find(52);
+    $orderDetails = $order?->orderDetails;
+    return view('export.order_pdf', compact('order', 'orderDetails'));
+});
 Route::get('/totest', function () {
 
     $units_prices = UnitPrice::get();
