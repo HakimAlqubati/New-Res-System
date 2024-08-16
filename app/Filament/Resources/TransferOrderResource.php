@@ -53,6 +53,7 @@ class TransferOrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+        ->paginated(true)
             ->columns([
                 TextColumn::make('id')->label(__('lang.order_id'))->toggleable(isToggledHiddenByDefault: false)
                     ->copyable()

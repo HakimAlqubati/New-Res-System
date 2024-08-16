@@ -33,7 +33,7 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
-
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class PurchaseInvoiceResource extends Resource
 {
@@ -90,16 +90,16 @@ class PurchaseInvoiceResource extends Resource
                 Textarea::make('description')->label(__('lang.description'))
                     ->placeholder('Enter description')
                     ->columnSpanFull(),
-                // FileUpload::make('attachment')
-                //     ->label(__('lang.attachment'))
-                //     ->enableOpen()
-                //     ->enableDownload()
-                //     ->directory('purchase-invoices')
-                //     ->columnSpanFull()
-                //     ->acceptedFileTypes(['application/pdf'])
-                //     ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
-                //         return (string) str($file->getClientOriginalName())->prepend('purchase-invoice-');
-                //     }),
+                FileUpload::make('attachment')
+                    ->label(__('lang.attachment'))
+                    ->enableOpen()
+                    ->enableDownload()
+                    ->directory('purchase-invoices')
+                    ->columnSpanFull()
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+                        return (string) str($file->getClientOriginalName())->prepend('purchase-invoice-');
+                    }),
                 Repeater::make('units')
                     ->createItemButtonLabel(__('lang.add_item'))
                     ->columns(5)
@@ -203,8 +203,9 @@ class PurchaseInvoiceResource extends Resource
                 TextColumn::make('description')->searchable(),
                 IconColumn::make('has_attachment')->label(__('lang.has_attachment'))
                     ->boolean()
-                    ->trueIcon('heroicon-o-badge-check')
-                    ->falseIcon('heroicon-o-x-circle'),
+                    // ->trueIcon('heroicon-o-badge-check')
+                    // ->falseIcon('heroicon-o-x-circle')
+                    ,
 
             ])
             ->filters([
@@ -222,7 +223,7 @@ class PurchaseInvoiceResource extends Resource
                                 return redirect(url(url('storage/' . $record['attachment'])));
                             }
                         })->hidden(fn ($record) => !(strlen($record['attachment']) > 0))
-                        ->icon('heroicon-o-download')
+                        // ->icon('heroicon-o-download')
                         ->color('green')
                 ]),
             ])
