@@ -110,4 +110,6 @@ return [
     'all_stores' => 'كل المخازن',
     'all_suppliers' => 'كل الموردين',
     'transfer_date' => 'تاريخ المناقلة',
+    'product_approved_by_store'=> 'المنتج بعد تعديله من (المخزن)',
+    'ordered_product'=> 'المنتج المطلوب من (الفرع)',
 ];

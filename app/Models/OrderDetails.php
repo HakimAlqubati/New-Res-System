@@ -21,6 +21,8 @@ class OrderDetails extends Model
         'updated_at',
         'created_at',
         'updated_by',
+        'orderd_product_id',
+        'ordered_unit_id',
     ];
 
 
@@ -33,10 +35,12 @@ class OrderDetails extends Model
     {
         return $this->belongsTo(Product::class);
     }
+  
     public function unit()
     {
         return $this->belongsTo(Unit::class);
     }
+  
 
     public function order()
     {
@@ -60,5 +64,15 @@ class OrderDetails extends Model
             'available_quantity' => $this->available_quantity,
             'available_in_store' => $this->available_in_store,
         ];
+    }
+
+    public function ordered_product()
+    {
+        return $this->belongsTo(Product::class,'orderd_product_id');
+    }
+
+    public function orderd_unit()
+    {
+        return $this->belongsTo(Unit::class);
     }
 }

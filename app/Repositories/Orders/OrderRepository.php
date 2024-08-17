@@ -133,6 +133,8 @@ class OrderRepository implements OrderRepositoryInterface
                     'order_id' => $orderId,
                     'product_id' => $orderDetail['product_id'],
                     'unit_id' => $orderDetail['unit_id'],
+                    'orderd_product_id' => $orderDetail['product_id'],
+                    'ordered_unit_id' => $orderDetail['unit_id'],
                     'quantity' => $orderDetail['quantity'],
                     'available_quantity' => $orderDetail['quantity'],
                     'created_by' => auth()->user()->id,
