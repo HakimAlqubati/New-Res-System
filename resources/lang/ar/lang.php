@@ -118,4 +118,6 @@ return [
     'change_or_add_purchase_supplier' => 'تعديل أو إضافة فاتورة مشتروات',
     'there_is_no_purchase' => 'خطأ برقم الفاتورة',
     'please_type_an_invoice_no_exist' => 'من فضلك قم بإدخال رقم فاتورة صحيح',
+    'purchased_orders' => 'الطلبات المشتراة',
+    'order_date' => 'تاريخ الطلبية',
 ];

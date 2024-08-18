@@ -119,4 +119,6 @@ return [
     'change_or_add_purchase_supplier' => 'Change or add purchase supplier',
     'there_is_no_purchase' => 'There is no inovoice no',
     'please_type_an_invoice_no_exist' => 'Please type an exist invoice no',
+    'purchased_orders' => 'Purchased orders',
+    'order_date' => 'Order date',
 ];

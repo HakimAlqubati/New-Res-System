@@ -206,7 +206,7 @@ class OrderResource extends Resource implements HasShieldPermissions
 
     protected static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::where('is_purchased',0)->count();
     }
 
     public function isTableSearchable(): bool
@@ -227,11 +227,17 @@ class OrderResource extends Resource implements HasShieldPermissions
         return false;
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+        ->where('is_purchased', 0)
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
 
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->id;
-        dd();
-        return $record->this->id;
     }
 }
