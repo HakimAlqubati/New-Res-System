@@ -3,9 +3,8 @@
 namespace App\Filament\Resources\OrderReportsResource\Pages;
 
 use App\Filament\Resources\OrderReportsResource\ReportProductQuantitiesResource;
-use App\Models\Branch; 
-use App\Models\Product; 
-
+use App\Models\Branch;
+use App\Models\Product;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Actions\Action;
@@ -20,7 +19,6 @@ class ListReportProductQuantities extends ListRecords
 {
     protected static string $resource = ReportProductQuantitiesResource::class;
     protected static string $view = 'filament.pages.order-reports.report-product-quantities';
-
 
     protected function getTableFilters(): array
     {
@@ -53,7 +51,6 @@ class ListReportProductQuantities extends ListRecords
         ];
     }
 
-
     protected function getViewData(): array
     {
         $branch_ids = [];
@@ -63,9 +60,8 @@ class ListReportProductQuantities extends ListRecords
         $product_id = __filament_request_select('product_id', 'choose');
         $branch_ids = __filament_request_select_multiple('branch_id', [], true);
 
-        $start_date =  __filament_request_key("date.start_date", null);
+        $start_date = __filament_request_key("date.start_date", null);
         $end_date = __filament_request_key("date.end_date", null);
-
 
         $report_data = $this->getReportData($product_id, $start_date, $end_date, $branch_ids);
 
@@ -76,20 +72,18 @@ class ListReportProductQuantities extends ListRecords
             $total_quantity = $report_data['total_quantity'];
         }
 
-
         // dd($report_data);
 
-        $start_date = (!is_null($start_date) ? date('Y-m-d', strtotime($start_date))  : __('lang.date_is_unspecified'));
-        $end_date = (!is_null($end_date) ? date('Y-m-d', strtotime($end_date))  : __('lang.date_is_unspecified'));
-
+        $start_date = (!is_null($start_date) ? date('Y-m-d', strtotime($start_date)) : __('lang.date_is_unspecified'));
+        $end_date = (!is_null($end_date) ? date('Y-m-d', strtotime($end_date)) : __('lang.date_is_unspecified'));
 
         return [
             'report_data' => $report_data['data'],
             'product_id' => $product_id,
             'start_date' => $start_date,
             'end_date' => $end_date,
-            'total_quantity' =>  $total_quantity,
-            'total_price' =>  $total_price
+            'total_quantity' => $total_quantity,
+            'total_price' => $total_price,
         ];
     }
 
@@ -97,8 +91,6 @@ class ListReportProductQuantities extends ListRecords
     {
         return Layout::AboveContent;
     }
-
-
 
     public function getReportData($product_id, $start_date, $end_date, $branch_ids)
     {
@@ -127,8 +119,8 @@ class ListReportProductQuantities extends ListRecords
             ->when($branch_ids && is_array($branch_ids), function ($query) use ($branch_ids) {
                 return $query->whereIn('orders.branch_id', $branch_ids);
             })
-            // ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
-            // ->where('orders.active', 1)
+        // ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+        // ->where('orders.active', 1)
             ->whereNull('orders.deleted_at')
             ->groupBy('orders.branch_id', 'products.name', 'branches.name', 'units.name', 'orders_details.price')
             ->get();
@@ -136,19 +128,19 @@ class ListReportProductQuantities extends ListRecords
         $final['data'] = [];
         $total_price = 0;
         $total_quantity = 0;
-        foreach ($data as   $val) {
+        foreach ($data as $val) {
             $obj = new \stdClass();
             $obj->product = $val->product;
             $obj->branch = $val->branch;
             $obj->unit = $val->unit;
             $obj->quantity = number_format($val->quantity, 2);
-            $obj->price = number_format($val->price, 2) . ' ' . getDefaultCurrency();
+            $obj->price = number_format($val->price, 2);
             $total_price += $val->price;
             $total_quantity += $val->quantity;
             $final['data'][] = $obj;
         }
 
-        $final['total_price'] = number_format($total_price, 2) . ' ' . getDefaultCurrency();
+        $final['total_price'] = number_format($total_price, 2);
         $final['total_quantity'] = number_format($total_quantity, 2);
 
         return $final;
@@ -156,9 +148,9 @@ class ListReportProductQuantities extends ListRecords
 
     protected function getActions(): array
     {
-        return  [Action::make('Export to PDF')->label(__('lang.export_pdf'))
-            ->action('exportToPdf')
-            ->color('success'),];
+        return [Action::make('Export to PDF')->label(__('lang.export_pdf'))
+                ->action('exportToPdf')
+                ->color('success')];
     }
 
     public function exportToPdf()
@@ -172,7 +164,7 @@ class ListReportProductQuantities extends ListRecords
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
             'total_quantity' => $data['total_quantity'],
-            'total_price' => $data['total_price']
+            'total_price' => $data['total_price'],
         ];
 
         $pdf = Pdf::loadView('export.reports.report-product-quantities', $data);

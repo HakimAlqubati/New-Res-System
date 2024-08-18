@@ -114,7 +114,7 @@
                 <th>{{ __('lang.branch') }}</th>
                 <th>{{ __('lang.unit') }}</th>
                 <th>{{ __('lang.quantity') }}</th>
-                <th>{{ __('lang.price') }}</th>
+                <th>{{ __('lang.price') . ' (' . getDefaultCurrency() . ')' }}</th>
             </tr>
         </thead>
         <tbody>
