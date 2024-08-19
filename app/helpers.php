@@ -40,7 +40,7 @@ function getBranchId()
 }
 
 /**
- * to add filament request select 
+ * to add filament request select
  */
 function __filament_request_select($key, $default = null)
 {
@@ -156,7 +156,6 @@ function data_get_recursive($target, $key, $default = null)
     return $target;
 }
 
-
 /**
  * to add filament request date filter
  */
@@ -193,7 +192,7 @@ function __filament_request_key($key, $default = null)
 function getAdminsToNotify()
 {
     $adminIds = [];
-    $adminIds =  User::whereHas("roles", function ($q) {
+    $adminIds = User::whereHas("roles", function ($q) {
         $q->whereIn("id", [1, 3]);
     })->select('id', 'name')->get()->pluck('id')->toArray();
     $recipients = User::whereIn('id', $adminIds)->get(['id', 'name']);
@@ -245,7 +244,7 @@ function getCalculatingPriceOfOrdersMethod()
  */
 function getUnitPrice($product_id, $unit_id)
 {
-    return  UnitPrice::where(
+    return UnitPrice::where(
         'product_id',
         $product_id
     )->where('unit_id', $unit_id)?->first()?->price;
@@ -262,4 +261,16 @@ function checkIfUserHasPendingForApprovalOrder($branchId)
         ->first();
 
     return $order ? $order->id : null;
+}
+
+/**
+ * function to return no last days to return orders in mobile
+ */
+function getLimitDaysOrders()
+{
+    $limitDays = SystemSetting::select('limit_days_orders')?->first()?->limit_days_orders;
+    if ($limitDays) {
+        return $limitDays;
+    }
+    return 30; // 30 days as default
 }

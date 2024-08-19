@@ -16,5 +16,6 @@ class SystemSetting extends Model
         'currency_symbol',
         'calculating_orders_price_method',
         'completed_order_if_not_qty',
+        'limit_days_orders',
     ];
 }

@@ -37,6 +37,7 @@ class SystemSettingResource extends Resource
             ->schema([
                 TextInput::make('website_name')->label(__('system_settings.website_name')),
                 TextInput::make('currency_symbol')->label(__('system_settings.currency_symbol')),
+                TextInput::make('limit_days_orders')->numeric()->label(__('system_settings.limit_days_orders')),
                 Select::make('calculating_orders_price_method')->label(__('system_settings.calculating_orders_price_method'))
                     ->options([
                         'from_unit_prices' => __('system_settings.from_unit_prices'),
@@ -61,6 +62,8 @@ class SystemSettingResource extends Resource
                 TextColumn::make('currency_symbol')->label(__('system_settings.currency_symbol')),
                 TextColumn::make('calculating_orders_price_method')
                     ->label(__('system_settings.calculating_orders_price_method')),
+                TextColumn::make('limit_days_orders')
+                    ->label(__('system_settings.limit_days_orders')),
                 IconColumn::make('completed_order_if_not_qty')
                     ->boolean()->label(__('system_settings.completed_order_if_not_qty')),
             ])

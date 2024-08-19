@@ -10,4 +10,5 @@ return [
     'note_if_order_completed_if_not_qty' => 'Prices will be calculated based on the entered supplier invoices',
     'title_message_you_cannot_update_calculating_method' => 'You can\'t edit calculating prices method!',
     'body_message_you_cannot_update_calculating_method' => 'because you started work and you have orders',
+    'limit_days_orders' => 'Number of last days to return orders in mobile'
 ];
