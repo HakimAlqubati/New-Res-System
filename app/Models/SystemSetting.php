@@ -17,5 +17,6 @@ class SystemSetting extends Model
         'calculating_orders_price_method',
         'completed_order_if_not_qty',
         'limit_days_orders',
+        'enable_user_orders_to_store',
     ];
 }

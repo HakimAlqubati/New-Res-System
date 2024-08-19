@@ -274,3 +274,11 @@ function getLimitDaysOrders()
     }
     return 30; // 30 days as default
 }
+
+/**
+ * function to return default user orders status
+ */
+function getEnableUserOrdersToStore()
+{
+    return SystemSetting::select('enable_user_orders_to_store')?->first()?->enable_user_orders_to_store;
+}

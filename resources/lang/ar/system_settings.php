@@ -11,4 +11,5 @@ return [
     'title_message_you_cannot_update_calculating_method' => 'لا يمكنك تعديل طريقة احتساب أسعار الطلبيات',
     'body_message_you_cannot_update_calculating_method' => 'لأنك بالفعل بدأت بالعمل ولديك طلبيات موجودة',
     'limit_days_orders' => 'عدد آخر أيام رجوع الطلبيات في التطبيق',
+    'enable_user_orders_to_store' => 'إمكانية إرسال طلبيات المستخدمين للمخزن',
 ];

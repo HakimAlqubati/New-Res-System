@@ -81,7 +81,11 @@ class OrderRepository implements OrderRepositoryInterface
                 }
                 $orderStatus = Order::ORDERED;
             } else if ($currnetRole == 8) { // Role 8 is User
-                $orderStatus = Order::PENDING_APPROVAL;
+                if (!getEnableUserOrdersToStore()) {
+                    $orderStatus = Order::PENDING_APPROVAL;
+                } else {
+                    $orderStatus = Order::ORDERED;
+                }
                 $branchId = auth()->user()->owner->branch->id;
                 $customerId = auth()->user()->owner->id;
             }
@@ -168,7 +172,11 @@ class OrderRepository implements OrderRepositoryInterface
                 }
                 $orderStatus = Order::ORDERED;
             } else if ($currnetRole == 8) {
-                $orderStatus = Order::PENDING_APPROVAL;
+                if (!getEnableUserOrdersToStore()) {
+                    $orderStatus = Order::PENDING_APPROVAL;
+                } else {
+                    $orderStatus = Order::ORDERED;
+                }
                 $branchId = auth()->user()->owner->branch->id;
                 $customerId = auth()->user()->owner->id;
             }
