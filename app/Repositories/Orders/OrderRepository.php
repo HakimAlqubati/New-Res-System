@@ -47,7 +47,9 @@ class OrderRepository implements OrderRepositoryInterface
             $query->where('status', '!=', Order::PENDING_APPROVAL);
         }
         // $orders = $query->orderBy('created_at', 'DESC')->limit(80)->get();
-        $orders = $query->orderBy('created_at', 'DESC')->where('created_at', '>=', Carbon::now()->subDays(getLimitDaysOrders()))->get();
+        $orders = $query->orderBy('created_at', 'DESC')->where('created_at', '>=', Carbon::now()->subDays(getLimitDaysOrders()))
+            ->where('is_purchased', 0)
+            ->get();
         return OrderResource::collection($orders);
     }
 
