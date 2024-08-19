@@ -7,28 +7,24 @@ use App\Filament\Resources\OrderPurchaseResource\Pages\EditOrderPurchase;
 use App\Filament\Resources\OrderPurchaseResource\Pages\ListOrderPurchase;
 use App\Filament\Resources\OrderPurchaseResource\Pages\ViewOrderPurchase;
 use App\Filament\Resources\OrderResource\RelationManagers\OrderDetailsRelationManager;
-
-
+use App\Models\Branch;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\UnitPrice;
 use App\Tables\Columns\count_items_order;
 use App\Tables\Columns\TotalOrder;
 use Closure;
-
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -43,7 +39,6 @@ class OrderPurchaseResource extends Resource
     {
         return __('lang.purchased_orders');
     }
-
 
     public static function getLabel(): ?string
     {
@@ -62,22 +57,35 @@ class OrderPurchaseResource extends Resource
                     ->placeholder('Select date')
                     ->default(date('Y-m-d'))
                     ->format('Y-m-d')
-                    // ->disabledOn('edit')
+                // ->disabledOn('edit')
                     ->columnSpanFull()
-                    , 
+                ,
+                Select::make('branch_id')->label(__('lang.branch'))
+                    ->searchable()
+                    ->required()
+                    ->options(
+                        Branch::where('active', 1)->get(['id', 'name'])->pluck('name', 'id')
+                    )
+                    ->disabledOn('edit')
+                    ->searchable()
+                    ->hidden(function () {
+                        return !in_array(getCurrentRole(), [1, 3]);
+                    })
+                    ->columnSpanFull()
+                ,
                 Textarea::make('notes')->label(__('lang.notes'))
                     ->placeholder('Enter notes')
                     ->columnSpanFull()
-                    
-                    ,
-               
+
+                ,
+
                 Repeater::make('orderDetails')
                     ->createItemButtonLabel(__('lang.add_item'))
                     ->columns(5)
                     ->defaultItems(1)
                     ->hiddenOn([
                         // Pages\EditPurchaseInvoice::class,
-                        ViewOrderPurchase::class
+                        ViewOrderPurchase::class,
                     ])
                     ->columnSpanFull()
                     ->collapsible()
@@ -87,25 +95,27 @@ class OrderPurchaseResource extends Resource
                         Select::make('product_id')
                             ->label(__('lang.product'))
                             ->searchable()
-                            // ->disabledOn('edit')
+                        // ->disabledOn('edit')
                             ->options(function () {
                                 return Product::pluck('name', 'id');
                             })
                             ->reactive()
                             ->required()
-                            ->afterStateUpdated(fn (callable $set) => $set('unit_id', null))
+                            ->afterStateUpdated(fn(callable $set) => $set('unit_id', null))
                             ->searchable(),
                         Select::make('unit_id')
                             ->label(__('lang.unit'))
                             ->required()
-                            // ->disabledOn('edit')
+                        // ->disabledOn('edit')
                             ->options(
                                 function (callable $get) {
 
                                     $unitPrices = UnitPrice::where('product_id', $get('product_id'))->get()->toArray();
 
-                                    if ($unitPrices)
+                                    if ($unitPrices) {
                                         return array_column($unitPrices, 'unit_name', 'unit_id');
+                                    }
+
                                     return [];
                                 }
                             )
@@ -125,18 +135,18 @@ class OrderPurchaseResource extends Resource
                             ->label(__('lang.quantity'))
                             ->type('text')
                             ->default(1)
-                            // ->disabledOn('edit')
-                            // ->mask(
-                            //     fn (TextInput\Mask $mask) => $mask
-                            //         ->numeric()
-                            //         ->decimalPlaces(2)
-                            //         ->thousandsSeparator(',')
-                            // )
+                        // ->disabledOn('edit')
+                        // ->mask(
+                        //     fn (TextInput\Mask $mask) => $mask
+                        //         ->numeric()
+                        //         ->decimalPlaces(2)
+                        //         ->thousandsSeparator(',')
+                        // )
                             ->reactive()
                             ->required()
                             ->afterStateUpdated(function (Closure $set, $state, $get) {
-                                $set('total_price', ((float) $state) * ((float)$get('price')));
-                                $set('available_quantity',$state);
+                                $set('total_price', ((float) $state) * ((float) $get('price')));
+                                $set('available_quantity', $state);
                             }),
                         TextInput::make('price')
                             ->label(__('lang.price'))
@@ -144,17 +154,17 @@ class OrderPurchaseResource extends Resource
                             ->default(1)
                             ->integer()
                             ->required()
-                            // ->disabledOn('edit')
-                            // ->mask(
-                            //     fn (TextInput\Mask $mask) => $mask
-                            //         ->numeric()
-                            //         ->decimalPlaces(2)
-                            //         ->thousandsSeparator(',')
-                            // )
+                        // ->disabledOn('edit')
+                        // ->mask(
+                        //     fn (TextInput\Mask $mask) => $mask
+                        //         ->numeric()
+                        //         ->decimalPlaces(2)
+                        //         ->thousandsSeparator(',')
+                        // )
                             ->reactive()
 
                             ->afterStateUpdated(function (Closure $set, $state, $get) {
-                                $set('total_price', ((float) $state) * ((float)$get('quantity')));
+                                $set('total_price', ((float) $state) * ((float) $get('quantity')));
                             }),
                         TextInput::make('total_price')->default(1)
                             ->type('text')
@@ -163,7 +173,6 @@ class OrderPurchaseResource extends Resource
                     ])
             ]);
     }
-
 
     public static function table(Table $table): Table
     {
@@ -178,10 +187,10 @@ class OrderPurchaseResource extends Resource
                     ->searchable(isIndividual: true, isGlobal: false),
                 TextColumn::make('customer.name')->label(__('lang.branch_manager'))->toggleable()
                     ->searchable(isIndividual: true)
-                    ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
+                    ->tooltip(fn(Model $record): string => "By {$record->customer->name}"),
                 TextColumn::make('branch.name')->label(__('lang.branch')),
                 TextColumn::make('order_date')->label(__('lang.order_date')),
-              
+
                 count_items_order::make('item_counts')->label(__('lang.item_counts')),
                 TotalOrder::make('total_amount')->label(__('lang.total_amount')),
                 TextColumn::make('created_at')
@@ -215,7 +224,6 @@ class OrderPurchaseResource extends Resource
         ];
     }
 
-
     public static function canDeleteAny(): bool
     {
         return static::can('deleteAny');
@@ -223,14 +231,26 @@ class OrderPurchaseResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-        ->where('is_purchased', 1)
+        $currentRole = getCurrentRole();
+
+        $query = parent::getEloquentQuery();
+        if ($currentRole == 7) {
+            $query->where('branch_id', auth()->user()->branch->id);
+        }
+        $query = $query->where('is_purchased', 1)
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+        return $query;
     }
     protected static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('is_purchased',1)->count();
+        $query = static::getModel()::query();
+        $currentRole = getCurrentRole();
+
+        if ($currentRole == 7) {
+            $query->where('branch_id', auth()->user()->branch->id);
+        }
+        return $query->where('is_purchased', 1)->count();
     }
 }
