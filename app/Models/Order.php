@@ -41,12 +41,10 @@ class Order extends Model
         return $this->hasMany(OrderDetails::class, 'order_id');
     }
 
-
     public function customer()
     {
         return $this->belongsTo(User::class, 'customer_id');
     }
-
 
     public function branch()
     {
@@ -75,7 +73,6 @@ class Order extends Model
             ->where('orders_details.available_in_store', 1)->distinct();
     }
 
-
     public function storeEmpResponsiple()
     {
         return $this->belongsTo(User::class, 'storeuser_id_update');
@@ -84,5 +81,17 @@ class Order extends Model
     public function customer_name()
     {
         return 'dddd';
+    }
+
+    // attribute to get items count
+    public function getItemCountAttribute()
+    {
+        return $this->orderDetails?->count();
+    }
+    // attribute to get total amount
+    public function getTotalAmountAttribute()
+    {
+        
+        return $this->orderDetails?->sum('price');
     }
 }

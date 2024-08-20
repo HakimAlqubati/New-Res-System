@@ -17,6 +17,7 @@ use niklasravnsborg\LaravelPdf\Facades\Pdf;
 
 class ListReportProductQuantities extends ListRecords
 {
+
     protected static string $resource = ReportProductQuantitiesResource::class;
     protected static string $view = 'filament.pages.order-reports.report-product-quantities';
 
@@ -112,13 +113,13 @@ class ListReportProductQuantities extends ListRecords
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             ->join('branches', 'orders.branch_id', '=', 'branches.id')
             ->join('units', 'orders_details.unit_id', '=', 'units.id')
-            ->where('orders_details.product_id', '=', $product_id)
-            ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
-                return $query->whereBetween('orders.created_at', [$start_date, $end_date]);
-            })
-            ->when($branch_ids && is_array($branch_ids), function ($query) use ($branch_ids) {
-                return $query->whereIn('orders.branch_id', $branch_ids);
-            })
+            // ->where('orders_details.product_id', '=', $product_id)
+            // ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
+            //     return $query->whereBetween('orders.created_at', [$start_date, $end_date]);
+            // })
+            // ->when($branch_ids && is_array($branch_ids), function ($query) use ($branch_ids) {
+            //     return $query->whereIn('orders.branch_id', $branch_ids);
+            // })
         // ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
         // ->where('orders.active', 1)
             ->whereNull('orders.deleted_at')

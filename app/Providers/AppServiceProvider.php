@@ -32,6 +32,7 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\ServiceProvider;
 
@@ -164,6 +165,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         FilamentAsset::register([
+            Css::make('main', ''),
             // asset("filament/main.css"),
             // asset("New-Res-System/public/filament/main.css"),
         ]);

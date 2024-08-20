@@ -73,12 +73,13 @@ class PurchaseInvoiceResource extends Resource
                     // ->disabledOn('edit')
                     ->format('Y-m-d'),
                 Select::make('supplier_id')->label(__('lang.supplier'))
-                    ->options(
-                        Supplier::get(['id', 'name'])->pluck('name', 'id')
-                    )->searchable()
-
-                // ->disabledOn('edit')
-                ,
+                    ->getSearchResultsUsing(fn (string $search): array => Supplier::where('name', 'like', "%{$search}%")->limit(10)->pluck('name', 'id')->toArray())
+                    ->getOptionLabelUsing(fn ($value): ?string => Supplier::find($value)?->name)
+                    ->searchable()
+                    ->options(Supplier::limit(5)->get(['id', 'name'])->pluck('name', 'id'))
+                    // ->disabledOn('edit')
+,
+                
                 Select::make('store_id')->label(__('lang.store'))
                     ->searchable()
                     ->default(getDefaultStore())
@@ -118,8 +119,10 @@ class PurchaseInvoiceResource extends Resource
                             ->searchable()
                             // ->disabledOn('edit')
                             ->options(function () {
-                                return Product::pluck('name', 'id');
+                                return Product::limit(10)->pluck('name', 'id');
                             })
+                            ->getSearchResultsUsing(fn (string $search): array => Product::where('active',1)->where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
+                            ->getOptionLabelUsing(fn ($value): ?string => Product::find($value)?->name)
                             ->reactive()
                             ->afterStateUpdated(fn (callable $set) => $set('unit_id', null))
                             ->searchable(),

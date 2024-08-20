@@ -13,8 +13,8 @@ class EditProduct extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['name'] = isset($data['name'][app()->getLocale()]) ? $data['name'][app()->getLocale()] : '';
-        $data['description'] =  isset($data['description'][app()->getLocale()]) ? $data['description'][app()->getLocale()] : '';
+        // $data['name'] = isset($data['name'][app()->getLocale()]) ? $data['name'][app()->getLocale()] : '';
+        // $data['description'] =  isset($data['description'][app()->getLocale()]) ? $data['description'][app()->getLocale()] : '';
 
         return $data;
     }

@@ -16,6 +16,7 @@ use App\Filament\Resources\Shield\RoleResource;
 use App\Filament\Resources\StoreResource;
 use App\Filament\Resources\SupplierResource;
 use App\Filament\Resources\SystemSettingResource;
+use App\Filament\Resources\TestinfoList\TestinfoListResource;
 use App\Filament\Resources\TransferOrderResource;
 use App\Filament\Resources\UnitResource;
 use App\Filament\Resources\UserResource;
@@ -119,6 +120,7 @@ class AdminPanelProvider extends PanelProvider
                     NavigationGroup::make(__('system_settings.system_settings'))
                         ->items([
                             ...SystemSettingResource::getNavigationItems(),
+                            ...TestinfoListResource::getNavigationItems(),
                         ]),
                 ]);
             }
@@ -163,6 +165,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->topNavigation()
+            ->maxContentWidth('full')
+            ;
     }
 }

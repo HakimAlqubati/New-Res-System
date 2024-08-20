@@ -6,29 +6,24 @@ use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Branch;
 use App\Models\Order;
-use App\Models\Product;
-use App\Models\Unit;
 use App\Models\User;
-use App\Tables\Columns\count_items_order;
-use App\Tables\Columns\TotalOrder;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Closure;
 use Filament\Forms;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+// use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-// use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OrderResource extends Resource implements HasShieldPermissions
@@ -43,7 +38,7 @@ class OrderResource extends Resource implements HasShieldPermissions
             'update',
             'delete',
             'delete_any',
-            'publish'
+            'publish',
         ];
     }
 
@@ -96,20 +91,20 @@ class OrderResource extends Resource implements HasShieldPermissions
                     ->searchable(isIndividual: true, isGlobal: false),
                 TextColumn::make('customer.name')->label(__('lang.branch_manager'))->toggleable()
                     ->searchable(isIndividual: true)
-                    ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
+                    ->tooltip(fn(Model $record): string => "By {$record->customer->name}"),
                 TextColumn::make('branch.name')->label(__('lang.branch')),
                 BadgeColumn::make('status')
                     ->label(__('lang.order_status'))
                     ->colors([
                         'primary',
-                        'secondary' => static fn ($state): bool => $state === Order::PENDING_APPROVAL,
-                        'warning' => static fn ($state): bool => $state === Order::READY_FOR_DELEVIRY,
-                        'success' => static fn ($state): bool => $state === Order::DELEVIRED,
-                        'danger' => static fn ($state): bool => $state === Order::PROCESSING,
+                        'secondary' => static fn($state): bool => $state === Order::PENDING_APPROVAL,
+                        'warning' => static fn($state): bool => $state === Order::READY_FOR_DELEVIRY,
+                        'success' => static fn($state): bool => $state === Order::DELEVIRED,
+                        'danger' => static fn($state): bool => $state === Order::PROCESSING,
                     ])
                     ->iconPosition('after'),
-                count_items_order::make('item_counts')->label(__('lang.item_counts')),
-                TotalOrder::make('total_amount')->label(__('lang.total_amount')),
+                TextColumn::make('item_count')->label(__('lang.item_counts')),
+                TextColumn::make('total_amount')->label(__('lang.total_amount')),
                 TextColumn::make('created_at')
                     ->label(__('lang.created_at'))
                     ->sortable(),
@@ -150,11 +145,11 @@ class OrderResource extends Resource implements HasShieldPermissions
                         return $query
                             ->when(
                                 $data['created_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
                 Tables\Filters\TrashedFilter::make(),
@@ -191,8 +186,6 @@ class OrderResource extends Resource implements HasShieldPermissions
         ];
     }
 
-
-
     protected function getTableReorderColumn(): ?string
     {
         return 'sort';
@@ -203,10 +196,9 @@ class OrderResource extends Resource implements HasShieldPermissions
         return null;
     }
 
-
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('is_purchased',0)->count();
+        return static::getModel()::where('is_purchased', 0)->count();
     }
 
     public function isTableSearchable(): bool
@@ -230,7 +222,7 @@ class OrderResource extends Resource implements HasShieldPermissions
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-        ->where('is_purchased', 0)
+            ->where('is_purchased', 0)
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);

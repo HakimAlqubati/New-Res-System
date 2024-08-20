@@ -13,7 +13,7 @@ class Product extends Model
         SoftDeletes
         //, HasTranslations
         ;
-    // public $translatable = ['name', 'description'];
+    public $translatable = ['name', 'description'];
 
     protected $fillable = [
         'name',

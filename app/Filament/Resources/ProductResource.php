@@ -83,12 +83,12 @@ class ProductResource extends Resource
                             })->searchable(),
                         TextInput::make('price')->type('number')->default(1)
                             ->label(__('lang.price'))
-                            ->mask(
-                                fn (TextInput\Mask $mask) => $mask
-                                    ->numeric()
-                                    ->decimalPlaces(2)
-                                    ->thousandsSeparator(',')
-                            ),
+                            // ->mask(
+                            //     fn (TextInput\Mask $mask) => $mask
+                            //         ->numeric()
+                            //         ->decimalPlaces(2)
+                            //         ->thousandsSeparator(',')
+                            // ),
                     ])
 
             ]);
