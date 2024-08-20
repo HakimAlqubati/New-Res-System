@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
- 
-use App\Repositories\Orders\OrderDetailsRepository; 
-use Illuminate\Http\Request; 
+
+use App\Repositories\Orders\OrderDetailsRepository;
+use Illuminate\Http\Request;
 
 class OrderDetailsController extends Controller
 {
@@ -41,7 +41,7 @@ class OrderDetailsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    { 
+    {
         // 
     }
 
@@ -77,7 +77,13 @@ class OrderDetailsController extends Controller
 
     public function update(Request $request)
     {
-        return $this->orderDetailsRepository->update($request);
+        $pricing_method = getCalculatingPriceOfOrdersMethod();
+
+        if ($pricing_method == 'fifo') {
+            return $this->orderDetailsRepository->updateWithFifo($request);
+        } else if ($pricing_method == 'from_unit_prices') {
+            return $this->orderDetailsRepository->updateWithUnitPrices($request);
+        }
     }
 
     /**

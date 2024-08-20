@@ -1,9 +1,9 @@
 <div class="filament-footer flex items-center justify-center">
 
-
+    {{-- href="https://aws.amazon.com/what-is-cloud-computing" --}}
     <div style="text-align: center">
-        <a href="https://aws.amazon.com/what-is-cloud-computing"><img class="img-footer"
-                src="https://d0.awsstatic.com/logos/powered-by-aws.png" alt="Powered by AWS Cloud Computing"></a>
+        <a><img class="img-footer" src="https://d0.awsstatic.com/logos/powered-by-aws.png"
+                alt="Powered by AWS Cloud Computing"></a>
     </div>
 
 

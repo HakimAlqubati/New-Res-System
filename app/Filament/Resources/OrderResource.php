@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
 // use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms\Components\Textarea;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OrderResource extends Resource implements HasShieldPermissions
 {
@@ -138,7 +139,7 @@ class OrderResource extends Resource implements HasShieldPermissions
                     ->searchable()
                     ->multiple()
                     ->label(__('lang.branch'))->relationship('branch', 'name'),
-                Filter::make('active')->label(__('lang.active')),
+                // Filter::make('active')->label(__('lang.active')),
                 Filter::make('created_at')
                     ->label(__('lang.created_at'))
                     ->form([
@@ -155,12 +156,15 @@ class OrderResource extends Resource implements HasShieldPermissions
                                 $data['created_until'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
-                    })
+                    }),
+                Tables\Filters\TrashedFilter::make(),
 
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 // ExportBulkAction::make()
@@ -202,7 +206,7 @@ class OrderResource extends Resource implements HasShieldPermissions
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::where('is_purchased',0)->count();
     }
 
     public function isTableSearchable(): bool
@@ -223,11 +227,17 @@ class OrderResource extends Resource implements HasShieldPermissions
         return false;
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+        ->where('is_purchased', 0)
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
 
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->id;
-        dd();
-        return $record->this->id;
     }
 }

@@ -113,4 +113,12 @@ return [
     'attachment' => 'مرفقات',
     'download_attachment' => 'تحميل المرفق',
     'has_attachment' => 'مع المرفقات؟',
+    'whatsapp_number' => 'رقم الواتساب',
+    'phone_number' => 'رقم الجوال',
+    'show_invoice_no' => 'إظهار رقم الفاتورة؟',
+    'change_or_add_purchase_supplier' => 'تعديل أو إضافة فاتورة مشتروات',
+    'there_is_no_purchase' => 'خطأ برقم الفاتورة',
+    'please_type_an_invoice_no_exist' => 'من فضلك قم بإدخال رقم فاتورة صحيح',
+    'purchased_orders' => 'الطلبات المشتراة',
+    'order_date' => 'تاريخ الطلبية',
 ];

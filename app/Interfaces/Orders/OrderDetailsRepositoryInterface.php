@@ -4,5 +4,6 @@ namespace App\Interfaces\Orders;
 
 interface OrderDetailsRepositoryInterface
 {
-    public function update($request);
+    public function updateWithUnitPrices($request);
+    public function updateWithFifo($request);
 }

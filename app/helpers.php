@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Order;
 use App\Models\Store;
 use App\Models\SystemSetting;
 use App\Models\UnitPrice;
@@ -23,7 +24,11 @@ function formatMoney($amount, $currency = '$')
  */
 function getCurrentRole()
 {
-    return auth()->user()?->roles[0]?->id;
+    $roleId = 0;
+    if (count(auth()->user()?->roles) > 0) {
+        $roleId = auth()->user()?->roles[0]?->id;
+    }
+    return $roleId;
 }
 
 /**
@@ -35,7 +40,7 @@ function getBranchId()
 }
 
 /**
- * to add filament request select 
+ * to add filament request select
  */
 function __filament_request_select($key, $default = null)
 {
@@ -151,7 +156,6 @@ function data_get_recursive($target, $key, $default = null)
     return $target;
 }
 
-
 /**
  * to add filament request date filter
  */
@@ -188,7 +192,7 @@ function __filament_request_key($key, $default = null)
 function getAdminsToNotify()
 {
     $adminIds = [];
-    $adminIds =  User::whereHas("roles", function ($q) {
+    $adminIds = User::whereHas("roles", function ($q) {
         $q->whereIn("id", [1, 3]);
     })->select('id', 'name')->get()->pluck('id')->toArray();
     $recipients = User::whereIn('id', $adminIds)->get(['id', 'name']);
@@ -226,9 +230,11 @@ function getDefaultCurrency()
 function getCalculatingPriceOfOrdersMethod()
 {
     $defaultMethod = 'from_unit_prices';
-    $systemSettingsCalculatingMethod = SystemSetting::select('calculating_orders_price_method')->first();
-    if ($systemSettingsCalculatingMethod && ($systemSettingsCalculatingMethod->calculating_orders_price_method != $defaultMethod)) {
-        $defaultMethod = $systemSettingsCalculatingMethod->calculating_orders_price_method;
+
+    $systemSettingsCalculatingMethod = SystemSetting::select('calculating_orders_price_method')->first()->calculating_orders_price_method;
+
+    if ($systemSettingsCalculatingMethod != null && ($systemSettingsCalculatingMethod != $defaultMethod)) {
+        $defaultMethod = $systemSettingsCalculatingMethod;
     }
     return $defaultMethod;
 }
@@ -238,8 +244,41 @@ function getCalculatingPriceOfOrdersMethod()
  */
 function getUnitPrice($product_id, $unit_id)
 {
-    return  UnitPrice::where(
+    return UnitPrice::where(
         'product_id',
         $product_id
-    )->where('unit_id', $unit_id)->first()->price;
+    )->where('unit_id', $unit_id)?->first()?->price;
+}
+
+/**
+ * function to check if user has pending approval order when submit order
+ */
+function checkIfUserHasPendingForApprovalOrder($branchId)
+{
+    $order = Order::where('status', Order::PENDING_APPROVAL)
+        ->where('branch_id', $branchId)
+        ->where('active', 1)
+        ->first();
+
+    return $order ? $order->id : null;
+}
+
+/**
+ * function to return no last days to return orders in mobile
+ */
+function getLimitDaysOrders()
+{
+    $limitDays = SystemSetting::select('limit_days_orders')?->first()?->limit_days_orders;
+    if ($limitDays) {
+        return $limitDays;
+    }
+    return 30; // 30 days as default
+}
+
+/**
+ * function to return default user orders status
+ */
+function getEnableUserOrdersToStore()
+{
+    return SystemSetting::select('enable_user_orders_to_store')?->first()?->enable_user_orders_to_store;
 }

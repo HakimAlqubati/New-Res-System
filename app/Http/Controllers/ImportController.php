@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Imports\ImportCategories;
 use App\Imports\ImportItemTypes;
 use App\Imports\ImportProducts;
+use App\Imports\ImportPurchaseInvoiceDetails;
 use App\Imports\ImportUnitPrices;
 use App\Imports\ImportUnits;
 use Illuminate\Http\Request;
@@ -14,6 +15,10 @@ class ImportController extends Controller
     public function import_products_view()
     {
         return view('import_products');
+    }
+    public function import_purchase_invoice_details_view()
+    {
+        return view('import_purchase_invoice_details');
     }
 
     public function import_units_view()
@@ -42,6 +47,19 @@ class ImportController extends Controller
          
         try {
             Excel::import(new ImportProducts, $request->file('file')->store('files'));
+        } catch (\Exception $e) {
+            // Print or log the exception
+            echo "Exception: " . $e->getMessage();
+        }
+
+        return redirect()->back();
+    }
+
+    public function importpurchaseInvoiceDetails(Request $request)
+    {
+         
+        try {
+            Excel::import(new ImportPurchaseInvoiceDetails, $request->file('file')->store('files'));
         } catch (\Exception $e) {
             // Print or log the exception
             echo "Exception: " . $e->getMessage();

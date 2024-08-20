@@ -61,7 +61,7 @@ class PurchaseInvoiceResource extends Resource
             ->schema([
                 TextInput::make('invoice_no')->label(__('lang.invoice_no'))
                     ->required()
-                    ->unique()
+                    ->unique(ignoreRecord: true)
                     ->placeholder('Enter invoice number')
                 // ->disabledOn('edit')
                 ,
@@ -76,7 +76,7 @@ class PurchaseInvoiceResource extends Resource
                     ->options(
                         Supplier::get(['id', 'name'])->pluck('name', 'id')
                     )->searchable()
-                    ->required()
+
                 // ->disabledOn('edit')
                 ,
                 Select::make('store_id')->label(__('lang.store'))
@@ -84,7 +84,7 @@ class PurchaseInvoiceResource extends Resource
                     ->default(getDefaultStore())
                     ->options(
                         Store::where('active', 1)->get(['id', 'name'])->pluck('name', 'id')
-                    )->required()
+                    )
                     ->disabledOn('edit')
                     ->searchable(),
                 Textarea::make('description')->label(__('lang.description'))
@@ -92,8 +92,8 @@ class PurchaseInvoiceResource extends Resource
                     ->columnSpanFull(),
                 FileUpload::make('attachment')
                     ->label(__('lang.attachment'))
-                    ->enableOpen()
-                    ->enableDownload()
+                    // ->enableOpen()
+                    // ->enableDownload()
                     ->directory('purchase-invoices')
                     ->columnSpanFull()
                     ->acceptedFileTypes(['application/pdf'])
@@ -103,9 +103,9 @@ class PurchaseInvoiceResource extends Resource
                 Repeater::make('units')
                     ->createItemButtonLabel(__('lang.add_item'))
                     ->columns(5)
-                    ->defaultItems(1)
+                    ->defaultItems(0)
                     ->hiddenOn([
-                        Pages\EditPurchaseInvoice::class,
+                        // Pages\EditPurchaseInvoice::class,
                         Pages\ViewPurchaseInvoice::class
                     ])
                     ->columnSpanFull()
@@ -115,7 +115,6 @@ class PurchaseInvoiceResource extends Resource
                     ->schema([
                         Select::make('product_id')
                             ->label(__('lang.product'))
-                            ->required()
                             ->searchable()
                             // ->disabledOn('edit')
                             ->options(function () {
@@ -126,7 +125,6 @@ class PurchaseInvoiceResource extends Resource
                             ->searchable(),
                         Select::make('unit_id')
                             ->label(__('lang.unit'))
-                            ->required()
                             // ->disabledOn('edit')
                             ->options(
                                 function (callable $get) {
@@ -151,7 +149,6 @@ class PurchaseInvoiceResource extends Resource
                             }),
                         TextInput::make('quantity')
                             ->label(__('lang.quantity'))
-                            ->required()
                             ->type('text')
                             ->default(1)
                             // ->disabledOn('edit')
@@ -166,7 +163,6 @@ class PurchaseInvoiceResource extends Resource
                                 $set('total_price', ((float) $state) * ((float)$get('price')));
                             }),
                         TextInput::make('price')
-                            ->required()
                             ->label(__('lang.price'))
                             ->type('text')
                             ->default(1)
@@ -209,7 +205,7 @@ class PurchaseInvoiceResource extends Resource
 
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make()
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -220,7 +216,12 @@ class PurchaseInvoiceResource extends Resource
                         ->label(__('lang.download_attachment'))
                         ->action(function ($record) {
                             if (strlen($record['attachment']) > 0) {
-                                return redirect(url(url('storage/' . $record['attachment'])));
+                                if (env('APP_ENV') == 'local') {
+                                    $file_link = url('storage/' . $record['attachment']);
+                                } else if (env('APP_ENV') == 'production') {
+                                    $file_link = url('New-Res-System/public/storage/' . $record['attachment']);
+                                }
+                                return redirect(url($file_link));
                             }
                         })->hidden(fn ($record) => !(strlen($record['attachment']) > 0))
                         // ->icon('heroicon-o-download')
@@ -228,11 +229,11 @@ class PurchaseInvoiceResource extends Resource
                 ]),
             ])
             ->bulkActions([
-                // Tables\Actions\DeleteBulkAction::make(),
-            ])
-            ->poll('10s');
+                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\RestoreBulkAction::make()
+            ]);
     }
- 
+
 
     public static function getRelations(): array
     {

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
+use App\Models\Order;
 use App\Models\OrderTransfer;
 use App\Tables\Columns\CountItemsTransfer;
 use App\Tables\Columns\TotalTransfer;
@@ -177,11 +178,13 @@ class TransferOrderResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
+        return static::getModel()::query()->whereIn('status',[Order::READY_FOR_DELEVIRY,Order::DELEVIRED]) ;
         return static::getModel()::query()->InTransfer();
     }
 
     public static function getNavigationBadge(): ?string
     {
+        return static::getModel()::whereIn('status',[Order::READY_FOR_DELEVIRY,Order::DELEVIRED])-> count();
         return count(OrderTransfer::inTransfer()->select('orders.id')->get()->toArray());
     }
 }

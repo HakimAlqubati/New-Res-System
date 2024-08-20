@@ -48,7 +48,100 @@ class OrderRepository implements OrderRepositoryInterface
         $orders = $query->orderBy('created_at', 'DESC')->limit(80)->get();
         return OrderResource::collection($orders);
     }
-    public function store($request)
+
+
+    public function storeWithFifo($request)
+    {
+        try {
+            DB::beginTransaction();
+            // to get current user role
+            $currnetRole = getCurrentRole();
+
+            if ($currnetRole == 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'you dont have any role'
+                ], 500);
+            }
+
+
+            $pendingOrderId = 0;
+            $message = '';
+            // check if user has pending for approval order to determine branchId & orderId & orderStatus
+            if ($currnetRole == 7) { // Role 7 is Branch
+                $branchId = auth()->user()?->branch?->id;
+                $customerId = auth()->user()->id;
+                if (!isset($branchId)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'You are not manager of any branch'
+                    ], 500);
+                }
+                $orderStatus = Order::ORDERED;
+            } else if ($currnetRole == 8) { // Role 8 is User
+                $orderStatus = Order::PENDING_APPROVAL;
+                $branchId = auth()->user()->owner->branch->id;
+                $customerId = auth()->user()->owner->id;
+            }
+            $pendingOrderId  =    checkIfUserHasPendingForApprovalOrder($branchId);
+
+            // Map order data from request body 
+            $orderData = [
+                'status' => $orderStatus,
+                'customer_id' => $customerId,
+                'branch_id' => $branchId,
+                'notes' => $request->input('notes'),
+                'description' => $request->input('description'),
+            ];
+
+            // Create new order
+            if (!($pendingOrderId > 0)) {
+                $order = Order::create($orderData);
+                $orderId = $order->id;
+                $message = 'done successfully';
+            } else if ($pendingOrderId > 0) {
+                $orderDetailsData = calculateFifoMethod($request->input('order_details'), $pendingOrderId);
+                handlePendingOrderDetails($orderDetailsData);
+                $orderId = $pendingOrderId;
+                if ($currnetRole == 8) {
+                    Order::find($orderId)->update([
+                        'updated_by' => auth()->user()->id,
+                    ]);
+                    $message = 'Your order has been submited on pending approval order no ' . $orderId;
+                } else if ($currnetRole == 7) {
+                    Order::find($orderId)->update([
+                        'updated_by' => auth()->user()->id,
+                        'status' => Order::ORDERED,
+                    ]);
+                    $message = 'done successfully';
+                }
+            }
+
+            $orderDetailsData = calculateFifoMethod($request->input('order_details'), $orderId);
+
+
+            if (count($orderDetailsData) > 0 && !($pendingOrderId > 0)) {
+                // to store (order details) new order 
+                OrderDetails::insert($orderDetailsData);
+            }
+
+            //to calculate the total of order when store it
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'order' => Order::find($orderId),
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function storeWithUnitPricing($request)
     {
         try {
             DB::beginTransaction();
@@ -78,7 +171,7 @@ class OrderRepository implements OrderRepositoryInterface
                 $branchId = auth()->user()->owner->branch->id;
                 $customerId = auth()->user()->owner->id;
             }
-            $pendingOrderId = $this->checkIfUserHasPendingForApprovalOrder($branchId);
+            $pendingOrderId  = checkIfUserHasPendingForApprovalOrder($branchId);
 
             // Map order data from request body
             $orderData = [
@@ -162,15 +255,6 @@ class OrderRepository implements OrderRepositoryInterface
                 'message' => $e->getMessage(),
             ], 500);
         }
-    }
-    public function checkIfUserHasPendingForApprovalOrder($branchId)
-    {
-        $order = Order::where('status', Order::PENDING_APPROVAL)
-            ->where('branch_id', $branchId)
-            ->where('active', 1)
-            ->first();
-
-        return $order ? $order->id : null;
     }
     public function update($request, $id)
     {

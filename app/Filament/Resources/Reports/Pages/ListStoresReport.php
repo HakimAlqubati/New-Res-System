@@ -9,10 +9,12 @@ use App\Models\Store;
 use App\Models\Supplier;
 
 use Filament\Forms\Components\Builder;
+use Filament\Pages\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\DB;
+use niklasravnsborg\LaravelPdf\Facades\Pdf;
 
 class ListStoresReport extends ListRecords
 {
@@ -90,7 +92,7 @@ class ListStoresReport extends ListRecords
         if (isset($supplier_id) && $supplier_id != '' && $supplier_id != 0 && $supplier_id != 'all') {
             $subquery1->where('purchase_invoices.supplier_id', $supplier_id);
         }
-
+        $subquery1->whereNull('purchase_invoices.deleted_at');
         $subquery1 = $subquery1->groupBy('purchase_invoice_details.product_id', 'purchase_invoice_details.unit_id', 'products.name', 'units.name');
 
         $subquery2 = DB::table('orders_details')
@@ -100,10 +102,12 @@ class ListStoresReport extends ListRecords
             ])
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             // ->where('orders.created_at', '>=', DB::raw("DATE('2024-03-11')"))
-            ->whereIn('orders.status', [
-                Order::READY_FOR_DELEVIRY,
-                Order::DELEVIRED
-            ])
+            // ->whereIn('orders.status', [
+            //     Order::READY_FOR_DELEVIRY,
+            //     Order::DELEVIRED
+            // ])
+            // ->where('orders.active', 1)
+            ->whereNull('orders.deleted_at')
             ->groupBy('orders_details.product_id', 'orders_details.unit_id');
 
         $query = DB::table(DB::raw("({$subquery1->toSql()}) AS p"))
@@ -118,8 +122,46 @@ class ListStoresReport extends ListRecords
                 DB::raw('COALESCE(o.ordered_quantity, 0) AS ordered'),
                 DB::raw('(COALESCE(p.purchase_quantity, 0) - COALESCE(o.ordered_quantity, 0)) AS remaining')
             ]);
+        
 
         $results = $query->get();
+        // $results2 = Product::where('active',1)->select('id','name')->get()->toArray();
+        // foreach ($results2 as $key => $value) { 
+        //      $obj = new \stdClass();
+        //      $obj->product_id = $value['product_id'];
+        //      $obj->product_name = $value['product_name'];
+        //      $obj->unit_name = null;
+        //      $obj->income = null;
+        //      $obj->ordered = null;
+        //      $obj->remaining = null;
+        //      $results3[] = $obj;
+        // }
+        // // dd($results,$results2,$results3);
         return $results;
+    }
+
+    protected function getActions(): array
+    {
+        return  [Action::make('Export to PDF')->label(__('lang.export_pdf'))
+            ->action('exportToPdf')
+            ->color('success'),];
+    }
+
+    public function exportToPdf()
+    {
+        $data = $this->getViewData();
+
+        $data = [
+            'stores_report_data' => $data['stores_report_data'],
+            'store_id' => $data['store_id'],
+            'supplier_id' => $data['supplier_id'],
+        ];
+
+        $pdf = Pdf::loadView('export.reports.stores-report', $data);
+
+        return response()
+            ->streamDownload(function () use ($pdf) {
+                $pdf->stream("stores-report" . '.pdf');
+            }, "stores-report" . '.pdf');
     }
 }

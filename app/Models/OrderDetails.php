@@ -21,6 +21,8 @@ class OrderDetails extends Model
         'updated_at',
         'created_at',
         'updated_by',
+        'purchase_invoice_id',
+        'negative_inventory_quantity'
     ];
 
 
@@ -60,5 +62,20 @@ class OrderDetails extends Model
             'available_quantity' => $this->available_quantity,
             'available_in_store' => $this->available_in_store,
         ];
+    }
+
+    public function purchaseInvoice()
+    {
+        return $this->belongsTo(PurchaseInvoice::class);
+    }
+
+    public function getPurchaseInvoiceNoAttribute()
+    {
+        $invoiceNo = 'None';
+        $purchaseInvoice = $this->purchaseInvoice;
+        if ($purchaseInvoice) {
+            $invoiceNo = '(' . $purchaseInvoice->id . ') ' . $purchaseInvoice->invoice_no;
+        }
+        return $invoiceNo;
     }
 }

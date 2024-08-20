@@ -5,10 +5,6 @@ namespace App\Filament\Resources\OrderReportsResource\Pages;
 use App\Filament\Resources\OrderReportsResource\GeneralReportOfProductsResource;
 
 use App\Models\Branch;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\Store;
-use App\Models\Supplier;
 
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DatePicker;
@@ -17,6 +13,8 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\DB;
+use niklasravnsborg\LaravelPdf\Facades\Pdf;
+use Filament\Pages\Actions\Action;
 
 class ListGeneralReportOfProducts extends ListRecords
 {
@@ -58,6 +56,7 @@ class ListGeneralReportOfProducts extends ListRecords
         $report_data['data'] = [];
         $total_quantity = 0;
         $total_price = 0;
+
         $report_data  = $this->getReportData($start_date, $end_date, $branch_id);
 
 
@@ -69,7 +68,7 @@ class ListGeneralReportOfProducts extends ListRecords
         if (isset($report_data['total_quantity'])) {
             $total_quantity = $report_data['total_quantity'];
         }
-        
+
         return [
             'report_data' => $report_data['data'],
             'branch_id' => $branch_id,
@@ -89,37 +88,66 @@ class ListGeneralReportOfProducts extends ListRecords
     function getReportData($start_date, $end_date, $branch_id)
     {
 
-
-        $data = DB::table('orders_details')
+        $get_data = DB::table('orders_details')
             ->join('orders', 'orders_details.order_id', '=', 'orders.id')
             ->join('products', 'orders_details.product_id', '=', 'products.id')
             ->select(
                 'products.category_id',
                 DB::raw('SUM(orders_details.available_quantity) as available_quantity'),
-                DB::raw('SUM(orders_details.price) as price')
+                // DB::raw('SUM(orders_details.price) as price'),
+                'orders_details.price as price',
+                DB::raw('SUM(orders_details.available_quantity) * orders_details.price as total_price')
             )
 
             ->when($branch_id, function ($query) use ($branch_id) {
                 return $query->where('orders.branch_id', $branch_id);
             })
             ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
-                return $query->whereBetween('orders.created_at', [$start_date, $end_date]);
+
+                $s_d = date('Y-m-d', strtotime($start_date)) . ' 00:00:00';
+                $e_d = date('Y-m-d', strtotime($end_date)) . ' 23:59:59';
+
+                return $query->whereBetween('orders.created_at', [$s_d, $e_d]);
             })
             // ->when($year && $month, function ($query) use ($year, $month) {
             //     return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
             // })
-            ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
-            ->groupBy('products.category_id')
+            // ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            // ->where('products.category_id', 13)
+            ->whereNull('orders.deleted_at')
+            ->groupBy(
+                'products.category_id',
+                'orders_details.price',
+                'orders_details.unit_id'
+            )
             ->get()
-            ->mapWithKeys(function ($item) {
-                if (is_object($item)) {
-                    return [$item->category_id => [
-                        'available_quantity' => $item->available_quantity,
-                        'price' => $item->price
-                    ]];
-                }
-            })
-            ->all();
+            // ->mapWithKeys(function ($item) {
+            //     if (is_object($item)) {
+            //         $sum_qty = 0;
+            //         $sum_qty += $item->available_quantity;
+            //         return [$item->category_id => [
+            //             'available_quantity' => $sum_qty,
+            //             // 'price' => ($item->price * $item->available_quantity)
+            //             'price' => ($item->price)
+            //         ]];
+            //     }
+            // })
+            ->toArray();
+        $sum_price = 0;
+        $sum_qty = 0;
+
+        $data = [];
+        foreach ($get_data as $val) {
+            if (!isset($data[$val->category_id])) {
+                $data[$val->category_id] = [
+                    'price' => 0,
+                    'available_quantity' => 0,
+                ];
+            }
+            $data[$val->category_id]['price'] += $val->total_price;
+            $data[$val->category_id]['available_quantity'] += $val->available_quantity;
+        }
+
         $categories = DB::table('categories')->where('active', 1)->get(['id', 'name'])->pluck('name', 'id');
 
         $final_result['data'] = [];
@@ -143,5 +171,37 @@ class ListGeneralReportOfProducts extends ListRecords
         $final_result['total_quantity'] = number_format($total_quantity, 2);
 
         return $final_result;
+    }
+
+
+
+    protected function getActions(): array
+    {
+        return  [Action::make('Export to PDF')->label(__('lang.export_pdf'))
+            ->action('exportToPdf')
+            ->color('success'),];
+    }
+
+    public function exportToPdf()
+    {
+
+        $data = $this->getViewData();
+
+        $data = [
+            'report_data' => $data['report_data'],
+            'branch_id' => $data['branch_id'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'total_quantity' => $data['total_quantity'],
+            'total_price' => $data['total_price']
+        ];
+
+
+        $pdf = Pdf::loadView('export.reports.general-report-products', $data);
+
+        return response()
+            ->streamDownload(function () use ($pdf) {
+                $pdf->stream("general-report-products" . '.pdf');
+            }, "general-report-products" . '.pdf');
     }
 }

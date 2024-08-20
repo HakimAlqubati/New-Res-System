@@ -33,6 +33,9 @@ class Supplier extends Authenticatable implements FilamentUser
         'password',
         'owner_id',
         'role_id',
+        'phone_number',
+        'whatsapp_number',
+        'supplier_address',
     ];
 
     /**

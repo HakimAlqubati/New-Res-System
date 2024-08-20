@@ -19,6 +19,7 @@ class RolePolicy
     public function viewAny(User $user)
     {
         return true;
+        return 1;
         return $user->can('view_any_role');
     }
 

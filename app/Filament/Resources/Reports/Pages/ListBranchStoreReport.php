@@ -11,11 +11,13 @@ use App\Models\Supplier;
 
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DatePicker;
+use Filament\Pages\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\DB;
+use niklasravnsborg\LaravelPdf\Facades\Pdf;
 
 class ListBranchStoreReport extends ListRecords
 {
@@ -120,10 +122,13 @@ class ListBranchStoreReport extends ListRecords
                 ->join('orders', 'orders_details.order_id', '=', 'orders.id')
                 ->join('products', 'orders_details.product_id', '=', 'products.id')
                 ->join('units', 'orders_details.unit_id', '=', 'units.id')
-                ->whereIn('orders.status', [
-                    Order::DELEVIRED,
-                    Order::READY_FOR_DELEVIRY
-                ]);
+                ->where('orders.active', 1)
+                ->whereNull('orders.deleted_at')
+                // ->whereIn('orders.status', [
+                //     Order::DELEVIRED,
+                //     Order::READY_FOR_DELEVIRY
+                // ])
+            ;
             if (!is_null($start_date) && !is_null($end_date)) {
                 $query->whereBetween('orders.created_at', [$start_date, $end_date]);
             }
@@ -135,5 +140,32 @@ class ListBranchStoreReport extends ListRecords
                 ->get();
         }
         return $results;
+    }
+
+    protected function getActions(): array
+    {
+        return  [Action::make('Export to PDF')->label(__('lang.export_pdf'))
+            ->action('exportToPdf')
+            ->color('success'),];
+    }
+
+    public function exportToPdf()
+    {
+        $data = $this->getViewData();
+
+        $data = [
+            'branch_store_report_data' => $data['branch_store_report_data'],
+            'branch_id' => $data['branch_id'],
+            'total_quantity' => $data['total_quantity'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+        ];
+
+        $pdf = Pdf::loadView('export.reports.branch-store-report', $data);
+
+        return response()
+            ->streamDownload(function () use ($pdf) {
+                $pdf->stream("branch-store-report" . '.pdf');
+            }, "branch-store-report" . '.pdf');
     }
 }

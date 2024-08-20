@@ -4,8 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SupplierResource\Pages;
 use App\Models\Supplier;
-use App\Models\User;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -36,6 +35,9 @@ class SupplierResource extends Resource
 
                 TextInput::make('name')->label(__('lang.name'))->required(),
                 TextInput::make('email')->label(__('lang.email'))->email()->required(),
+                TextInput::make('whatsapp_number')->label(__('lang.whatsapp_number')),
+                TextInput::make('phone_number')->label(__('lang.phone_number')),
+                Textarea::make('supplier_address')->label(__('lang.address'))->columnSpanFull()
 
 
             ]);
@@ -54,16 +56,24 @@ class SupplierResource extends Resource
                 TextColumn::make('email')
                     ->sortable()->searchable()
                     ->searchable(isIndividual: true, isGlobal: false),
+                TextColumn::make('phone_number')
+                    ->sortable()->searchable()
+                    ->searchable(isIndividual: true, isGlobal: false),
+                TextColumn::make('whatsapp_number')
+                    ->sortable()->searchable()
+                    ->searchable(isIndividual: true, isGlobal: false),
             ])
             ->filters([
                 Tables\Filters\Filter::make('active')
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('active')),
-                // Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\RestoreAction::make(),
+                Tables\Actions\RestoreAction::make()->hidden(
+                    (getCurrentRole() != 1)
+                ),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

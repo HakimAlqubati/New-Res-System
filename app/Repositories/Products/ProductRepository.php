@@ -132,7 +132,9 @@ class ProductRepository implements ProductRepositoryInterface
             ->when($year && $month, function ($query) use ($year, $month) {
                 return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
             })
-            ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            // ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            ->where('orders.active', 1)
+            ->whereNull('orders.deleted_at')
             ->groupBy('products.category_id')
             ->get()
             ->mapWithKeys(function ($item) {
@@ -195,7 +197,9 @@ class ProductRepository implements ProductRepositoryInterface
             })->when($year && $month, function ($query) use ($year, $month) {
                 return $query->whereRaw('YEAR(orders.created_at) = ? AND MONTH(orders.created_at) = ?', [$year, $month]);
             })
-            ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            // ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            ->where('orders.active', 1)
+            ->whereNull('orders.deleted_at')
             ->where('products.category_id', $category_id)
             ->groupBy(
                 'orders_details.product_id',
@@ -269,7 +273,9 @@ class ProductRepository implements ProductRepositoryInterface
             ->when($branch_id && is_array($branch_id), function ($query) use ($branch_id) {
                 return $query->whereIn('orders.branch_id', $branch_id);
             })
-            ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            // ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            ->where('orders.active', 1)
+            ->whereNull('orders.deleted_at')
             ->groupBy('orders.branch_id', 'products.name', 'branches.name', 'units.name')
             ->get();
         $final = [];
@@ -304,7 +310,9 @@ class ProductRepository implements ProductRepositoryInterface
             ->when(getCurrentRole() == 3 && $branch_id && is_array($branch_id), function ($query) use ($branch_id) {
                 return $query->whereIn('orders.branch_id', $branch_id);
             })
-            ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            // ->whereIn('orders.status', [Order::DELEVIRED, Order::READY_FOR_DELEVIRY])
+            ->where('orders.active', 1)
+            ->whereNull('orders.deleted_at')
             ->groupBy('products.name',   'units.name')
             // ->groupBy('orders.branch_id')
             ->get();

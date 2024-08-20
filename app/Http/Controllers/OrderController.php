@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers; 
-use App\Repositories\Orders\OrderRepository; 
-use Illuminate\Http\Request;  
+namespace App\Http\Controllers;
+
+use App\Repositories\Orders\OrderRepository;
+use Illuminate\Http\Request;
+
 class OrderController extends Controller
 {
     /**
@@ -39,7 +41,13 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        return $this->orderRepository->store($request);
+        $pricing_method = getCalculatingPriceOfOrdersMethod();
+
+        if ($pricing_method == 'fifo') {
+            return $this->orderRepository->storeWithFifo($request);
+        } else if ($pricing_method == 'from_unit_prices') {
+            return $this->orderRepository->storeWithUnitPricing($request);
+        }
     }
 
     /**
@@ -49,7 +57,7 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    { 
+    {
     }
 
     /**
@@ -72,7 +80,7 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-       return $this->orderRepository->update($request, $id);
+        return $this->orderRepository->update($request, $id);
     }
 
     /**

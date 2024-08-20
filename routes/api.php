@@ -8,7 +8,9 @@ use App\Http\Controllers\ProductController;
 use App\Models\Branch;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,6 +24,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/compare', function (Request $request) {
+    $qty = $request->input('qty');
+    $product_id = $request->input('product_id');
+    $unit_id = $request->input('unit_id');
+    // $fdata = getSumQtyOfProductFromPurchases($product_id, $unit_id);
+    $fdata = comparePurchasedWithOrderdQties($product_id, $unit_id);
+
+    return $fdata;
+});
+Route::get('/to_try_order', function (Request $request) {
+    $req_array = $request->all();
+    $fdata = [];
+    $fdata  = calculateFifoMethod($req_array['order_details'], 15);
+
+    return $fdata;
+});
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/products', [ProductController::class, 'index']);
