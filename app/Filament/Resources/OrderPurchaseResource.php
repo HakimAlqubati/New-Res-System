@@ -20,10 +20,9 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -40,14 +39,14 @@ class OrderPurchaseResource extends Resource
         return __('lang.purchased_orders');
     }
 
-    public static function getLabel(): ?string
-    {
-        return __('lang.purchased_orders');
-    }
-    protected static function getNavigationLabel(): string
-    {
-        return __('lang.purchased_orders');
-    }
+    // public static function getLabel(): ?string
+    // {
+    //     return __('lang.purchased_orders');
+    // }
+    // protected static function getNavigationLabel(): string
+    // {
+    //     return __('lang.purchased_orders');
+    // }
     public static function form(Form $form): Form
     {
         return $form
@@ -243,14 +242,14 @@ class OrderPurchaseResource extends Resource
             ]);
         return $query;
     }
-    protected static function getNavigationBadge(): ?string
-    {
-        $query = static::getModel()::query();
-        $currentRole = getCurrentRole();
+    // protected static function getNavigationBadge(): ?string
+    // {
+    //     $query = static::getModel()::query();
+    //     $currentRole = getCurrentRole();
 
-        if ($currentRole == 7) {
-            $query->where('branch_id', auth()->user()->branch->id);
-        }
-        return $query->where('is_purchased', 1)->count();
-    }
+    //     if ($currentRole == 7) {
+    //         $query->where('branch_id', auth()->user()->branch->id);
+    //     }
+    //     return $query->where('is_purchased', 1)->count();
+    // }
 }
