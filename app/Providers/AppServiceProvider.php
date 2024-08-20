@@ -24,6 +24,8 @@ use App\Filament\Resources\UnitResource;
 use App\Filament\Resources\UserResource;
 use App\Interfaces\Orders\OrderRepositoryInterface;
 use App\Models\Order;
+use App\Models\OrderDetails;
+use App\Observers\OrderDetailsObserver;
 use App\Observers\OrderObserver;
 use App\Repositories\Orders\OrderRepository;
 use Filament\Facades\Filament;
@@ -59,6 +61,7 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Order::observe(OrderObserver::class);
+        OrderDetails::observe(OrderDetailsObserver::class);
 
         // Filament::registerNavigationGroups([
         //     'Orders',
