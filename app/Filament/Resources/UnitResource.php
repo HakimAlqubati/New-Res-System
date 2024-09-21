@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UnitResource extends Resource
@@ -107,5 +108,27 @@ class UnitResource extends Resource
     protected static function getActiveNavigationIcon(): string
     {
         return 'heroicon-s-document-text';
+    }
+    public static function canCreate(): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return true;
+    }
+    public static function canEdit(Model $record): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return static::can('update', $record);
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return static::can('delete', $record);
     }
 }

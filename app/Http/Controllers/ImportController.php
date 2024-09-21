@@ -8,8 +8,11 @@ use App\Imports\ImportProducts;
 use App\Imports\ImportPurchaseInvoiceDetails;
 use App\Imports\ImportUnitPrices;
 use App\Imports\ImportUnits;
+use App\Models\Product;
+use App\Models\UnitPrice;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+
 class ImportController extends Controller
 {
     public function import_products_view()
@@ -36,7 +39,6 @@ class ImportController extends Controller
         return view('import_categories');
     }
 
-
     public function import_unit_prices_view()
     {
         return view('import_unit_prices');
@@ -44,20 +46,20 @@ class ImportController extends Controller
 
     public function importProducts(Request $request)
     {
-         
-        try {
-            Excel::import(new ImportProducts, $request->file('file')->store('files'));
-        } catch (\Exception $e) {
-            // Print or log the exception
-            echo "Exception: " . $e->getMessage();
-        }
+
+        // try {
+        Excel::import(new ImportProducts, $request->file('file')->store('files'));
+        // } catch (\Exception $e) {
+        //     // Print or log the exception
+        //     echo "Exception: " . $e->getMessage();
+        // }
 
         return redirect()->back();
     }
 
     public function importpurchaseInvoiceDetails(Request $request)
     {
-         
+
         try {
             Excel::import(new ImportPurchaseInvoiceDetails, $request->file('file')->store('files'));
         } catch (\Exception $e) {
@@ -70,7 +72,7 @@ class ImportController extends Controller
 
     public function importCategories(Request $request)
     {
-         
+
         try {
             Excel::import(new ImportCategories, $request->file('file')->store('files'));
         } catch (\Exception $e) {
@@ -83,7 +85,7 @@ class ImportController extends Controller
 
     public function importUnits(Request $request)
     {
-         
+
         try {
             Excel::import(new ImportUnits, $request->file('file')->store('files'));
         } catch (\Exception $e) {
@@ -96,7 +98,7 @@ class ImportController extends Controller
 
     public function importItemTypes(Request $request)
     {
-         
+
         try {
             Excel::import(new ImportItemTypes, $request->file('file')->store('files'));
         } catch (\Exception $e) {
@@ -109,7 +111,7 @@ class ImportController extends Controller
 
     public function importUnitPrices(Request $request)
     {
-         
+
         try {
             Excel::import(new ImportUnitPrices, $request->file('file')->store('files'));
         } catch (\Exception $e) {
@@ -118,5 +120,32 @@ class ImportController extends Controller
         }
 
         // return redirect()->back();
+    }
+
+    public function addDefaultPrices()
+    {
+        $products = Product::where('active', 1)->get();
+        foreach ($products as $key => $value) {
+            UnitPrice::create([
+                'product_id' => $value->id,
+                'price' => 3,
+                'unit_id' => 1,
+            ]);
+            UnitPrice::create([
+                'product_id' => $value->id,
+                'price' => 4,
+                'unit_id' => 2,
+            ]);
+            UnitPrice::create([
+                'product_id' => $value->id,
+                'price' => 1,
+                'unit_id' => 3,
+            ]);
+            UnitPrice::create([
+                'product_id' => $value->id,
+                'price' => 2,
+                'unit_id' => 4,
+            ]);
+        }
     }
 }

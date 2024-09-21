@@ -5,7 +5,7 @@ namespace App\Imports;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\ToCollection;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class ImportProducts implements ToModel
@@ -15,28 +15,20 @@ class ImportProducts implements ToModel
      */
     public function model(array $row)
     {
+        // Create a new product instance
+        $product = new Product();
 
-        if (isset($row[0]) && !Product::where('code', $row[0])->first()) {
-            // Create a new product instance
-            $product = new Product();
+        $product->name = $row[0];
+        $product->active = 1;
+        $product->category_id = $row[1];
+        $product->code = Str::slug($row[0]);
+        $product->product_code = $row[2];
+        $product->description = $row[0];
 
-            // Set the translations
-            $product->setTranslations('name', [
-                'ar' => $row[2],
-                'en' => $row[1],
-            ]);
-            $product->active = 1;
-            $product->category_id =  Category::where('category_code', $row[3])->first()->id;
-            $product->category_code = $row[3];
-            $product->product_code = $row[0];
-            $product->code = $row[0];
+        // Save the product
+        $product->save();
 
-            // Save the product
-            $product->save();
+        return $product;
 
-            return $product;
-        } else {
-            return null;
-        }
     }
 }

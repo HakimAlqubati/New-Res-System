@@ -149,6 +149,7 @@ class ProductResource extends Resource
             'index' => Pages\ManageProducts::route('/'),
             'create' => Pages\CreateProduct::route('/create'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'view' => Pages\ViewProduct::route('/{record}'),
         ];
     }
 
@@ -174,5 +175,29 @@ class ProductResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    public static function canCreate(): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return true;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return static::can('update', $record);
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return static::can('delete', $record);
     }
 }

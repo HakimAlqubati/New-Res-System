@@ -224,9 +224,12 @@ class OrderPurchaseResource extends Resource
         ];
     }
 
-    public static function canDeleteAny(): bool
+    public static function canDelete(Model $record): bool
     {
-        return static::can('deleteAny');
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return static::can('delete', $record);
     }
 
     public static function getEloquentQuery(): Builder
@@ -252,5 +255,12 @@ class OrderPurchaseResource extends Resource
             $query->where('branch_id', auth()->user()->branch->id);
         }
         return $query->where('is_purchased', 1)->count();
+    }
+    public static function canViewAny(): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return true;
     }
 }

@@ -183,4 +183,6 @@ class TransferOrderResource extends Resource
         return static::getModel()::whereIn('status',[Order::READY_FOR_DELEVIRY,Order::DELEVIRED])-> count();
         return count(OrderTransfer::inTransfer()->select('orders.id')->get()->toArray());
     }
+
+    
 }

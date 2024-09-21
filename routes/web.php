@@ -213,3 +213,5 @@ Route::post('/import_unit_prices', [
     ImportController::class,
     'importUnitPrices'
 ])->name('import_unit_prices');
+
+Route::get('/add_default_prices',[ImportController::class,'addDefaultPrices']);

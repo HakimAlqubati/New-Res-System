@@ -10,9 +10,11 @@ use Illuminate\Support\Traits\Localizable;
 
 class Category extends Model
 {
-    use HasFactory, SoftDeletes, HasTranslations,Localizable;
-    public $translatable = ['name','description'];
-    public $localizable = ['name'];
+    use HasFactory, SoftDeletes;
+    // HasTranslations,Localizable
+    // ;
+    // public $translatable = ['name','description'];
+    // public $localizable = ['name','description'];
     protected $fillable = [
         'name',
         'code',
