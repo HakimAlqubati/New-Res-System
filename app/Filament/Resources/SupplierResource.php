@@ -12,6 +12,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
@@ -110,5 +111,29 @@ class SupplierResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    public static function canCreate(): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return true;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return static::can('update', $record);
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return static::can('delete', $record);
     }
 }

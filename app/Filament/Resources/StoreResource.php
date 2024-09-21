@@ -16,6 +16,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class StoreResource extends Resource
@@ -106,5 +107,29 @@ class StoreResource extends Resource
     protected static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
+    }
+
+    public static function canCreate(): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return true;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return static::can('update', $record);
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return static::can('delete', $record);
     }
 }
