@@ -93,4 +93,28 @@ class CategoryResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
+
+    public static function canCreate(): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return true;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return static::can('update', $record);
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return static::can('delete', $record);
+    }
 }
