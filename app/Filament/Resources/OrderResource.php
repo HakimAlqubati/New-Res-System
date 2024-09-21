@@ -249,6 +249,14 @@ class OrderResource extends Resource implements HasShieldPermissions
     //     return true;
     // }
 
+    public static function canEdit(Model $record): bool
+    {
+        if(getCurrentRole() == 9){
+            return false;
+        }
+        return static::can('update', $record);
+    }
+
     public static function canDelete(Model $record): bool
     {
         if(getCurrentRole() == 9){
