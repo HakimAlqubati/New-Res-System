@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Filament\Reports\Orders\OrderReportResource;
 use App\Filament\Resources\BranchResource;
 use App\Filament\Resources\CategoryResource;
 use App\Filament\Resources\OrderPurchaseResource;
@@ -15,7 +14,6 @@ use App\Filament\Resources\Reports\BranchStoreReportResource;
 use App\Filament\Resources\Reports\PurchaseInvoiceReportResource;
 use App\Filament\Resources\Reports\StoresReportResource;
 use App\Filament\Resources\Shield\RoleResource;
-use App\Filament\Resources\StockReportResource;
 use App\Filament\Resources\StoreResource;
 use App\Filament\Resources\SupplierResource;
 use App\Filament\Resources\SystemSettingResource;
@@ -47,8 +45,6 @@ class AppServiceProvider extends ServiceProvider
         );
     }
 
-
-
     /**
      * Bootstrap any application services.
      *
@@ -68,62 +64,72 @@ class AppServiceProvider extends ServiceProvider
         // ]);
 
         Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
-            $menu =  $builder->items([
+            $menu = $builder->items([
                 NavigationItem::make(__('lang.dashboard'))
                     ->icon('heroicon-o-home')
                     ->activeIcon('heroicon-s-home')
-                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
+                    ->isActiveWhen(fn(): bool => request()->routeIs('filament.pages.dashboard'))
                     ->url(route('filament.pages.dashboard')),
-            ])
-                ->groups([
-                    NavigationGroup::make(__('lang.orders'))
-                        ->items([
-                            ...OrderResource::getNavigationItems(),
-                            ...OrderPurchaseResource::getNavigationItems(),
-                            ...TransferOrderResource::getNavigationItems(),
-                        ]),
-                ])
+            ]);
+            if (getCurrentRole() != 9) {
+                $menu = $menu
+                    ->groups([
+                        NavigationGroup::make(__('lang.orders'))
+                            ->items([
+                                 ...(OrderResource::getNavigationItems()),
+                                ...OrderPurchaseResource::getNavigationItems(),
+                                ...TransferOrderResource::getNavigationItems(),
+                            ]),
+                    ]);
+            }else{
+                $menu = $menu
+                    ->groups([
+                        NavigationGroup::make(__('lang.orders'))
+                            ->items([
+                                ...TransferOrderResource::getNavigationItems(),
+                            ]),
+                    ]);
+            }
+            $menu = $menu
                 ->groups([
                     NavigationGroup::make(__('lang.order_reports'))
                         ->items([
-                            ...ReportProductQuantitiesResource::getNavigationItems(),
+                             ...ReportProductQuantitiesResource::getNavigationItems(),
                             ...GeneralReportOfProductsResource::getNavigationItems(),
                         ]),
                 ])
                 ->groups([
                     NavigationGroup::make(__('lang.products_and_units'))
                         ->items([
-                            ...ProductResource::getNavigationItems(),
+                             ...ProductResource::getNavigationItems(),
                             ...UnitResource::getNavigationItems(),
                         ]),
                 ])
                 ->groups([
                     NavigationGroup::make(__('lang.categories'))
                         ->items([
-                            ...CategoryResource::getNavigationItems(),
+                             ...CategoryResource::getNavigationItems(),
                         ]),
                 ])
                 ->groups([
                     NavigationGroup::make(__('lang.branches'))
                         ->items([
-                            ...BranchResource::getNavigationItems(),
+                             ...BranchResource::getNavigationItems(),
                         ]),
                 ]);
-
 
             $menu = $builder->groups([
                 NavigationGroup::make(__('lang.user_and_roles'))
                     ->items([
-                        ...UserResource::getNavigationItems(),
-                        ...(  RoleResource::getNavigationItems()  )
+                         ...UserResource::getNavigationItems(),
+                        ...(RoleResource::getNavigationItems()),
                     ]),
             ]);
-
 
             $menu = $builder->groups([
                 NavigationGroup::make(__('lang.inventory_management'))
                     ->items([
-                        ...SupplierResource::getNavigationItems(),
+                         ...SupplierResource::getNavigationItems(),
                         ...PurchaseInvoiceResource::getNavigationItems(),
                         ...PurchaseInvoiceReportResource::getNavigationItems(),
                         ...StoreResource::getNavigationItems(),
@@ -133,21 +139,20 @@ class AppServiceProvider extends ServiceProvider
                     ]),
             ]);
 
-
             if (getCurrentRole() == 1) {
                 $menu = $builder->groups([
                     NavigationGroup::make(__('system_settings.system_settings'))
                         ->items([
-                            ...SystemSettingResource::getNavigationItems(),
+                             ...SystemSettingResource::getNavigationItems(),
                         ]),
                 ]);
             }
-                // ->groups([
-                // NavigationGroup::make(__('lang.reports'))
-                // ->items([
-                // ...OrderReportResource::getNavigationItems(), 
-                // ]),
-                // ])
+            // ->groups([
+            // NavigationGroup::make(__('lang.reports'))
+            // ->items([
+            // ...OrderReportResource::getNavigationItems(),
+            // ]),
+            // ])
             ;
             return $menu;
         });
