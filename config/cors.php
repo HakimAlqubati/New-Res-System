@@ -20,7 +20,7 @@ return [
     'allowed_methods' => ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
 
 
-    'allowed_origins' => ['https://mobile.ressystem.com'],
+    'allowed_origins' => ['https://mobile.ressystem.com', 'http://localhost:57362'],
 
     'allowed_origins_patterns' => [],
 
