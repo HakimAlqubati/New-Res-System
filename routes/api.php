@@ -208,9 +208,9 @@ function getRecording($restrictedStateId)
         return 1;
     }
 }
-// Route::options('{any}', function (Request $request) {
-//     return response()->json([], 200)
-//         ->header('Access-Control-Allow-Origin', '*')
-//         ->header('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
-//         ->header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
-// })->where('any', '.*');
+Route::options('{any}', function (Request $request) {
+    return response()->json([], 200)
+        ->header('Access-Control-Allow-Origin', '*')
+        ->header('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
+        ->header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+})->where('any', '.*');
