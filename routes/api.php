@@ -50,6 +50,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('orders', OrderController::class);
     Route::resource('orderDetails', OrderDetailsController::class);
     Route::patch('patch', [OrderDetailsController::class, 'update']);
+    Route::post('patch2', [OrderDetailsController::class, 'update']);
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/v2/report_products', [ProductController::class, 'reportProductsv2']);
     Route::get('/v2/report_products/details/{category_id}', [ProductController::class, 'reportProductsv2Details']);
