@@ -49,6 +49,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('products', ProductController::class);
     Route::apiResource('orders', OrderController::class);
     Route::post('orders2', [OrderController::class,'index']);
+    Route::post('orders2/{id}', [OrderController::class,'index']);
     Route::resource('orderDetails', OrderDetailsController::class);
     Route::patch('patch', [OrderDetailsController::class, 'update']);
     Route::post('patch2', [OrderDetailsController::class, 'update']);
