@@ -48,6 +48,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/user', [AuthController::class, 'getCurrnetUser']);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('orders', OrderController::class);
+    Route::post('orders2', [OrderController::class,'index']);
     Route::resource('orderDetails', OrderDetailsController::class);
     Route::patch('patch', [OrderDetailsController::class, 'update']);
     Route::post('patch2', [OrderDetailsController::class, 'update']);
