@@ -85,21 +85,45 @@
         background-color: transparent;
     }
 
-    /* Striped table rows */
-    table.tpretty tbody tr:nth-child(odd) {
-        background-color: #f2f2f2;
-        /* Light gray background for odd rows */
-    }
-
-    table.tpretty tbody tr:nth-child(even) {
-        background-color: #ffffff;
-        /* White background for even rows */
-    }
-
+  
     table.tpretty thead tr th {
         background-color: #ddd;
         /* Light gray background for headers */
         font-weight: bold;
+    }
+
+    /* Striped table rows */
+    table.tpretty tbody tr:nth-child(odd) {
+        background-color: #f2f2f2 !important;
+        /* Light gray background for odd rows */
+    }
+
+    table.tpretty tbody tr:nth-child(even) {
+        background-color: #ffffff !important;
+        /* White background for even rows */
+    }
+
+    /* Ensure styles apply in print mode */
+    @media print {
+        table.tpretty tbody tr:nth-child(odd) {
+            background-color: #f2f2f2 !important;
+            -webkit-print-color-adjust: exact;
+            /* Ensures color is printed */
+            print-color-adjust: exact;
+            /* Standard property for color printing */
+        }
+
+        table.tpretty tbody tr:nth-child(even) {
+            background-color: #ffffff !important;
+        }
+
+        table.tpretty thead tr th {
+            background-color: #ddd !important;
+            /* Light gray for headers */
+            font-weight: bold;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
     }
 </style>
 
