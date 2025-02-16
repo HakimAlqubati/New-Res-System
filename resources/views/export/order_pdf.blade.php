@@ -84,6 +84,23 @@
         color: #212529;
         background-color: transparent;
     }
+
+    /* Striped table rows */
+    table.tpretty tbody tr:nth-child(odd) {
+        background-color: #f2f2f2;
+        /* Light gray background for odd rows */
+    }
+
+    table.tpretty tbody tr:nth-child(even) {
+        background-color: #ffffff;
+        /* White background for even rows */
+    }
+
+    table.tpretty thead tr th {
+        background-color: #ddd;
+        /* Light gray background for headers */
+        font-weight: bold;
+    }
 </style>
 
 <body>
