@@ -84,7 +84,7 @@ class ListStoresReport extends ListRecords
             ])
             ->join('purchase_invoices', 'purchase_invoice_details.purchase_invoice_id', '=', 'purchase_invoices.id')
             ->join('products', 'purchase_invoice_details.product_id', '=', 'products.id')
-            ->join('units', 'purchase_invoice_details.unit_id', '=', 'units.id');
+            ->join('units', 'purchase_invoice_details.unit_id', '=', 'units.id')->whereNull('deleted_at');
         if (isset($store_id) && $store_id != '' && $store_id != 0 && $store_id != 'all') {
             $subquery1->where('purchase_invoices.store_id', $store_id);
         }
@@ -122,7 +122,7 @@ class ListStoresReport extends ListRecords
                 DB::raw('COALESCE(o.ordered_quantity, 0) AS ordered'),
                 DB::raw('(COALESCE(p.purchase_quantity, 0) - COALESCE(o.ordered_quantity, 0)) AS remaining')
             ]);
-        
+
 
         $results = $query->get();
         // $results2 = Product::where('active',1)->select('id','name')->get()->toArray();
