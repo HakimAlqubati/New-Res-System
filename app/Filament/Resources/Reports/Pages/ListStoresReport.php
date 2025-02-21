@@ -84,7 +84,7 @@ class ListStoresReport extends ListRecords
             ])
             ->join('purchase_invoices', 'purchase_invoice_details.purchase_invoice_id', '=', 'purchase_invoices.id')
             ->join('products', 'purchase_invoice_details.product_id', '=', 'products.id')
-            ->join('units', 'purchase_invoice_details.unit_id', '=', 'units.id')->whereNull('deleted_at');
+            ->join('units', 'purchase_invoice_details.unit_id', '=', 'units.id')->whereNull('purchase_invoice_details.deleted_at');
         if (isset($store_id) && $store_id != '' && $store_id != 0 && $store_id != 'all') {
             $subquery1->where('purchase_invoices.store_id', $store_id);
         }
