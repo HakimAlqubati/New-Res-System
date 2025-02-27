@@ -78,4 +78,9 @@ class OrderDetails extends Model
         }
         return $invoiceNo;
     }
+    public function getTotalPriceAttribute()
+    {
+        $res = $this->available_quantity * $this->price;
+        return formatMoney($res);
+    }
 }

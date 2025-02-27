@@ -45,6 +45,7 @@ class OrderDetailsRelationManager extends RelationManager
                 TextColumn::make('quantity')->label(__('lang.ordered_quantity_by_branch')),
                 TextColumn::make('available_quantity')->label(__('lang.quantity_after_modification')),
                 TextColumn::make('price')->label(__('lang.unit_price')),
+                TextColumn::make('total_price')->label(__('lang.total')),
                 // IconColumn::make('negative_inventory_quantity')
                 //     ->options([
                 //         'heroicon-o-check' => fn ($state, $record): bool => $record->negative_inventory_quantity === 1,
