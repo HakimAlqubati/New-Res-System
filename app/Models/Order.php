@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
@@ -83,5 +84,10 @@ class Order extends Model
     public function customer_name()
     {
         return 'dddd';
+    }
+
+    public function getTotalPriceAttribute()
+    {
+        return $this->orderDetails()->sum(DB::raw('available_quantity * price'));
     }
 }
