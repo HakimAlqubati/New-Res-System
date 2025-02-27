@@ -109,7 +109,8 @@ class OrderResource extends Resource implements HasShieldPermissions
                     ])
                     ->iconPosition('after'),
                 count_items_order::make('item_counts')->label(__('lang.item_counts')),
-                TotalOrder::make('total_amount')->label(__('lang.total_amount')),
+                TextColumn::make('total_price')->label(__('lang.total_price')),
+                // TotalOrder::make('total_amount')->label(__('lang.total_amount')),
                 TextColumn::make('created_at')
                     ->label(__('lang.created_at'))
                     ->sortable(),
