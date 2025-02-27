@@ -81,6 +81,6 @@ class OrderDetails extends Model
     public function getTotalPriceAttribute()
     {
         $res = $this->available_quantity * $this->price;
-        return formatMoney($res);
+        return round($res, 2);
     }
 }
