@@ -16,11 +16,15 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Maatwebsite\Excel\Facades\Excel;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ProductResource extends Resource
 {
@@ -50,12 +54,10 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')->required()->label(__('lang.name'))
-                   
-                    ,
+                TextInput::make('name')->required()->label(__('lang.name')),
                 TextInput::make('code')->required()->label(__('lang.code'))
-                    // ->disabledOn('edit')
-                    ,
+                // ->disabledOn('edit')
+                ,
 
                 Textarea::make('description')->label(__('lang.description'))
                     ->rows(2)
@@ -84,7 +86,7 @@ class ProductResource extends Resource
                         TextInput::make('price')->type('number')->default(1)
                             ->label(__('lang.price'))
                             ->mask(
-                                fn (TextInput\Mask $mask) => $mask
+                                fn(TextInput\Mask $mask) => $mask
                                     ->numeric()
                                     ->decimalPlaces(2)
                                     ->thousandsSeparator(',')
@@ -110,7 +112,7 @@ class ProductResource extends Resource
                     ->toggleable()
                     ->searchable()
                     ->searchable(isIndividual: true)
-                    ->tooltip(fn (Model $record): string => "By {$record->name}"),
+                    ->tooltip(fn(Model $record): string => "By {$record->name}"),
                 Tables\Columns\TextColumn::make('code')->searchable()
                     ->label(__('lang.code'))
                     ->searchable(isIndividual: true, isGlobal: false),
@@ -122,7 +124,7 @@ class ProductResource extends Resource
             ])
             ->filters([
                 Tables\Filters\Filter::make('active')->label(__('lang.active'))
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('active')),
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('active')),
                 SelectFilter::make('category_id')
                     ->searchable()
                     ->multiple()
@@ -139,6 +141,46 @@ class ProductResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
                 ExportBulkAction::make(),
                 // Tables\Actions\ForceDeleteBulkAction::make(),
+
+                BulkAction::make('exportProductsWithUnits')
+                    ->label('Export with Unit Prices')
+                    ->icon('heroicon-o-download')
+                    ->action(function (Collection $records): BinaryFileResponse {
+                        // نسحب العلاقات مع الوحدات والتصنيفات
+                        $data = [];
+
+                        foreach ($records as $product) {
+                            $product->load(['unitPrices.unit', 'category']);
+                            foreach ($product->unitPrices as $unitPrice) {
+                                $data[] = [
+                                    'product_id' => $product->id,
+                                    'product_name' => $product->name,
+                                    'product_code' => $product->code,
+                                    'category' => $product->category?->name ?? '',
+                                    'unit' => $unitPrice->unit?->name ?? '',
+                                    'price' => $unitPrice->price,
+                                ];
+                            }
+                        }
+
+                        // توليد وتصدير Excel
+                        return Excel::download(new class($data) implements \Maatwebsite\Excel\Concerns\FromCollection, \Maatwebsite\Excel\Concerns\WithHeadings {
+                            public function __construct(public array $data) {}
+
+                            public function collection()
+                            {
+                                return collect($this->data);
+                            }
+
+                            public function headings(): array
+                            {
+                                return ['product_id', 'product_name', 'product_code', 'category', 'unit', 'price'];
+                            }
+                        }, 'products_with_units.xlsx');
+                    })
+                    ->requiresConfirmation()
+                    ->deselectRecordsAfterCompletion()
+                    ->color('success'),
                 Tables\Actions\RestoreBulkAction::make(),
             ]);
     }
