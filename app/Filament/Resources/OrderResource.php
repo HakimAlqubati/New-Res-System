@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Exports\OrdersExport2;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Branch;
@@ -29,7 +30,10 @@ use Illuminate\Database\Eloquent\Model;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms\Components\Textarea;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrderResource extends Resource implements HasShieldPermissions
 {
@@ -96,16 +100,16 @@ class OrderResource extends Resource implements HasShieldPermissions
                     ->searchable(isIndividual: true, isGlobal: false),
                 TextColumn::make('customer.name')->label(__('lang.branch_manager'))->toggleable()
                     ->searchable(isIndividual: true)
-                    ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
+                    ->tooltip(fn(Model $record): string => "By {$record->customer->name}"),
                 TextColumn::make('branch.name')->label(__('lang.branch')),
                 BadgeColumn::make('status')
                     ->label(__('lang.order_status'))
                     ->colors([
                         'primary',
-                        'secondary' => static fn ($state): bool => $state === Order::PENDING_APPROVAL,
-                        'warning' => static fn ($state): bool => $state === Order::READY_FOR_DELEVIRY,
-                        'success' => static fn ($state): bool => $state === Order::DELEVIRED,
-                        'danger' => static fn ($state): bool => $state === Order::PROCESSING,
+                        'secondary' => static fn($state): bool => $state === Order::PENDING_APPROVAL,
+                        'warning' => static fn($state): bool => $state === Order::READY_FOR_DELEVIRY,
+                        'success' => static fn($state): bool => $state === Order::DELEVIRED,
+                        'danger' => static fn($state): bool => $state === Order::PROCESSING,
                     ])
                     ->iconPosition('after'),
                 count_items_order::make('item_counts')->label(__('lang.item_counts')),
@@ -151,11 +155,11 @@ class OrderResource extends Resource implements HasShieldPermissions
                         return $query
                             ->when(
                                 $data['created_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
                 Tables\Filters\TrashedFilter::make(),
@@ -168,7 +172,15 @@ class OrderResource extends Resource implements HasShieldPermissions
                 // Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
-                ExportBulkAction::make()
+                // ExportBulkAction::make(),
+                BulkAction::make('exportOrdersWithDetails')
+                    ->label('Export Orders + Details') 
+                    ->action(function ($records) {
+                        return \Maatwebsite\Excel\Facades\Excel::download(
+                            new \App\Exports\OrdersExport2($records),
+                            'orders_with_details.xlsx'
+                        );
+                    })
             ]);
     }
 
@@ -207,7 +219,7 @@ class OrderResource extends Resource implements HasShieldPermissions
 
     protected static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('is_purchased',0)->count();
+        return static::getModel()::where('is_purchased', 0)->count();
     }
 
     public function isTableSearchable(): bool
@@ -231,7 +243,7 @@ class OrderResource extends Resource implements HasShieldPermissions
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-        ->where('is_purchased', 0)
+            ->where('is_purchased', 0)
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
