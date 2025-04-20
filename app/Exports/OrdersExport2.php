@@ -19,73 +19,62 @@ class OrdersExport2 implements FromArray, WithHeadings
     public function array(): array
     {
         $data = [];
-
+    
         foreach ($this->orders->load(['customer', 'branch', 'orderDetails.product', 'orderDetails.unit']) as $order) {
-            // ✅ 1. Header Row (Order info)
+            // ✅ Header row
             $data[] = [
-                'Row Type' => 'Header',
-                'Order ID' => $order->id,
-                'Branch ID' => $order->branch_id,
-                'Branch Name' => $order->branch->name ?? '',
-                'Customer ID' => $order->customer_id,
-                'Customer Name' => $order->customer->name ?? '',
-                'Status' => $order->status,
-                'Notes' => $order->notes,
-                'Created At' => $order->created_at,
-                'Product ID' => '',
-                'Product Name' => '',
-                'Unit ID' => '',
-                'Unit Name' => '',
-                'Quantity' => '',
-                'Price' => '',
-                'Available Quantity' => '',
+                'row_type' => 'header',
+                'order_id' => $order->id,
+                'branch_id' => $order->branch_id,
+                'customer_id' => $order->customer_id,
+                'status' => $order->status,
+                'notes' => $order->notes,
+                'created_at' => $order->created_at,
+                'product_id' => '',
+                'unit_id' => '',
+                'quantity' => '',
+                'price' => '',
+                'available_quantity' => '',
             ];
-
-            // ✅ 2. Detail Rows (Products in order)
+    
+            // ✅ Detail rows
             foreach ($order->orderDetails as $detail) {
                 $data[] = [
-                    'Row Type' => 'Detail',
-                    'Order ID' => $order->id,
-                    'Branch ID' => '',
-                    'Branch Name' => '',
-                    'Customer ID' => '',
-                    'Customer Name' => '',
-                    'Status' => '',
-                    'Notes' => '',
-                    'Created At' => '',
-                    'Product ID' => $detail->product_id,
-                    'Product Name' => $detail->product->name ?? '',
-                    'Unit ID' => $detail->unit_id,
-                    'Unit Name' => $detail->unit->name ?? '',
-                    'Quantity' => $detail->quantity,
-                    'Price' => $detail->price,
-                    'Available Quantity' => $detail->available_quantity,
+                    'row_type' => 'detail',
+                    'order_id' => $order->id,
+                    'branch_id' => '',
+                    'customer_id' => '',
+                    'status' => '',
+                    'notes' => '',
+                    'created_at' => '',
+                    'product_id' => $detail->product_id,
+                    'unit_id' => $detail->unit_id,
+                    'quantity' => $detail->quantity,
+                    'price' => $detail->price,
+                    'available_quantity' => $detail->available_quantity,
                 ];
             }
         }
-
+    
         return $data;
     }
-
+    
     public function headings(): array
     {
         return [
-            'Row Type',
-            'Order ID',
-            'Branch ID',
-            'Branch Name',
-            'Customer ID',
-            'Customer Name',
-            'Status',
-            'Notes',
-            'Created At',
-            'Product ID',
-            'Product Name',
-            'Unit ID',
-            'Unit Name',
-            'Quantity',
-            'Price',
-            'Available Quantity',
+            'row_type',
+            'order_id',
+            'branch_id',
+            'customer_id',
+            'status',
+            'notes',
+            'created_at',
+            'product_id',
+            'unit_id',
+            'quantity',
+            'price',
+            'available_quantity',
         ];
     }
+    
 }
