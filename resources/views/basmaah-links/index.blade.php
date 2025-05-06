@@ -23,14 +23,14 @@
             max-width: 600px;
             margin: auto;
             background-color: #ffffff;
-            padding: 30px;
+            padding: 10px;
             border-radius: 24px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
             text-align: center;
         }
 
         .logo {
-            width: 100px;
+            width: 200px;
             margin: 0 auto 20px;
         }
 
@@ -62,7 +62,8 @@
         }
 
         .link-box:hover {
-            background-color: #f59e0b;
+            background-color: #00bfa5;
+
             color: #ffffff;
         }
 
@@ -74,8 +75,8 @@
         }
 
         .highlight-box {
-            background-color: #f4c984;
-            color: #000;
+            background-color: #0077b6;
+            color: #fff;
         }
 
         /* أيقونات ملوّنة */
@@ -112,7 +113,7 @@
 <body>
     <div class="container">
         <div class="logo">
-            <img src="https://basmaah.com.sa/wp-content/uploads/elementor/thumbs/2-r2b26mgpzesbftyt675qkmo3rbz9zbffmlhys457iw.webp"
+            <img src="https://nltworkbench.com/storage/basma.png"
                 alt="شعار بصمة">
         </div>
 
