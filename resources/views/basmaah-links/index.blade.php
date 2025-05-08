@@ -63,7 +63,6 @@
 
         .link-box:hover {
             background-color: #00bfa5;
-
             color: #ffffff;
         }
 
@@ -80,41 +79,20 @@
         }
 
         /* أيقونات ملوّنة */
-        .fa-envelope {
-            color: #e37400;
-        }
-
-        .fa-whatsapp {
-            color: #25d366;
-        }
-
-        .fa-telegram-plane {
-            color: #229ed9;
-        }
-
-        .fa-facebook-f {
-            color: #1877f2;
-        }
-
-        .fa-tiktok {
-            color: #010101;
-        }
-
-        .fa-x-twitter {
-            color: #000000;
-        }
-
-        .fa-globe {
-            color: #5a67d8;
-        }
+        .fa-envelope { color: #e37400; }
+        .fa-whatsapp { color: #25d366; }
+        .fa-linkedin-in { color: #0077b5; }
+        .fa-facebook-f { color: #1877f2; }
+        .fa-tiktok { color: #010101; }
+        .fa-x-twitter { color: #000000; }
+        .fa-globe { color: #5a67d8; }
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class="logo">
-            <img src="https://nltworkbench.com/storage/basma.png"
-                alt="شعار بصمة">
+            <img src="https://nltworkbench.com/storage/basma.png" alt="شعار بصمة">
         </div>
 
         <h1>روابط التواصل مع بصمة</h1>
@@ -129,9 +107,9 @@
             <i class="fab fa-whatsapp"></i>
         </a>
 
-        <a href="https://t.me/+966536577770" class="link-box">
-            <span>تيليجرام</span>
-            <i class="fab fa-telegram-plane"></i>
+        <a href="https://www.linkedin.com/company/basmaah" class="link-box">
+            <span>LinkedIn</span>
+            <i class="fab fa-linkedin-in"></i>
         </a>
 
         <a href="https://www.facebook.com/profile.php?id=61574223930417&mibextid=wwXIfr" class="link-box">
