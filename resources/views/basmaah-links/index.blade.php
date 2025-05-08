@@ -4,13 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <title>روابط بصمة</title>
-
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
-
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
@@ -27,6 +22,7 @@
             border-radius: 24px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
             text-align: center;
+            position: relative;
         }
 
         .logo {
@@ -78,29 +74,104 @@
             color: #fff;
         }
 
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        .copy-btn:hover {
+            color: #e0e0e0;
+        }
+
+        /* الإشعار */
+        .toast {
+            position: absolute;
+            top: -30px;
+            right: 20px;
+            background-color: #00bfa5;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
         /* أيقونات ملوّنة */
-        .fa-envelope { color: #e37400; }
-        .fa-whatsapp { color: #25d366; }
-        .fa-linkedin-in { color: #0077b5; }
-        .fa-facebook-f { color: #1877f2; }
-        .fa-tiktok { color: #010101; }
-        .fa-x-twitter { color: #000000; }
-        .fa-globe { color: #5a67d8; }
+        .fa-envelope {
+            color: #e37400;
+        }
+
+        .fa-whatsapp {
+            color: #25d366;
+        }
+
+        .fa-linkedin-in {
+            color: #0077b5;
+        }
+
+        .fa-facebook-f {
+            color: #1877f2;
+        }
+
+        .fa-tiktok {
+            color: #010101;
+        }
+
+        .fa-x-twitter {
+            color: #000000;
+        }
+
+        .fa-globe {
+            color: #5a67d8;
+        }
+
+        .fa-phone {
+            color: #16a34a;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <div class="toast" id="toast">تم النسخ!</div>
+
         <div class="logo">
             <img src="https://nltworkbench.com/storage/basma.png" alt="شعار بصمة">
         </div>
 
         <h1>روابط التواصل مع بصمة</h1>
 
-        <a href="mailto:basmaah.sa@gmail.com" class="link-box highlight-box">
-            <span>البريد الإلكتروني: basmaah.sa@gmail.com</span>
+        <!-- البريد الإلكتروني -->
+        <div class="link-box highlight-box" style="justify-content: space-between;">
+            <a href="mailto:basmaah.sa@gmail.com"
+                style="flex-grow: 1; color: #fff; text-decoration: none; text-align: right;">
+                <span>البريد الإلكتروني: basmaah.sa@gmail.com</span>
+            </a>
+            <button class="copy-btn" onclick="copyToClipboard('basmaah.sa@gmail.com')">
+                <i class="fas fa-copy"></i>
+            </button>
             <i class="fas fa-envelope"></i>
-        </a>
+        </div>
+
+        <!-- رقم الهاتف -->
+        <div class="link-box highlight-box" style="justify-content: space-between;">
+            <a href="tel:+966536577770" style="flex-grow: 1; color: #fff; text-decoration: none; text-align: right;">
+                <span>رقم الهاتف: 0536577770</span>
+            </a>
+            <button class="copy-btn" onclick="copyToClipboard('0536577770')">
+                <i class="fas fa-copy"></i>
+            </button>
+            <i class="fas fa-phone"></i>
+        </div>
 
         <a href="https://wa.me/966536577770" class="link-box">
             <span>واتساب</span>
@@ -132,6 +203,18 @@
             <i class="fas fa-globe"></i>
         </a>
     </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById("toast");
+                toast.classList.add("show");
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                }, 2000);
+            });
+        }
+    </script>
 </body>
 
 </html>
