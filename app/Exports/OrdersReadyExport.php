@@ -24,6 +24,7 @@ class OrdersReadyExport implements FromCollection, WithHeadings
                     'From Location' => optional($this->getDefaultStore())->name ?? 'Not set',
                     'To Location'   => $order->branch?->name ?? 'Not set',
                     'Quantity'      => $item->quantity,
+                    'Unit'          => $item->unit?->name ?? '—', // <-- الوحدة هنا
                 ];
             }
         }
@@ -38,10 +39,10 @@ class OrdersReadyExport implements FromCollection, WithHeadings
             'From Location',
             'To Location',
             'Quantity',
+            'Unit',
         ];
     }
 
-    // توليد وصف افتراضي بناء على الطلب والبند (يمكنك تعديله كما تحب)
     protected function generateDescription($order, $item)
     {
         $productName = $item->product?->name ?? 'منتج غير محدد';
@@ -49,7 +50,6 @@ class OrdersReadyExport implements FromCollection, WithHeadings
         $toBranch    = $order->branch?->name ?? 'Not set';
 
         return "{$productName} Transfered from {$fromStore} to {$toBranch}";
-
     }
 
     protected function getDefaultStore()
