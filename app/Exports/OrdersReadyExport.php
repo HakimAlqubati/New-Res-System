@@ -44,8 +44,11 @@ class OrdersReadyExport implements FromCollection, WithHeadings
     // توليد وصف افتراضي بناء على الطلب والبند (يمكنك تعديله كما تحب)
     protected function generateDescription($order, $item)
     {
-        // مثال عملي: "Order #1234, Item: {product name}"
-        return "Order #{$order->id}, " . ($item->product?->name ?? 'منتج غير محدد');
+        $productName = $item->product?->name ?? 'منتج غير محدد';
+        $fromStore   = optional($this->getDefaultStore())->name ?? 'Not set';
+        $toBranch    = $order->branch?->name ?? 'Not set';
+
+        return "{$productName} Transfered from {$fromStore} to {$toBranch}";
 
     }
 
