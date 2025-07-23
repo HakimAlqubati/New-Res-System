@@ -159,21 +159,21 @@ class OrderResource extends Resource implements HasShieldPermissions
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('export_ready_orders')
-                    ->label('Export Ready/Delivered Orders')
+                Tables\Actions\Action::make('export_this_order')
+                    ->label('Export to Excel')
                     ->icon('heroicon-o-download')
-                    ->action(function () {
-                        $orders = \App\Models\Order::with(['orderDetails.product', 'branch'])
-                            ->whereIn('id',[4826])
-                            // ->whereIn('status', [
-                            //     \App\Models\Order::READY_FOR_DELEVIRY,
-                            //     \App\Models\Order::DELEVIRED,
-                            // ])
-                            ->get();
-
-                        $export = new OrdersReadyExport($orders);
-
-                        return Excel::download($export, 'orders_ready.xlsx');
+                    // اجلب الطلب الحالي فقط مع تفاصيله
+                    ->action(function (Model $record) {
+                        $order  = $record->load(['orderDetails.product', 'branch']);
+                        $export = new OrdersReadyExport(collect([$order]));
+                        return Excel::download($export, 'order_' . $order->id . '.xlsx');
+                    })
+                    // يظهر فقط لو حالة الطلب ready_for_delivery أو delevired
+                    ->visible(function (Model $record) {
+                        return in_array($record->status, [
+                            Order::READY_FOR_DELEVIRY,
+                            Order::DELEVIRED,
+                        ]);
                     }),
 
             ])
