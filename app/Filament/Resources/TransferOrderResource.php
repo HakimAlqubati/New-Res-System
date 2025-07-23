@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Exports\OrdersReadyExport;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
+use App\Models\Order;
 use App\Models\OrderTransfer;
 use App\Tables\Columns\CountItemsTransfer;
 use App\Tables\Columns\TotalTransfer;
@@ -20,6 +22,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Maatwebsite\Excel\Facades\Excel;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class TransferOrderResource extends Resource
@@ -53,6 +56,34 @@ class TransferOrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+        ->headerActions([
+                   Tables\Actions\Action::make('export_selected_orders')
+            ->label('Export Orders (Ready/Delivered)')
+            ->icon('heroicon-o-download')
+            ->form([
+                Forms\Components\MultiSelect::make('order_ids')
+                    ->label('Select Orders')
+                    ->options(
+                        \App\Models\Order::whereIn('status', [
+                            \App\Models\Order::READY_FOR_DELEVIRY,
+                            \App\Models\Order::DELEVIRED,
+                        ])
+                        ->orderBy('id', 'desc')
+                        ->get()
+                        ->pluck('id', 'id') // يمكن تخصيص طريقة العرض لو أردت
+                    )
+                    ->searchable()
+                    ->required()
+                    ->placeholder('Choose order numbers ...'),
+            ])
+            ->action(function (array $data) {
+                $orders = \App\Models\Order::with(['orderDetails.product', 'branch'])
+                    ->whereIn('id', $data['order_ids'] ?? [])
+                    ->get();
+                $export = new \App\Exports\OrdersReadyExport($orders);
+                return \Maatwebsite\Excel\Facades\Excel::download($export, 'selected_orders.xlsx');
+            }),
+            ])
             ->columns([
                 TextColumn::make('id')->label(__('lang.order_id'))->toggleable(isToggledHiddenByDefault: false)
                     ->copyable()
@@ -115,6 +146,22 @@ class TransferOrderResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 // Tables\Actions\EditAction::make(), 
+                   Tables\Actions\Action::make('export_this_order')
+                    ->label('Export to Excel')
+                    ->icon('heroicon-o-download')
+                    // اجلب الطلب الحالي فقط مع تفاصيله
+                    ->action(function (Model $record) {
+                        $order  = $record->load(['orderDetails.product', 'branch']);
+                        $export = new OrdersReadyExport(collect([$order]));
+                        return Excel::download($export, 'order_' . $order->id . '.xlsx');
+                    })
+                    // يظهر فقط لو حالة الطلب ready_for_delivery أو delevired
+                    ->visible(function (Model $record) {
+                        return in_array($record->status, [
+                            Order::READY_FOR_DELEVIRY,
+                            Order::DELEVIRED,
+                        ]);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

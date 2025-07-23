@@ -155,7 +155,8 @@ class OrderResource extends Resource implements HasShieldPermissions
                             );
                     }),
 
-            ])->headerActions([
+            ])
+            ->headerActions([
                    Tables\Actions\Action::make('export_selected_orders')
             ->label('Export Orders (Ready/Delivered)')
             ->icon('heroicon-o-download')
