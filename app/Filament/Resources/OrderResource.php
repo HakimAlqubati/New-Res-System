@@ -1,20 +1,19 @@
 <?php
-
 namespace App\Filament\Resources;
 
+use App\Exports\OrdersReadyExport;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Branch;
 use App\Models\Order;
-use App\Models\Product;
-use App\Models\Unit;
 use App\Models\User;
 use App\Tables\Columns\count_items_order;
 use App\Tables\Columns\TotalOrder;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Closure;
 use Filament\Forms;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -26,9 +25,8 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Maatwebsite\Excel\Facades\Excel;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use Filament\Forms\Components\Textarea;
 
 class OrderResource extends Resource implements HasShieldPermissions
 {
@@ -42,14 +40,14 @@ class OrderResource extends Resource implements HasShieldPermissions
             'update',
             'delete',
             'delete_any',
-            'publish'
+            'publish',
         ];
     }
 
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
-    protected static ?string $navigationGroup = 'Orders';
+    protected static ?string $navigationIcon       = 'heroicon-o-collection';
+    protected static ?string $navigationGroup      = 'Orders';
     protected static ?string $recordTitleAttribute = 'id';
     protected static function getNavigationLabel(): string
     {
@@ -71,10 +69,10 @@ class OrderResource extends Resource implements HasShieldPermissions
                 Select::make('status')
                     ->label(__('lang.order_status'))
                     ->options([
-                        Order::ORDERED => 'Ordered',
+                        Order::ORDERED            => 'Ordered',
                         Order::READY_FOR_DELEVIRY => 'Ready for delivery',
-                        Order::PROCESSING => 'processing',
-                        Order::DELEVIRED => 'delevired',
+                        Order::PROCESSING         => 'processing',
+                        Order::DELEVIRED          => 'delevired',
                     ]),
                 // TextInput::make('store_emp_responsiple.name')->label(__('lang.store_responsiple'))->columnSpanFull(),
                 Textarea::make('notes')->label(__('lang.notes_from_store'))->columnSpanFull(),
@@ -95,16 +93,16 @@ class OrderResource extends Resource implements HasShieldPermissions
                     ->searchable(isIndividual: true, isGlobal: false),
                 TextColumn::make('customer.name')->label(__('lang.branch_manager'))->toggleable()
                     ->searchable(isIndividual: true)
-                    ->tooltip(fn (Model $record): string => "By {$record->customer->name}"),
+                    ->tooltip(fn(Model $record): string => "By {$record->customer->name}"),
                 TextColumn::make('branch.name')->label(__('lang.branch')),
                 BadgeColumn::make('status')
                     ->label(__('lang.order_status'))
                     ->colors([
                         'primary',
-                        'secondary' => static fn ($state): bool => $state === Order::PENDING_APPROVAL,
-                        'warning' => static fn ($state): bool => $state === Order::READY_FOR_DELEVIRY,
-                        'success' => static fn ($state): bool => $state === Order::DELEVIRED,
-                        'danger' => static fn ($state): bool => $state === Order::PROCESSING,
+                        'secondary' => static fn($state): bool => $state === Order::PENDING_APPROVAL,
+                        'warning'   => static fn($state): bool   => $state === Order::READY_FOR_DELEVIRY,
+                        'success'   => static fn($state): bool   => $state === Order::DELEVIRED,
+                        'danger'    => static fn($state): bool    => $state === Order::PROCESSING,
                     ])
                     ->iconPosition('after'),
                 count_items_order::make('item_counts')->label(__('lang.item_counts')),
@@ -124,11 +122,11 @@ class OrderResource extends Resource implements HasShieldPermissions
                     ->multiple()
                     ->searchable()
                     ->options([
-                        'ordered' => 'Ordered',
-                        'processing' => 'Processing',
+                        'ordered'            => 'Ordered',
+                        'processing'         => 'Processing',
                         'ready_for_delivery' => 'Ready for deleviry',
-                        'delevired' => 'Delevired',
-                        'pending_approval' => 'Pending approval',
+                        'delevired'          => 'Delevired',
+                        'pending_approval'   => 'Pending approval',
                     ]),
                 SelectFilter::make('customer_id')
                     ->searchable()
@@ -149,21 +147,36 @@ class OrderResource extends Resource implements HasShieldPermissions
                         return $query
                             ->when(
                                 $data['created_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
-                    })
+                    }),
 
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('export_ready_orders')
+                    ->label('Export Ready/Delivered Orders')
+                    ->icon('heroicon-o-download')
+                    ->action(function () {
+                        $orders = \App\Models\Order::with(['orderDetails.product', 'branch'])
+                            ->whereIn('status', [
+                                \App\Models\Order::READY_FOR_DELEVIRY,
+                                \App\Models\Order::DELEVIRED,
+                            ])->get();
+
+                        $export = new OrdersReadyExport($orders);
+
+                        return Excel::download($export, 'orders_ready.xlsx');
+                    }),
+
             ])
             ->bulkActions([
-                ExportBulkAction::make()
+                ExportBulkAction::make(),
             ]);
     }
 
@@ -178,16 +191,14 @@ class OrderResource extends Resource implements HasShieldPermissions
     {
 
         return [
-            'index' => Pages\ListOrders::route('/'),
-            'create' => Pages\CreateOrder::route('/create'),
-            'view' => Pages\ViewOrder::route('/{record}'),
-            'edit' => Pages\EditOrder::route('/{record}/edit'),
+            'index'               => Pages\ListOrders::route('/'),
+            'create'              => Pages\CreateOrder::route('/create'),
+            'view'                => Pages\ViewOrder::route('/{record}'),
+            'edit'                => Pages\EditOrder::route('/{record}/edit'),
             'order-report-custom' => Pages\OrderReportCustom::route('/order-report-custom'),
 
         ];
     }
-
-
 
     protected function getTableReorderColumn(): ?string
     {
@@ -198,7 +209,6 @@ class OrderResource extends Resource implements HasShieldPermissions
     {
         return null;
     }
-
 
     protected static function getNavigationBadge(): ?string
     {
@@ -222,7 +232,6 @@ class OrderResource extends Resource implements HasShieldPermissions
     {
         return false;
     }
-
 
     public static function getGlobalSearchResultTitle(Model $record): string
     {
