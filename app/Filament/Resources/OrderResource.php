@@ -164,10 +164,12 @@ class OrderResource extends Resource implements HasShieldPermissions
                     ->icon('heroicon-o-download')
                     ->action(function () {
                         $orders = \App\Models\Order::with(['orderDetails.product', 'branch'])
-                            ->whereIn('status', [
-                                \App\Models\Order::READY_FOR_DELEVIRY,
-                                \App\Models\Order::DELEVIRED,
-                            ])->get();
+                            ->whereIn('id',[4826])
+                            // ->whereIn('status', [
+                            //     \App\Models\Order::READY_FOR_DELEVIRY,
+                            //     \App\Models\Order::DELEVIRED,
+                            // ])
+                            ->get();
 
                         $export = new OrdersReadyExport($orders);
 
