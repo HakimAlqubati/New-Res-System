@@ -155,6 +155,33 @@ class OrderResource extends Resource implements HasShieldPermissions
                             );
                     }),
 
+            ])->headerActions([
+                   Tables\Actions\Action::make('export_selected_orders')
+            ->label('Export Orders (Ready/Delivered)')
+            ->icon('heroicon-o-download')
+            ->form([
+                Forms\Components\MultiSelect::make('order_ids')
+                    ->label('Select Orders')
+                    ->options(
+                        \App\Models\Order::whereIn('status', [
+                            \App\Models\Order::READY_FOR_DELEVIRY,
+                            \App\Models\Order::DELEVIRED,
+                        ])
+                        ->orderBy('id', 'desc')
+                        ->get()
+                        ->pluck('id', 'id') // يمكن تخصيص طريقة العرض لو أردت
+                    )
+                    ->searchable()
+                    ->required()
+                    ->placeholder('Choose order numbers ...'),
+            ])
+            ->action(function (array $data) {
+                $orders = \App\Models\Order::with(['orderDetails.product', 'branch'])
+                    ->whereIn('id', $data['order_ids'] ?? [])
+                    ->get();
+                $export = new \App\Exports\OrdersReadyExport($orders);
+                return \Maatwebsite\Excel\Facades\Excel::download($export, 'selected_orders.xlsx');
+            }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
