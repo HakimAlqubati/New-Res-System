@@ -23,7 +23,7 @@ class OrdersReadyExport implements FromCollection, WithHeadings
                     'Description'   => $this->generateDescription($order, $item),
                     'From Location' => optional($this->getDefaultStore())->name ?? 'Not set',
                     'To Location'   => $order->branch?->name ?? 'Not set',
-                    'Quantity'      => $item->quantity,
+                    'Quantity'      => $item->available_quantity,
                     'Unit'          => $item->unit?->name ?? '—', // <-- الوحدة هنا
                 ];
             }
