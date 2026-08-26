@@ -16,6 +16,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ListReportProductQuantities extends ListRecords
 {
@@ -123,7 +124,10 @@ class ListReportProductQuantities extends ListRecords
             ->join('units', 'orders_details.unit_id', '=', 'units.id')
             ->where('orders_details.product_id', '=', $product_id)
             ->when($start_date && $end_date, function ($query) use ($start_date, $end_date) {
-                return $query->whereBetween('orders.created_at', [$start_date, $end_date]);
+                return $query->whereBetween('orders.created_at', [
+                    Carbon::parse($start_date)->startOfDay(),
+                    Carbon::parse($end_date)->endOfDay(),
+                ]);
             })
             ->when($branch_ids && is_array($branch_ids), function ($query) use ($branch_ids) {
                 return $query->whereIn('orders.branch_id', $branch_ids);
