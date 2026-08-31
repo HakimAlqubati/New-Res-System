@@ -52,6 +52,10 @@ class OrderRepository implements OrderRepositoryInterface
     {
         try {
             DB::beginTransaction();
+            return response()->json([
+                'success' => false,
+                'message' => 'تم ايقاف الدعم على هذا التطبيق، يرجى اضافة الطلبات بالتطبيق الجديد',
+            ], 500);
             // to get current user role
             $currnetRole = getCurrentRole();
             if (!isset($currnetRole)) {
@@ -249,7 +253,7 @@ class OrderRepository implements OrderRepositoryInterface
         $order_status = $order->status;
         $file_name = __('lang.order-no-') . $id;
         if (in_array($order_status, [Order::READY_FOR_DELEVIRY, Order::DELEVIRED])) {
-            $file_name = __('lang.transfer-no-') . $id. ' - '. $order->transfer_date;
+            $file_name = __('lang.transfer-no-') . $id . ' - ' . $order->transfer_date;
         }
         return Excel::download(new OrdersExport($id), $order_branch . ' - ' . $file_name . '.xlsx');
     }
